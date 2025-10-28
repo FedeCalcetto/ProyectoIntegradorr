@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Interface\" />
+    <Folder Include="CasosDeUso\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProyectoIntegrador.DataTransferObject\ProyectoIntegrador.DataTransferObject.csproj" />
+    <ProjectReference Include="..\ProyectoIntegrador.EntityFrameWork\ProyectoIntegrador.EntityFrameWork.csproj" />
+    <ProjectReference Include="..\ProyectoIntegrador\ProyectoIntegrador.LogicaNegocio.csproj" />
+  </ItemGroup>
+
+</Project>

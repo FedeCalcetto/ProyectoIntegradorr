@@ -1,0 +1,83 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProyectoIntegrador.LogicaNegocio", "ProyectoIntegrador.LogicaNegocio.csproj", "{34254C71-A445-4104-80CB-80005D12082D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProyectoIntegrador.EntityFrameWork", "..\ProyectoIntegrador.EntityFrameWork\ProyectoIntegrador.EntityFrameWork.csproj", "{B9A1C19B-4153-47E8-9952-00CB83B9A4B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProyectoIntegrador.LogicaAplication", "..\ProyectoIntegrador.LogicaAplication\ProyectoIntegrador.LogicaAplication.csproj", "{B4266727-3ABE-4698-A28B-7AD72799B4E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProyectoIntegrador.SeguridadEncriptacion", "..\ProyectoIntegrador.SeguridadEncriptacion\ProyectoIntegrador.SeguridadEncriptacion.csproj", "{C62D1041-7D8A-4633-8954-0262F68DAD40}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{891F4135-D37E-4AA9-AD16-7315297A79EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{046541D2-912C-40B9-9F25-C0AF92EF711A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProyectoIntegrador.ConfigurationHelper", "..\ProyectoIntegrador.ConfigurationHelper\ProyectoIntegrador.ConfigurationHelper.csproj", "{B8D1A75A-4924-488A-9767-0E67DE98F0CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProyectoIntegrador.DataTransferObject", "..\ProyectoIntegrador.DataTransferObject\ProyectoIntegrador.DataTransferObject.csproj", "{280B1509-B8A0-48A6-A137-641887F89D8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProyectoIntegrador_Web", "..\ProyectoIntegrador_Web\ProyectoIntegrador_Web.csproj", "{F86AC979-365D-484B-8987-02A0AFE9AD6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProyectoIntegrador.WebApi", "..\ProyectoIntegrador.WebApi\ProyectoIntegrador.WebApi.csproj", "{39A7F8D1-DC1C-483A-BB8E-F1BD82925BA3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{34254C71-A445-4104-80CB-80005D12082D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34254C71-A445-4104-80CB-80005D12082D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34254C71-A445-4104-80CB-80005D12082D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34254C71-A445-4104-80CB-80005D12082D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9A1C19B-4153-47E8-9952-00CB83B9A4B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9A1C19B-4153-47E8-9952-00CB83B9A4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9A1C19B-4153-47E8-9952-00CB83B9A4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9A1C19B-4153-47E8-9952-00CB83B9A4B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4266727-3ABE-4698-A28B-7AD72799B4E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4266727-3ABE-4698-A28B-7AD72799B4E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4266727-3ABE-4698-A28B-7AD72799B4E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4266727-3ABE-4698-A28B-7AD72799B4E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C62D1041-7D8A-4633-8954-0262F68DAD40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C62D1041-7D8A-4633-8954-0262F68DAD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C62D1041-7D8A-4633-8954-0262F68DAD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C62D1041-7D8A-4633-8954-0262F68DAD40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8D1A75A-4924-488A-9767-0E67DE98F0CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8D1A75A-4924-488A-9767-0E67DE98F0CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8D1A75A-4924-488A-9767-0E67DE98F0CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8D1A75A-4924-488A-9767-0E67DE98F0CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{280B1509-B8A0-48A6-A137-641887F89D8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{280B1509-B8A0-48A6-A137-641887F89D8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{280B1509-B8A0-48A6-A137-641887F89D8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{280B1509-B8A0-48A6-A137-641887F89D8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F86AC979-365D-484B-8987-02A0AFE9AD6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F86AC979-365D-484B-8987-02A0AFE9AD6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F86AC979-365D-484B-8987-02A0AFE9AD6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F86AC979-365D-484B-8987-02A0AFE9AD6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39A7F8D1-DC1C-483A-BB8E-F1BD82925BA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39A7F8D1-DC1C-483A-BB8E-F1BD82925BA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39A7F8D1-DC1C-483A-BB8E-F1BD82925BA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39A7F8D1-DC1C-483A-BB8E-F1BD82925BA3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{34254C71-A445-4104-80CB-80005D12082D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B9A1C19B-4153-47E8-9952-00CB83B9A4B3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B4266727-3ABE-4698-A28B-7AD72799B4E3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C62D1041-7D8A-4633-8954-0262F68DAD40} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B8D1A75A-4924-488A-9767-0E67DE98F0CE} = {046541D2-912C-40B9-9F25-C0AF92EF711A}
+		{280B1509-B8A0-48A6-A137-641887F89D8C} = {046541D2-912C-40B9-9F25-C0AF92EF711A}
+		{F86AC979-365D-484B-8987-02A0AFE9AD6C} = {891F4135-D37E-4AA9-AD16-7315297A79EE}
+		{39A7F8D1-DC1C-483A-BB8E-F1BD82925BA3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AB081DC9-7292-42B0-B211-3CD13D42805E}
+	EndGlobalSection
+EndGlobal
