@@ -1,7 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using ProyectoIntegrador.EntityFrameWork;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<ProyectoDBContext>(
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB")));
 
+//Repositorios
+builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<ProyectoDBContext>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

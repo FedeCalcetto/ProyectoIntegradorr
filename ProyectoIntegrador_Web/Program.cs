@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using ProyectoIntegrador.EntityFrameWork;
+
 namespace ProyectoIntegrador_Web
 {
     public class Program
@@ -6,8 +9,13 @@ namespace ProyectoIntegrador_Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Services.AddDbContext<ProyectoDBContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB")));
+
+
+            //Repositorios
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<ProyectoDBContext>();
 
             var app = builder.Build();
 

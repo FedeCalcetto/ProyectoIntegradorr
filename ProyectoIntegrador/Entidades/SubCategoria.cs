@@ -9,6 +9,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
     public class SubCategoria
     {
         public int Id { get; set; }
+        public Categoria categoria { get; set; }
         public string Nombre { get; set; }
     }
 }

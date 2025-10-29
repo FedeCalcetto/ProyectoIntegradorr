@@ -20,9 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Excepciones\" />
-    <Folder Include="Interface\Repositorio\" />
     <Folder Include="Interface\Seguridad\" />
-    <Folder Include="Interface\Validacion\" />
   </ItemGroup>
 
 </Project>
