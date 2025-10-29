@@ -13,10 +13,12 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int id { get; set; }
         [Required(ErrorMessage = "el contenido es requerido")]
         public string contenido { get; set; }
-
-        public Cliente cliente { get; set; }
-        public Artesano artesano { get; set; }
-        public Producto producto { get; set; }
+        public int? clienteId { get; set; }
+        public Cliente? cliente { get; set; }
+        public int? artesanoId { get; set; }
+        public Artesano? artesano { get; set; }
+        public int? productoId { get; set; }
+        public Producto? producto { get; set; }
         public bool productoReportado { get; set; }
         public bool artesanoReportado { get; set; }
 

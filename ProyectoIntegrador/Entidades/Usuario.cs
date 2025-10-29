@@ -6,6 +6,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 {
     public abstract class Usuario : IValidable
     {
+        public int id { get; set; }
         [Required(ErrorMessage = "El nombre es requerido")]
         public string nombre { get; set; }
         [Required(ErrorMessage = "El apellido es requerido")]

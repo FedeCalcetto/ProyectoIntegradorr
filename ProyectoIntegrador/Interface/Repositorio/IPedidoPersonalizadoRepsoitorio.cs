@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
-    public interface IPedidoPersonalizadoRepositorio : IRepositorio<PedidoPersonalizado>
+    public interface IPedidoPersonalizadoRepsoitorio : IRepositorio<PedidoPersonalizado>
     {
     }
 }

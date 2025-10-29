@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 {
-    public class PedidoPersonalizadoEFRepositorio : IPedidoPersonalizadoRepositorio
+    public class PedidoPersonalizadoEFRepositorio : IPedidoPersonalizadoRepsoitorio
     {
-
         private readonly ProyectoDBContext _contexto;
 
         public PedidoPersonalizadoEFRepositorio(ProyectoDBContext contexto)
         {
             _contexto = contexto;
         }
+
 
         public void Agregar(PedidoPersonalizado entidad)
         {

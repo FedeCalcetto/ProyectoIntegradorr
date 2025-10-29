@@ -13,8 +13,10 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int id { get; set; }
         [Required(ErrorMessage = "la descripción es requerida es requerida")]
         public string descripcion { get; set; }
-        public Cliente cliente { get; set; }
-        public Artesano artesano { get; set; }
+        public int? clienteId { get; set; }
+        public Cliente? cliente { get; set; }
+        public int? artesanoId { get; set; }
+        public Artesano? artesano { get; set; }
 
         public void Validar()
         {
