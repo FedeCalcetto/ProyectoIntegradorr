@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interface\" />
-    <Folder Include="CasosDeUso\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ProyectoIntegrador.DataTransferObject\ProyectoIntegrador.DataTransferObject.csproj" />
     <ProjectReference Include="..\ProyectoIntegrador.EntityFrameWork\ProyectoIntegrador.EntityFrameWork.csproj" />
     <ProjectReference Include="..\ProyectoIntegrador\ProyectoIntegrador.LogicaNegocio.csproj" />

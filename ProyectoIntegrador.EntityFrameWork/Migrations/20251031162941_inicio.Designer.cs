@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251029182344_Inicio")]
-    partial class Inicio
+    [Migration("20251031162941_inicio")]
+    partial class inicio
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -228,6 +228,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("TipoUusario")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
                     b.Property<string>("apellido")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -243,16 +248,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Usuarios");
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator<string>("TipoUusario").HasValue("Usuario");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Admin", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
-                    b.ToTable("Admins", (string)null);
+                    b.HasDiscriminator().HasValue("Admin");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
@@ -277,14 +284,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("Clienteid");
 
-                    b.ToTable("Artesanos", (string)null);
+                    b.HasDiscriminator().HasValue("Artesano");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
-                    b.ToTable("Clientes", (string)null);
+                    b.HasDiscriminator().HasValue("Cliente");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
@@ -404,36 +411,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Admin", b =>
-                {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
-                        .WithOne()
-                        .HasForeignKey("ProyectoIntegrador.LogicaNegocio.Entidades.Admin", "id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
                         .WithMany("artesanosSeguidos")
                         .HasForeignKey("Clienteid");
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
-                        .WithOne()
-                        .HasForeignKey("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
-                        .WithOne()
-                        .HasForeignKey("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("ProyectoIntegrador.LogicaNegocio.ValueObjects.Direccion", "direccion", b1 =>
                         {
                             b1.Property<int>("Clienteid")
@@ -453,7 +439,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                             b1.HasKey("Clienteid");
 
-                            b1.ToTable("Clientes");
+                            b1.ToTable("Usuarios");
 
                             b1.WithOwner()
                                 .HasForeignKey("Clienteid");

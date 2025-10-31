@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicio : Migration
+    public partial class inicio : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,11 +33,24 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     apellido = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     email_email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    TipoUusario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
+                    Clienteid = table.Column<int>(type: "int", nullable: true),
+                    direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    direccion_barrio = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Usuarios_Usuarios_Clienteid",
+                        column: x => x.Clienteid,
+                        principalTable: "Usuarios",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -61,69 +74,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Admins",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Admins", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Admins_Usuarios_id",
-                        column: x => x.id,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Clientes",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false),
-                    direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    direccion_barrio = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Clientes", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Clientes_Usuarios_id",
-                        column: x => x.id,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Artesanos",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false),
-                    foto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
-                    Clienteid = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Artesanos", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Artesanos_Clientes_Clienteid",
-                        column: x => x.Clienteid,
-                        principalTable: "Clientes",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_Artesanos_Usuarios_id",
-                        column: x => x.id,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Facturas",
                 columns: table => new
                 {
@@ -138,14 +88,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     table.PrimaryKey("PK_Facturas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Facturas_Artesanos_Artesanoid",
+                        name: "FK_Facturas_Usuarios_Artesanoid",
                         column: x => x.Artesanoid,
-                        principalTable: "Artesanos",
+                        principalTable: "Usuarios",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_Facturas_Clientes_Clienteid",
+                        name: "FK_Facturas_Usuarios_Clienteid",
                         column: x => x.Clienteid,
-                        principalTable: "Clientes",
+                        principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -164,14 +114,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     table.PrimaryKey("PK_PedidoPersonalizado", x => x.id);
                     table.ForeignKey(
-                        name: "FK_PedidoPersonalizado_Artesanos_artesanoId",
+                        name: "FK_PedidoPersonalizado_Usuarios_artesanoId",
                         column: x => x.artesanoId,
-                        principalTable: "Artesanos",
+                        principalTable: "Usuarios",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_PedidoPersonalizado_Clientes_clienteId",
+                        name: "FK_PedidoPersonalizado_Usuarios_clienteId",
                         column: x => x.clienteId,
-                        principalTable: "Clientes",
+                        principalTable: "Usuarios",
                         principalColumn: "id");
                 });
 
@@ -193,16 +143,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     table.PrimaryKey("PK_Productos", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Productos_Artesanos_artesanoid",
+                        name: "FK_Productos_Usuarios_Clienteid",
+                        column: x => x.Clienteid,
+                        principalTable: "Usuarios",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Productos_Usuarios_artesanoid",
                         column: x => x.artesanoid,
-                        principalTable: "Artesanos",
+                        principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Productos_Clientes_Clienteid",
-                        column: x => x.Clienteid,
-                        principalTable: "Clientes",
-                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -222,19 +172,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     table.PrimaryKey("PK_Comentarios", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Comentarios_Artesanos_artesanoId",
-                        column: x => x.artesanoId,
-                        principalTable: "Artesanos",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_Comentarios_Clientes_clienteId",
-                        column: x => x.clienteId,
-                        principalTable: "Clientes",
-                        principalColumn: "id");
-                    table.ForeignKey(
                         name: "FK_Comentarios_Productos_productoId",
                         column: x => x.productoId,
                         principalTable: "Productos",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Comentarios_Usuarios_artesanoId",
+                        column: x => x.artesanoId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Comentarios_Usuarios_clienteId",
+                        column: x => x.clienteId,
+                        principalTable: "Usuarios",
                         principalColumn: "id");
                 });
 
@@ -261,11 +211,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         principalTable: "Productos",
                         principalColumn: "id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Artesanos_Clienteid",
-                table: "Artesanos",
-                column: "Clienteid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentarios_artesanoId",
@@ -321,14 +266,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 name: "IX_SubCategoria_categoriaid",
                 table: "SubCategoria",
                 column: "categoriaid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_Clienteid",
+                table: "Usuarios",
+                column: "Clienteid");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Admins");
-
             migrationBuilder.DropTable(
                 name: "Comentarios");
 
@@ -349,12 +296,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categorias");
-
-            migrationBuilder.DropTable(
-                name: "Artesanos");
-
-            migrationBuilder.DropTable(
-                name: "Clientes");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

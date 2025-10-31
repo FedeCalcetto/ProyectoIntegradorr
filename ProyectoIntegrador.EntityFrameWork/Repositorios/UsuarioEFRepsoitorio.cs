@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 {
-    public class UsuarioEFRepsoitorio : IUsuarioRepositorio
+    public class AdminEFRepsoitorio : IUsuarioRepositorio
     {
 
         private readonly ProyectoDBContext _contexto;
 
-        public UsuarioEFRepsoitorio(ProyectoDBContext contexto)
+        public AdminEFRepsoitorio(ProyectoDBContext contexto)
         {
             _contexto = contexto;
         }
@@ -42,5 +42,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             throw new NotImplementedException();
         }
+
+        public Usuario Login(string email, string password)
+        {
+
+            Usuario usuario = _contexto.Usuarios.FirstOrDefault(u => u.email.email.ToLower().Trim() == email.ToLower().Trim()
+                                && u.password == password);
+
+            return usuario;
+        }
+
     }
 }

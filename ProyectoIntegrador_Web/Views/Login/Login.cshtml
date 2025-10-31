@@ -1,0 +1,64 @@
+﻿@model ProyectoIntegrador_Web.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
+
+                    <!-- Mensajes de error o información -->
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+                    @if (ViewBag.Mensaje != null)
+                    {
+                        <div class="alert alert-info">@ViewBag.Mensaje</div>
+                    }
+
+                    <form asp-controller="Login" asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="Ingrese su correo" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Ingrese su contraseña" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+                        </div>
+                    </form>
+
+                    <hr />
+
+                    <div class="text-center">
+                        <a asp-controller="Registro" asp-action="Crear" class="btn btn-outline-secondary btn-block">
+                            Registrarse
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
