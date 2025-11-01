@@ -6,7 +6,7 @@ namespace ProyectoIntegrador_Web.Controllers
     public class AdminController : Controller
     {
         // GET: AdminController
-        public ActionResult Index()
+        public ActionResult Inicio()
         {
             return View();
         }

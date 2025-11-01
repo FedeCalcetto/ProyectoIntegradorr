@@ -28,7 +28,7 @@ namespace ProyectoIntegrador_Web
 
             //Casos de uso
             builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
-
+            builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
