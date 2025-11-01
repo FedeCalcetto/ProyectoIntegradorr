@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoIntegrador.EntityFrameWork;
+using ProyectoIntegrador.EntityFrameWork.Repositorios;
+using ProyectoIntegrador.LogicaAplication.CasosDeUso;
+using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 
 namespace ProyectoIntegrador_Web
 {
@@ -10,12 +14,20 @@ namespace ProyectoIntegrador_Web
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<ProyectoDBContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB3")));
 
 
             //Repositorios
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ProyectoDBContext>();
+            builder.Services.AddScoped<IUsuarioRepositorio, AdminEFRepsoitorio>();
+            builder.Services.AddScoped<IAdminRepositorio, AdminEFRepositorio>();
+            builder.Services.AddScoped<IArtesanoRepositorio, ArtesanoEFRepositorio>();
+            builder.Services.AddScoped<IProductoRepositorio, ProductoEFRepositorio>();
+            builder.Services.AddScoped<IClienteRepositorio, ClienteEFRepositorio>();
+
+            //Casos de uso
+            builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
 
             var app = builder.Build();
 

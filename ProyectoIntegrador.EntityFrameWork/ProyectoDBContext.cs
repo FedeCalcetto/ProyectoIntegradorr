@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 
 namespace ProyectoIntegrador.EntityFrameWork
 {
@@ -24,11 +25,14 @@ namespace ProyectoIntegrador.EntityFrameWork
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Usuario>().ToTable("Usuarios"); // Tabla base
-            modelBuilder.Entity<Cliente>().ToTable("Clientes"); // Subclase
-            modelBuilder.Entity<Artesano>().ToTable("Artesanos");
-            modelBuilder.Entity<Admin>().ToTable("Admins");
+            modelBuilder.Entity<Usuario>()
+                .HasDiscriminator<string>("TipoUusario")
+                .HasValue<Artesano>("Artesano")
+                .HasValue<Cliente>("Cliente")
+                .HasValue<Admin>("Admin");
 
+            modelBuilder.Entity<Usuario>().OwnsOne(u => u.email);
+            modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion);
 
             modelBuilder.Entity<PedidoPersonalizado>()
                 .HasOne(p => p.cliente)
@@ -67,6 +71,67 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .HasForeignKey(lf => lf.idFactura)
                 .OnDelete(DeleteBehavior.ClientSetNull); // evita cascadas múltiples
 
+            modelBuilder.Entity<Usuario>().OwnsOne(u => u.email, email =>
+            {
+                email.Property(e => e.email).HasColumnName("email_email");
+
+                // SEEDING del owned type Email
+                email.HasData(
+                    new { Usuarioid = 1, email = "juan@cliente.com" },
+                    new { Usuarioid = 2, email = "laura@artesana.com" },
+                    new { Usuarioid = 3, email = "admin@site.com" }
+                );
+            });
+
+            modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion, direccion =>
+            {
+                direccion.Property(d => d.domicilio).HasColumnName("direccion_domicilio");
+                direccion.Property(d => d.departamento).HasColumnName("direccion_departamento");
+                direccion.Property(d => d.barrio).HasColumnName("direccion_barrio");
+
+                // SEEDING del owned type Direccion
+                direccion.HasData(
+                    new
+                    {
+                        Clienteid = 1,
+                        domicilio = "Av. Libertad 123",
+                        departamento = "Montevideo",
+                        barrio = "Centro"
+                    }
+                );
+            });
+
+            // ----- SEED ENTIDADES PRINCIPALES -----
+            modelBuilder.Entity<Cliente>().HasData(new
+            {
+                id = 1,
+                nombre = "Juan",
+                apellido = "Pérez",
+                password = "juancliente123",
+                TipoUsuario = "Cliente"
+            });
+
+            modelBuilder.Entity<Artesano>().HasData(new
+            {
+                id = 2,
+                nombre = "Laura",
+                apellido = "Gómez",
+                password = "lauraartesana123",
+                foto = "laura.jpg",
+                descripcion = "Artesana especializada en cerámica artesanal.",
+                telefono = "099123456",
+                TipoUsuario = "Artesano"
+            });
+
+            modelBuilder.Entity<Admin>().HasData(new
+            {
+                id = 3,
+                nombre = "Admin",
+                apellido = "Root",
+                password = "admin123456",
+                TipoUsuario = "Admin"
+            });
         }
     }
-}
+    }
+
