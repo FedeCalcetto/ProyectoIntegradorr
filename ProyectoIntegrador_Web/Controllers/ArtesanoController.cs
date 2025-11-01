@@ -6,7 +6,7 @@ namespace ProyectoIntegrador_Web.Controllers
     public class ArtesanoController : Controller
     {
         // GET: ArtesanoController
-        public ActionResult Index()
+        public ActionResult Inicio()
         {
             return View();
         }

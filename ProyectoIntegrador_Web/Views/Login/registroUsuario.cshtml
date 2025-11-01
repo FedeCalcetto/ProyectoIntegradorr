@@ -1,0 +1,50 @@
+﻿@model ProyectoIntegrador_Web.Models.RegistroUsuarioViewModel
+
+@{
+    ViewData["Title"] = "registroUsuario";
+}
+
+<h1>Registrate!</h1>
+
+<h4>Registro</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Login" asp-action="registroUsuario" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="nombre" class="control-label"></label>
+                <input asp-for="nombre" class="form-control" />
+                <span asp-validation-for="nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="apellido" class="control-label"></label>
+                <input asp-for="apellido" class="form-control" />
+                <span asp-validation-for="apellido" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="email.email" class="form-label"></label>
+                <input asp-for="email.email" class="form-control" placeholder="Ingrese su correo" />
+                <span asp-validation-for="email.email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="password" class="control-label"></label>
+                <input asp-for="password" class="form-control" />
+                <span asp-validation-for="password" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="soyArtesano" class="form-check-input" />
+                <label asp-for="soyArtesano" class="form-check-label">Soy artesano</label>
+                <small class="form-text text-muted">Marque esta opción si quiere registrarse como artesano.</small>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-block">Registro</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
