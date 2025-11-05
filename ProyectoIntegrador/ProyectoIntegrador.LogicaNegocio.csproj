@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Excepciones\" />
+    <Folder Include="Interface\Seguridad\" />
     <Folder Include="Interface\Seguridad\" />
   </ItemGroup>
 
