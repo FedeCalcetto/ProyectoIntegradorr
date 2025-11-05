@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251031163654_usuarios2")]
+    partial class usuarios2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,6 +53,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("artesanoId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("artesanoReportado")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("clienteId")
                         .HasColumnType("int");
 
@@ -59,6 +65,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<int?>("productoId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("productoReportado")
+                        .HasColumnType("bit");
 
                     b.HasKey("id");
 

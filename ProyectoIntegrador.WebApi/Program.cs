@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<ProyectoDBContext>(
-                options => options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB")));
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB3")));
 
 //Repositorios
 builder.Services.AddControllersWithViews();

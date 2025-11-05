@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251029182344_Inicio")]
-    partial class Inicio
+    [Migration("20251101190212_reportes")]
+    partial class reportes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,9 +53,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("artesanoId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("artesanoReportado")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("clienteId")
                         .HasColumnType("int");
 
@@ -65,9 +62,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<int?>("productoId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("productoReportado")
-                        .HasColumnType("bit");
 
                     b.HasKey("id");
 
@@ -228,6 +222,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("TipoUusario")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
                     b.Property<string>("apellido")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -243,16 +242,27 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Usuarios");
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator<string>("TipoUusario").HasValue("Usuario");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Admin", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
-                    b.ToTable("Admins", (string)null);
+                    b.HasDiscriminator().HasValue("Admin");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 3,
+                            apellido = "Root",
+                            nombre = "Admin",
+                            password = "admin123456"
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
@@ -277,14 +287,35 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("Clienteid");
 
-                    b.ToTable("Artesanos", (string)null);
+                    b.HasDiscriminator().HasValue("Artesano");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 2,
+                            apellido = "Gómez",
+                            nombre = "Laura",
+                            password = "lauraartesana123",
+                            descripcion = "Artesana especializada en cerámica artesanal.",
+                            foto = "laura.jpg",
+                            telefono = "099123456"
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
-                    b.ToTable("Clientes", (string)null);
+                    b.HasDiscriminator().HasValue("Cliente");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            apellido = "Pérez",
+                            nombre = "Juan",
+                            password = "juancliente123"
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
@@ -390,7 +421,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                             b1.Property<string>("email")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("email_email");
 
                             b1.HasKey("Usuarioid");
 
@@ -398,18 +430,26 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("Usuarioid");
+
+                            b1.HasData(
+                                new
+                                {
+                                    Usuarioid = 1,
+                                    email = "juan@cliente.com"
+                                },
+                                new
+                                {
+                                    Usuarioid = 2,
+                                    email = "laura@artesana.com"
+                                },
+                                new
+                                {
+                                    Usuarioid = 3,
+                                    email = "admin@site.com"
+                                });
                         });
 
                     b.Navigation("email")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Admin", b =>
-                {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
-                        .WithOne()
-                        .HasForeignKey("ProyectoIntegrador.LogicaNegocio.Entidades.Admin", "id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -418,22 +458,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
                         .WithMany("artesanosSeguidos")
                         .HasForeignKey("Clienteid");
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
-                        .WithOne()
-                        .HasForeignKey("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
-                        .WithOne()
-                        .HasForeignKey("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("ProyectoIntegrador.LogicaNegocio.ValueObjects.Direccion", "direccion", b1 =>
                         {
                             b1.Property<int>("Clienteid")
@@ -441,22 +469,34 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                             b1.Property<string>("barrio")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("direccion_barrio");
 
                             b1.Property<string>("departamento")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("direccion_departamento");
 
                             b1.Property<string>("domicilio")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("direccion_domicilio");
 
                             b1.HasKey("Clienteid");
 
-                            b1.ToTable("Clientes");
+                            b1.ToTable("Usuarios");
 
                             b1.WithOwner()
                                 .HasForeignKey("Clienteid");
+
+                            b1.HasData(
+                                new
+                                {
+                                    Clienteid = 1,
+                                    barrio = "Centro",
+                                    departamento = "Montevideo",
+                                    domicilio = "Av. Libertad 123"
+                                });
                         });
 
                     b.Navigation("direccion")

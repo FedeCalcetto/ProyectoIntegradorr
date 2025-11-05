@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251031162941_inicio")]
+    partial class inicio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,6 +53,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("artesanoId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("artesanoReportado")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("clienteId")
                         .HasColumnType("int");
 
@@ -59,6 +65,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<int?>("productoId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("productoReportado")
+                        .HasColumnType("bit");
 
                     b.HasKey("id");
 
@@ -251,15 +260,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
                     b.HasDiscriminator().HasValue("Admin");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 3,
-                            apellido = "Root",
-                            nombre = "Admin",
-                            password = "admin123456"
-                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
@@ -285,18 +285,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("Clienteid");
 
                     b.HasDiscriminator().HasValue("Artesano");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 2,
-                            apellido = "Gómez",
-                            nombre = "Laura",
-                            password = "lauraartesana123",
-                            descripcion = "Artesana especializada en cerámica artesanal.",
-                            foto = "laura.jpg",
-                            telefono = "099123456"
-                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
@@ -304,15 +292,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
                     b.HasDiscriminator().HasValue("Cliente");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1,
-                            apellido = "Pérez",
-                            nombre = "Juan",
-                            password = "juancliente123"
-                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
@@ -418,8 +397,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                             b1.Property<string>("email")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("email_email");
+                                .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("Usuarioid");
 
@@ -427,23 +405,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("Usuarioid");
-
-                            b1.HasData(
-                                new
-                                {
-                                    Usuarioid = 1,
-                                    email = "juan@cliente.com"
-                                },
-                                new
-                                {
-                                    Usuarioid = 2,
-                                    email = "laura@artesana.com"
-                                },
-                                new
-                                {
-                                    Usuarioid = 3,
-                                    email = "admin@site.com"
-                                });
                         });
 
                     b.Navigation("email")
@@ -466,18 +427,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                             b1.Property<string>("barrio")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("direccion_barrio");
+                                .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("departamento")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("direccion_departamento");
+                                .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("domicilio")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("direccion_domicilio");
+                                .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("Clienteid");
 
@@ -485,15 +443,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("Clienteid");
-
-                            b1.HasData(
-                                new
-                                {
-                                    Clienteid = 1,
-                                    barrio = "Centro",
-                                    departamento = "Montevideo",
-                                    domicilio = "Av. Libertad 123"
-                                });
                         });
 
                     b.Navigation("direccion")
