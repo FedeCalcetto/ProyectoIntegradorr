@@ -8,8 +8,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Excepciones
 {
     public class validarNombreException : Exception
     {
-
-        public validarNombreException() : base("ingrese nombre y apellido"){ }
-
+        public validarNombreException() : base("ingrese nombre y apellido") { }
     }
 }

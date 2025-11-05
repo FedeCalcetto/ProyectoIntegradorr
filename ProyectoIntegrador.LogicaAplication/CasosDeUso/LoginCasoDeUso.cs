@@ -11,7 +11,6 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 {
     public class LoginCasoDeUso : ILogin
     {
-
         private readonly IUsuarioRepositorio _usuarioRepositorio;
 
         public LoginCasoDeUso(IUsuarioRepositorio usuarioRepositorio)
@@ -19,10 +18,10 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             _usuarioRepositorio = usuarioRepositorio;
         }
 
-
         public Usuario Ejecutar(string email, string password)
         {
-            return _usuarioRepositorio.Login(email, password);
+            return _usuarioRepositorio.Login(email,password);
         }
+
     }
 }

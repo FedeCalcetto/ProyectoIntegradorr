@@ -1,50 +1,70 @@
 ﻿@model ProyectoIntegrador_Web.Models.RegistroUsuarioViewModel
 
 @{
-    ViewData["Title"] = "registroUsuario";
+    ViewData["Title"] = "Registro de Usuario";
 }
 
-<h1>Registrate!</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4 text-primary fw-bold">¡Registrate!</h2>
+                    <p class="text-center text-muted mb-4">Completá tus datos para crear una cuenta.</p>
+                    <hr />
 
-<h4>Registro</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-controller="Login" asp-action="registroUsuario" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="nombre" class="control-label"></label>
-                <input asp-for="nombre" class="form-control" />
-                <span asp-validation-for="nombre" class="text-danger"></span>
+                    <form asp-controller="Login" asp-action="registroUsuario" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="nombre" class="form-label fw-semibold"></label>
+                            <input asp-for="nombre" class="form-control" placeholder="Ej. Ana" />
+                            <span asp-validation-for="nombre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="apellido" class="form-label fw-semibold"></label>
+                            <input asp-for="apellido" class="form-control" placeholder="Ej. Pérez" />
+                            <span asp-validation-for="apellido" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="email.email" class="form-label fw-semibold"></label>
+                            <input asp-for="email.email" class="form-control" placeholder="tu@correo.com" />
+                            <span asp-validation-for="email.email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="password" class="form-label fw-semibold"></label>
+                            <input asp-for="password" type="password" class="form-control" placeholder="Mínimo 10 caracteres" />
+                            <span asp-validation-for="password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="soyArtesano" class="form-check-input" id="soyArtesano" />
+                            <label asp-for="soyArtesano" class="form-check-label fw-semibold" for="soyArtesano">
+                                Soy artesano
+                            </label>
+                            <small class="text-muted d-block">Marcá esta opción si querés ofrecer tus productos.</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Registrarme</button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4" />
+
+                    <div class="text-center">
+                        <p class="mb-2">¿Ya tenés cuenta?</p>
+                        <a asp-controller="Login" asp-action="Login" class="btn btn-outline-secondary btn-sm">
+                            Iniciar sesión
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="apellido" class="control-label"></label>
-                <input asp-for="apellido" class="form-control" />
-                <span asp-validation-for="apellido" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="email.email" class="form-label"></label>
-                <input asp-for="email.email" class="form-control" placeholder="Ingrese su correo" />
-                <span asp-validation-for="email.email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="password" class="control-label"></label>
-                <input asp-for="password" class="form-control" />
-                <span asp-validation-for="password" class="text-danger"></span>
-            </div>
-            <div class="form-check mb-3">
-                <input asp-for="soyArtesano" class="form-check-input" />
-                <label asp-for="soyArtesano" class="form-check-label">Soy artesano</label>
-                <small class="form-text text-muted">Marque esta opción si quiere registrarse como artesano.</small>
-            </div>
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary btn-block">Registro</button>
-            </div>
-        </form>
+
+            
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-

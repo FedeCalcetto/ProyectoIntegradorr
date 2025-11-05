@@ -73,6 +73,5 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
             return usuario;
         }
-
     }
 }

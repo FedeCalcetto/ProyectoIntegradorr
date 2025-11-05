@@ -23,6 +23,8 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int stock { get; set; }
         public Artesano artesano { get; set; }
         public List<Comentario> comentarios { get; set; } = new List<Comentario>();
+        public int subCategroiaId { get; set; }
+        public SubCategoria SubCategoria { get; set; }
 
         public void Validar()
         {

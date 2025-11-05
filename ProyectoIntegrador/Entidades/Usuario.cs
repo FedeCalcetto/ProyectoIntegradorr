@@ -18,6 +18,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         [StringLength(30, MinimumLength = 10, ErrorMessage = "La contraseña debe tener entre 10 y 30 caracteres")]
         public string password { get; set; }
 
+        public string rol { get; set; }
         public void Validar()
         {
             validarContraseñaLongitud();
@@ -29,7 +30,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
         public void validarContraseñaLongitud()
         {
-            if(password.Length < 10 || password.Length > 30)
+            if (password.Length < 10 || password.Length > 30)
             {
                 throw new passwordUsuarioException();
             }
@@ -48,7 +49,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
         public void validarNombres()
         {
-            if(nombre.Length < 1 || apellido.Length < 1)
+            if (nombre.Length < 1 || apellido.Length < 1)
             {
                 throw new validarNombreException();
             }

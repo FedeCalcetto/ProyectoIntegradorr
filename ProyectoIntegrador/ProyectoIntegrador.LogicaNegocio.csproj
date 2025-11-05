@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Interface\Seguridad\" />
+    <Folder Include="Interface\Seguridad\" />
   </ItemGroup>
 
 </Project>

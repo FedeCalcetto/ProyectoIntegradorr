@@ -13,6 +13,5 @@ namespace ProyectoIntegrador.LogicaNegocio.Excepciones
         {
 
         }
-
     }
 }

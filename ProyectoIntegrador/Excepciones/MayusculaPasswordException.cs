@@ -10,6 +10,5 @@ namespace ProyectoIntegrador.LogicaNegocio.Excepciones
     {
 
         public MayusculaPasswordException() : base("la contraseña debe tener una mayuscula y otra en minuscula") { }
-
     }
 }

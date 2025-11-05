@@ -8,6 +8,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Excepciones
 {
     public class numeroPassowordException : Exception
     {
-        public numeroPassowordException() : base("la contraseña debe tener al menos un numero"){ }
+        public numeroPassowordException() : base("la contraseña debe tener al menos un numero") { }
     }
 }

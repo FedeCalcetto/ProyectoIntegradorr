@@ -20,6 +20,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int? productoId { get; set; }
         public Producto? producto { get; set; }
 
+
         //Si el usuario reporta un rpoducto el booleano queda en true y el producto no es null
         //y asi en viceversa con el artesano
         // y si no  es un reporte quedan los 2 en false

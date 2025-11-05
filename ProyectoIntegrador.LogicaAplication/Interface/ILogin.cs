@@ -9,8 +9,6 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
 {
     public interface ILogin
     {
-
-        Usuario Ejecutar(string email,string password);
-
+        Usuario Ejecutar(string email, string password);
     }
 }

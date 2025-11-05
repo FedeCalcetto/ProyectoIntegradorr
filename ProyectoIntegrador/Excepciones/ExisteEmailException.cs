@@ -9,6 +9,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Excepciones
     public class ExisteEmailException : Exception
     {
 
-        public ExisteEmailException() : base("Ya existe ese mail"){ }
+        public ExisteEmailException() : base("Ya existe ese mail") { }
     }
 }
