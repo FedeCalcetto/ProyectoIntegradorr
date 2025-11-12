@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 {
-    public class AdminEFRepsoitorio : IUsuarioRepositorio
+    public class UsuarioEFRepsoitorio : IUsuarioRepositorio
     {
 
         private readonly ProyectoDBContext _contexto;
 
-        public AdminEFRepsoitorio(ProyectoDBContext contexto)
+        public UsuarioEFRepsoitorio(ProyectoDBContext contexto)
         {
             _contexto = contexto;
         }

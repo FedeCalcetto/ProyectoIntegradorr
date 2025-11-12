@@ -12,7 +12,7 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251105185426_inicio")]
+    [Migration("20251112222909_inicio")]
     partial class inicio
     {
         /// <inheritdoc />
@@ -114,12 +114,20 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("cantidad")
                         .HasColumnType("int");
 
+                    b.Property<int>("facturaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("precioUnitario")
+                        .HasColumnType("int");
+
+                    b.Property<int>("productoid")
                         .HasColumnType("int");
 
                     b.HasKey("idProducto", "idFactura");
 
-                    b.HasIndex("idFactura");
+                    b.HasIndex("facturaId");
+
+                    b.HasIndex("productoid");
 
                     b.ToTable("LineaFactura");
                 });
@@ -148,7 +156,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("clienteId");
 
-                    b.ToTable("PedidoPersonalizado");
+                    b.ToTable("PedidosPersonalizados");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>
@@ -160,6 +168,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<int?>("Clienteid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubCategoriaId")
                         .HasColumnType("int");
 
                     b.Property<int>("artesanoid")
@@ -190,11 +201,43 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("Clienteid");
 
+                    b.HasIndex("SubCategoriaId");
+
                     b.HasIndex("artesanoid");
 
-                    b.HasIndex("subCategroiaId");
-
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Reporte", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int?>("artesanoId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("clienteId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("productoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("razon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("artesanoId");
+
+                    b.HasIndex("clienteId");
+
+                    b.HasIndex("productoId");
+
+                    b.ToTable("Reportes");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", b =>
@@ -216,7 +259,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("categoriaId");
 
-                    b.ToTable("SubCategoria");
+                    b.ToTable("SubCategorias");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", b =>
@@ -261,29 +304,29 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         new
                         {
                             id = 1,
-                            TipoUsuario = "Cliente",
-                            apellido = "Pérez",
-                            nombre = "Juan",
-                            password = "juancliente123",
-                            rol = "CLIENTE"
+                            TipoUsuario = "ADMIN",
+                            apellido = "Principal",
+                            nombre = "Administrador",
+                            password = "Admin123456",
+                            rol = "ADMIN"
                         },
                         new
                         {
                             id = 2,
-                            TipoUsuario = "Artesano",
-                            apellido = "Gómez",
-                            nombre = "Laura",
-                            password = "lauraartesana123",
-                            rol = "ARTESANO"
+                            TipoUsuario = "CLIENTE",
+                            apellido = "Cliente",
+                            nombre = "Juan",
+                            password = "Cliente123456",
+                            rol = "CLIENTE"
                         },
                         new
                         {
                             id = 3,
-                            TipoUsuario = "Admin",
-                            apellido = "Root",
-                            nombre = "Admin",
-                            password = "admin123456",
-                            rol = "ADMIN"
+                            TipoUsuario = "ARTESANO",
+                            apellido = "Artesana",
+                            nombre = "Maria",
+                            password = "Artesano123456",
+                            rol = "ARTESANO"
                         });
                 });
 
@@ -291,7 +334,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
-                    b.HasDiscriminator().HasValue("Admin");
+                    b.HasDiscriminator().HasValue("ADMIN");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
@@ -316,29 +359,32 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("Clienteid");
 
-                    b.HasDiscriminator().HasValue("Artesano");
+                    b.HasDiscriminator().HasValue("ARTESANO");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
-                    b.HasDiscriminator().HasValue("Cliente");
+                    b.HasDiscriminator().HasValue("CLIENTE");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
                         .WithMany()
-                        .HasForeignKey("artesanoId");
+                        .HasForeignKey("artesanoId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
                         .WithMany()
-                        .HasForeignKey("clienteId");
+                        .HasForeignKey("clienteId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
                         .WithMany("comentarios")
-                        .HasForeignKey("productoId");
+                        .HasForeignKey("productoId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("artesano");
 
@@ -356,7 +402,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
                         .WithMany("compras")
                         .HasForeignKey("Clienteid")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Cliente");
@@ -366,12 +412,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Factura", "factura")
                         .WithMany("itemsFactura")
-                        .HasForeignKey("idFactura")
+                        .HasForeignKey("facturaId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
                         .WithMany()
-                        .HasForeignKey("idProducto")
+                        .HasForeignKey("productoid")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("factura");
@@ -400,15 +448,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .WithMany("productosFavoritos")
                         .HasForeignKey("Clienteid");
 
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
-                        .WithMany("productos")
-                        .HasForeignKey("artesanoid")
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", "SubCategoria")
+                        .WithMany("Productos")
+                        .HasForeignKey("SubCategoriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", "SubCategoria")
-                        .WithMany("Productos")
-                        .HasForeignKey("subCategroiaId")
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
+                        .WithMany("productos")
+                        .HasForeignKey("artesanoid")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -417,12 +465,36 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Navigation("artesano");
                 });
 
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Reporte", b =>
+                {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
+                        .WithMany()
+                        .HasForeignKey("artesanoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
+                        .WithMany()
+                        .HasForeignKey("clienteId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
+                        .WithMany()
+                        .HasForeignKey("productoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("artesano");
+
+                    b.Navigation("cliente");
+
+                    b.Navigation("producto");
+                });
+
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", "categoria")
                         .WithMany("categorias")
                         .HasForeignKey("categoriaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("categoria");
@@ -451,17 +523,17 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                                 new
                                 {
                                     Usuarioid = 1,
-                                    email = "juan@cliente.com"
+                                    email = "admin@proyecto.com"
                                 },
                                 new
                                 {
                                     Usuarioid = 2,
-                                    email = "laura@artesana.com"
+                                    email = "cliente@proyecto.com"
                                 },
                                 new
                                 {
                                     Usuarioid = 3,
-                                    email = "admin@site.com"
+                                    email = "artesano@proyecto.com"
                                 });
                         });
 
@@ -508,10 +580,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             b1.HasData(
                                 new
                                 {
-                                    Clienteid = 1,
+                                    Clienteid = 2,
                                     barrio = "Centro",
                                     departamento = "Montevideo",
-                                    domicilio = "Av. Libertad 123"
+                                    domicilio = "Calle 123"
                                 });
                         });
 
