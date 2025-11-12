@@ -1,4 +1,6 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
+﻿using Microsoft.EntityFrameworkCore;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,27 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public ClienteEFRepositorio(ProyectoDBContext contexto)
         {
             _contexto = contexto;
+        }
+
+        public void Actualizar(Cliente cliente)
+        {
+            cliente.validarEditar();
+
+            var entidad = obtenerCliente(cliente.email.email);
+
+            if(entidad is null)
+            {
+                throw new ClienteNoEncontradoException();
+            }
+
+            entidad.nombre = cliente.nombre;
+            entidad.apellido = cliente.apellido;
+            //entidad.email = cliente.email;
+            entidad.password = cliente.password;
+            entidad.direccion = cliente.direccion;
+            _contexto.Update(entidad);
+            _contexto.SaveChanges();
+
         }
 
         public void Agregar(Cliente entidad)
@@ -36,6 +59,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public Cliente Obtener(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public Cliente obtenerCliente(string email)
+        {
+            return _contexto.Usuarios
+                       .OfType<Cliente>() 
+                       .FirstOrDefault(c => c.email.email == email);
         }
 
         public IEnumerable<Cliente> ObtenerTodos()

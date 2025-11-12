@@ -19,7 +19,7 @@ namespace ProyectoIntegrador_Web.Sesion
 
             if (string.IsNullOrWhiteSpace(email))
 
-                context.Result = new RedirectToActionResult("Login", "Login", null);
+                context.Result = new RedirectToActionResult("Login", "Home", null);
             else if (RolesAutorizados.Contains(rol))
                 base.OnActionExecuting(context);
             else

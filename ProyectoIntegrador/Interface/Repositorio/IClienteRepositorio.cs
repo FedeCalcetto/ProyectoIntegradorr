@@ -9,5 +9,10 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface IClienteRepositorio : IRepositorio<Cliente>
     {
+
+        Cliente obtenerCliente(string email);
+
+        void Actualizar(Cliente cliente);
+
     }
 }

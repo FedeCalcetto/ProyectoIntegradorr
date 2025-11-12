@@ -10,12 +10,14 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Artesano> Artesanos { get; set; }
         public DbSet<Admin> Admins { get; set; }
-
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
-        public DbSet<Factura> Facturas { get; set; }
+        public DbSet<SubCategoria> SubCategorias { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
-        //public DbSet<PedidoPersonalizado> PedidosPersonalizados { get; set; }
+        public DbSet<Factura> Facturas { get; set; }
+        public DbSet<PedidoPersonalizado> PedidosPersonalizados { get; set; }
+        public DbSet<Reporte> Reportes { get; set; }
+
 
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {
@@ -25,113 +27,133 @@ namespace ProyectoIntegrador.EntityFrameWork
         {
             base.OnModelCreating(modelBuilder);
 
+            // 🧱 TPH: Table Per Hierarchy para Usuario
             modelBuilder.Entity<Usuario>()
-                .HasDiscriminator<string>("TipoUusario")
-                .HasValue<Artesano>("Artesano")
-                .HasValue<Cliente>("Cliente")
-                .HasValue<Admin>("Admin");
+                .ToTable("Usuarios")
+                .HasDiscriminator<string>("TipoUsuario")
+                .HasValue<Cliente>("CLIENTE")
+                .HasValue<Artesano>("ARTESANO")
+                .HasValue<Admin>("ADMIN");
 
-            modelBuilder.Entity<Usuario>().OwnsOne(u => u.email);
-            modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion);
+            // 🔹 Propiedades "owned" (Email, Direccion)
+            modelBuilder.Entity<Usuario>().OwnsOne(u => u.email, email =>
+            {
+                email.Property(e => e.email).HasColumnName("email_email");
+            });
 
-            modelBuilder.Entity<PedidoPersonalizado>()
-                .HasOne(p => p.cliente)
-                .WithMany() // sin colección inversa
-                .HasForeignKey(p => p.clienteId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion, dir =>
+            {
+                dir.Property(d => d.domicilio).HasColumnName("direccion_domicilio");
+                dir.Property(d => d.departamento).HasColumnName("direccion_departamento");
+                dir.Property(d => d.barrio).HasColumnName("direccion_barrio");
+            });
 
-            // PedidoPersonalizado → Artesano (nullable + FK Restrict)
-            modelBuilder.Entity<PedidoPersonalizado>()
-                .HasOne(p => p.artesano)
-                .WithMany()
-                .HasForeignKey(p => p.artesanoId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            // 🔹 Relaciones
+            modelBuilder.Entity<Artesano>()
+                .HasMany(a => a.productos)
+                .WithOne(p => p.artesano)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Cliente>()
+                .HasMany(c => c.compras)
+                .WithOne(f => f.Cliente)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Comentario → Cliente / Artesano
-
-            modelBuilder.Entity<Comentario>()
-                .HasOne(c => c.producto)
-                .WithMany(cl => cl.comentarios)
-                .HasForeignKey(c => c.productoId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<Factura>()
+                .HasMany(f => f.itemsFactura)
+                .WithOne(lf => lf.factura)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<LineaFactura>()
                 .HasKey(lf => new { lf.idProducto, lf.idFactura });
 
-            modelBuilder.Entity<LineaFactura>()
-                .HasOne(lf => lf.producto)
-                .WithMany() // o WithMany() si no hay colección
-                .HasForeignKey(lf => lf.idProducto)
-                .OnDelete(DeleteBehavior.ClientSetNull); // o ClientSetNull si quieres
+            // 🧩 Comentarios
+            modelBuilder.Entity<Comentario>()
+                .HasOne(c => c.cliente)
+                .WithMany()
+                .HasForeignKey(c => c.clienteId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<LineaFactura>()
-                .HasOne(lf => lf.factura)
-                .WithMany(f => f.itemsFactura) // o WithMany() si no hay colección
-                .HasForeignKey(lf => lf.idFactura)
-                .OnDelete(DeleteBehavior.ClientSetNull); // evita cascadas múltiples
+            modelBuilder.Entity<Comentario>()
+                .HasOne(c => c.artesano)
+                .WithMany()
+                .HasForeignKey(c => c.artesanoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Usuario>().OwnsOne(u => u.email, email =>
-            {
-                email.Property(e => e.email).HasColumnName("email_email");
+            modelBuilder.Entity<Comentario>()
+                .HasOne(c => c.producto)
+                .WithMany(p => p.comentarios)
+                .HasForeignKey(c => c.productoId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-                // SEEDING del owned type Email
-                email.HasData(
-                    new { Usuarioid = 1, email = "juan@cliente.com" },
-                    new { Usuarioid = 2, email = "laura@artesana.com" },
-                    new { Usuarioid = 3, email = "admin@site.com" }
-                );
-            });
+            // 🧩 Reportes
+            modelBuilder.Entity<Reporte>()
+                .HasOne(r => r.cliente)
+                .WithMany()
+                .HasForeignKey(r => r.clienteId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion, direccion =>
-            {
-                direccion.Property(d => d.domicilio).HasColumnName("direccion_domicilio");
-                direccion.Property(d => d.departamento).HasColumnName("direccion_departamento");
-                direccion.Property(d => d.barrio).HasColumnName("direccion_barrio");
+            modelBuilder.Entity<Reporte>()
+                .HasOne(r => r.artesano)
+                .WithMany()
+                .HasForeignKey(r => r.artesanoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-                // SEEDING del owned type Direccion
-                direccion.HasData(
-                    new
-                    {
-                        Clienteid = 1,
-                        domicilio = "Av. Libertad 123",
-                        departamento = "Montevideo",
-                        barrio = "Centro"
-                    }
-                );
-            });
+            modelBuilder.Entity<Reporte>()
+                .HasOne(r => r.producto)
+                .WithMany()
+                .HasForeignKey(r => r.productoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // ----- SEED ENTIDADES PRINCIPALES -----
-            modelBuilder.Entity<Cliente>().HasData(new
-            {
-                id = 1,
-                nombre = "Juan",
-                apellido = "Pérez",
-                password = "juancliente123",
-                TipoUsuario = "Cliente"
-            });
+            // 🧪 Seed principal (TPH + owned types)
+            modelBuilder.Entity<Usuario>().HasData(
+                new
+                {
+                    id = 1,
+                    nombre = "Administrador",
+                    apellido = "Principal",
+                    password = "Admin123456",
+                    rol = "ADMIN",
+                    TipoUsuario = "ADMIN"
+                },
+                new
+                {
+                    id = 2,
+                    nombre = "Juan",
+                    apellido = "Cliente",
+                    password = "Cliente123456",
+                    rol = "CLIENTE",
+                    TipoUsuario = "CLIENTE"
+                },
+                new
+                {
+                    id = 3,
+                    nombre = "Maria",
+                    apellido = "Artesana",
+                    password = "Artesano123456",
+                    rol = "ARTESANO",
+                    TipoUsuario = "ARTESANO"
+                }
+            );
 
-            modelBuilder.Entity<Artesano>().HasData(new
-            {
-                id = 2,
-                nombre = "Laura",
-                apellido = "Gómez",
-                password = "lauraartesana123",
-                foto = "laura.jpg",
-                descripcion = "Artesana especializada en cerámica artesanal.",
-                telefono = "099123456",
-                TipoUsuario = "Artesano"
-            });
+            // ✅ Seeding de propiedades owned (desde EF Core 8+)
+            modelBuilder.Entity<Usuario>().OwnsOne(u => u.email).HasData(
+                new { Usuarioid = 1, email = "admin@proyecto.com" },
+                new { Usuarioid = 2, email = "cliente@proyecto.com" },
+                new { Usuarioid = 3, email = "artesano@proyecto.com" }
+            );
 
-            modelBuilder.Entity<Admin>().HasData(new
-            {
-                id = 3,
-                nombre = "Admin",
-                apellido = "Root",
-                password = "admin123456",
-                TipoUsuario = "Admin"
-            });
+            modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion).HasData(
+                new
+                {
+                    Clienteid = 2,
+                    domicilio = "Calle 123",
+                    departamento = "Montevideo",
+                    barrio = "Centro"
+                }
+            );
         }
+
     }
-    }
+}
 

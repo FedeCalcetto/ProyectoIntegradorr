@@ -20,7 +20,7 @@ namespace ProyectoIntegrador_Web
             //Repositorios
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ProyectoDBContext>();
-            builder.Services.AddScoped<IUsuarioRepositorio, AdminEFRepsoitorio>();
+            builder.Services.AddScoped<IUsuarioRepositorio, UsuarioEFRepsoitorio>();
             builder.Services.AddScoped<IAdminRepositorio, AdminEFRepositorio>();
             builder.Services.AddScoped<IArtesanoRepositorio, ArtesanoEFRepositorio>();
             builder.Services.AddScoped<IProductoRepositorio, ProductoEFRepositorio>();
@@ -29,6 +29,15 @@ namespace ProyectoIntegrador_Web
             //Casos de uso
             builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
+            builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            }
+             );
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -41,7 +50,7 @@ namespace ProyectoIntegrador_Web
 
             app.UseHttpsRedirection();
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapStaticAssets();

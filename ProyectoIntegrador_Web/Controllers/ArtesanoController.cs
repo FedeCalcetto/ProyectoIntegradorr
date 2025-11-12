@@ -8,7 +8,14 @@ namespace ProyectoIntegrador_Web.Controllers
         // GET: ArtesanoController
         public ActionResult Inicio()
         {
-            return View();
+            if (HttpContext.Session.GetString("Rol") != null && HttpContext.Session.GetString("Rol").Trim().ToUpper().Equals("ARTESANO"))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         // GET: ArtesanoController/Details/5
@@ -78,6 +85,11 @@ namespace ProyectoIntegrador_Web.Controllers
             {
                 return View();
             }
+        }
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

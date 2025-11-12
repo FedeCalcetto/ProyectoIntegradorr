@@ -17,7 +17,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         [Required(ErrorMessage = "la contraseña es requerida")]
         [StringLength(30, MinimumLength = 10, ErrorMessage = "La contraseña debe tener entre 10 y 30 caracteres")]
         public string password { get; set; }
-
         public string rol { get; set; }
         public void Validar()
         {

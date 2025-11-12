@@ -12,7 +12,7 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IUsuarioRepositorio _usuarioRepositorio;
         private readonly IAgregarUsuario _agregarUsuario;
 
-        public LoginController(IUsuarioRepositorio usuarioRepositorio,IAgregarUsuario agregarUsuario)
+        public LoginController(IUsuarioRepositorio usuarioRepositorio, IAgregarUsuario agregarUsuario)
         {
             _usuarioRepositorio = usuarioRepositorio;
             _agregarUsuario = agregarUsuario;
@@ -40,12 +40,14 @@ namespace ProyectoIntegrador_Web.Controllers
                 ModelState.AddModelError(string.Empty, "Email o contraseña incorrectos");
                 return View(modelo);
             }
-
+            HttpContext.Session.SetString("loginUsuario", usuario.email.email);
+            HttpContext.Session.SetString("Rol", usuario.rol);
             if (usuario is Cliente)
             {
                 return RedirectToAction("Inicio", "Cliente");
 
-            }else if (usuario is Artesano)
+            }
+            else if (usuario is Artesano)
             {
                 return RedirectToAction("Inicio", "Artesano");
             }
@@ -58,7 +60,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
         public IActionResult registroUsuario()
         {
-            return View() ;
+            return View();
         }
 
         [HttpPost]
@@ -69,7 +71,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View(modelo);
             }
 
-            if(modelo.soyArtesano == true)
+            if (modelo.soyArtesano == true)
             {
                 var entidad = new Artesano
                 {
@@ -123,7 +125,7 @@ namespace ProyectoIntegrador_Web.Controllers
             }
 
 
-               // return RedirectToAction("Index", "Home");
+            // return RedirectToAction("Index", "Home");
         }
 
 
