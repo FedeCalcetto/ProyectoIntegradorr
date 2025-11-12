@@ -1,6 +1,7 @@
 ﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
+using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 {
-    public class UsuarioEFRepsoitorio : IUsuarioRepositorio
+    public class AdminEFRepsoitorio : IUsuarioRepositorio
     {
 
         private readonly ProyectoDBContext _contexto;
 
-        public UsuarioEFRepsoitorio(ProyectoDBContext contexto)
+        public AdminEFRepsoitorio(ProyectoDBContext contexto)
         {
             _contexto = contexto;
         }
