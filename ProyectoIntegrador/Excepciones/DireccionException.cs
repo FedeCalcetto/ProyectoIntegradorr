@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ProyectoIntegrador.LogicaNegocio.Excepciones
+{
+    public class DireccionException : Exception
+    {
+        public DireccionException() : base("complete todos los datos de la direccion")  
+        { 
+        }
+    }
+}

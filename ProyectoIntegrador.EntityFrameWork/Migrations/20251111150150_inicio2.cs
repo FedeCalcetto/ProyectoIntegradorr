@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicio : Migration
+    public partial class inicio2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,15 +33,29 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     apellido = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     email_email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    rol = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
+                    Clienteid = table.Column<int>(type: "int", nullable: true),
+                    direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    direccion_barrio = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Usuarios_Usuarios_Clienteid",
+                        column: x => x.Clienteid,
+                        principalTable: "Usuarios",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "SubCategoria",
+                name: "SubCategorias",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -51,74 +65,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SubCategoria", x => x.Id);
+                    table.PrimaryKey("PK_SubCategorias", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SubCategoria_Categorias_categoriaid",
+                        name: "FK_SubCategorias_Categorias_categoriaid",
                         column: x => x.categoriaid,
                         principalTable: "Categorias",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Admins",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Admins", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Admins_Usuarios_id",
-                        column: x => x.id,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Clientes",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false),
-                    direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    direccion_barrio = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Clientes", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Clientes_Usuarios_id",
-                        column: x => x.id,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Artesanos",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false),
-                    foto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
-                    Clienteid = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Artesanos", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Artesanos_Clientes_Clienteid",
-                        column: x => x.Clienteid,
-                        principalTable: "Clientes",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_Artesanos_Usuarios_id",
-                        column: x => x.id,
-                        principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -138,20 +89,20 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     table.PrimaryKey("PK_Facturas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Facturas_Artesanos_Artesanoid",
+                        name: "FK_Facturas_Usuarios_Artesanoid",
                         column: x => x.Artesanoid,
-                        principalTable: "Artesanos",
+                        principalTable: "Usuarios",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_Facturas_Clientes_Clienteid",
+                        name: "FK_Facturas_Usuarios_Clienteid",
                         column: x => x.Clienteid,
-                        principalTable: "Clientes",
+                        principalTable: "Usuarios",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PedidoPersonalizado",
+                name: "PedidosPersonalizados",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -162,16 +113,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PedidoPersonalizado", x => x.id);
+                    table.PrimaryKey("PK_PedidosPersonalizados", x => x.id);
                     table.ForeignKey(
-                        name: "FK_PedidoPersonalizado_Artesanos_artesanoId",
+                        name: "FK_PedidosPersonalizados_Usuarios_artesanoId",
                         column: x => x.artesanoId,
-                        principalTable: "Artesanos",
+                        principalTable: "Usuarios",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_PedidoPersonalizado_Clientes_clienteId",
+                        name: "FK_PedidosPersonalizados_Usuarios_clienteId",
                         column: x => x.clienteId,
-                        principalTable: "Clientes",
+                        principalTable: "Usuarios",
                         principalColumn: "id");
                 });
 
@@ -193,16 +144,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     table.PrimaryKey("PK_Productos", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Productos_Artesanos_artesanoid",
-                        column: x => x.artesanoid,
-                        principalTable: "Artesanos",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Productos_Clientes_Clienteid",
+                        name: "FK_Productos_Usuarios_Clienteid",
                         column: x => x.Clienteid,
-                        principalTable: "Clientes",
+                        principalTable: "Usuarios",
                         principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Productos_Usuarios_artesanoid",
+                        column: x => x.artesanoid,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -214,28 +165,29 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     contenido = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     clienteId = table.Column<int>(type: "int", nullable: true),
                     artesanoId = table.Column<int>(type: "int", nullable: true),
-                    productoId = table.Column<int>(type: "int", nullable: true),
-                    productoReportado = table.Column<bool>(type: "bit", nullable: false),
-                    artesanoReportado = table.Column<bool>(type: "bit", nullable: false)
+                    productoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comentarios", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Comentarios_Artesanos_artesanoId",
-                        column: x => x.artesanoId,
-                        principalTable: "Artesanos",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_Comentarios_Clientes_clienteId",
-                        column: x => x.clienteId,
-                        principalTable: "Clientes",
-                        principalColumn: "id");
-                    table.ForeignKey(
                         name: "FK_Comentarios_Productos_productoId",
                         column: x => x.productoId,
                         principalTable: "Productos",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comentarios_Usuarios_artesanoId",
+                        column: x => x.artesanoId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Comentarios_Usuarios_clienteId",
+                        column: x => x.clienteId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -244,6 +196,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     idProducto = table.Column<int>(type: "int", nullable: false),
                     idFactura = table.Column<int>(type: "int", nullable: false),
+                    productoid = table.Column<int>(type: "int", nullable: false),
+                    facturaId = table.Column<int>(type: "int", nullable: false),
                     precioUnitario = table.Column<int>(type: "int", nullable: false),
                     cantidad = table.Column<int>(type: "int", nullable: false)
                 },
@@ -251,21 +205,67 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     table.PrimaryKey("PK_LineaFactura", x => new { x.idProducto, x.idFactura });
                     table.ForeignKey(
-                        name: "FK_LineaFactura_Facturas_idFactura",
-                        column: x => x.idFactura,
+                        name: "FK_LineaFactura_Facturas_facturaId",
+                        column: x => x.facturaId,
                         principalTable: "Facturas",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LineaFactura_Productos_idProducto",
-                        column: x => x.idProducto,
+                        name: "FK_LineaFactura_Productos_productoid",
+                        column: x => x.productoid,
                         principalTable: "Productos",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Artesanos_Clienteid",
-                table: "Artesanos",
-                column: "Clienteid");
+            migrationBuilder.CreateTable(
+                name: "Reportes",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    razon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    clienteId = table.Column<int>(type: "int", nullable: true),
+                    artesanoId = table.Column<int>(type: "int", nullable: true),
+                    productoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reportes", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Reportes_Productos_productoId",
+                        column: x => x.productoId,
+                        principalTable: "Productos",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reportes_Usuarios_artesanoId",
+                        column: x => x.artesanoId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reportes_Usuarios_clienteId",
+                        column: x => x.clienteId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Usuarios",
+                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email" },
+                values: new object[] { 1, "ADMIN", "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
+
+            migrationBuilder.InsertData(
+                table: "Usuarios",
+                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
+                values: new object[] { 2, "CLIENTE", "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
+
+            migrationBuilder.InsertData(
+                table: "Usuarios",
+                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email" },
+                values: new object[] { 3, "ARTESANO", "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentarios_artesanoId",
@@ -293,18 +293,23 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 column: "Clienteid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LineaFactura_idFactura",
+                name: "IX_LineaFactura_facturaId",
                 table: "LineaFactura",
-                column: "idFactura");
+                column: "facturaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PedidoPersonalizado_artesanoId",
-                table: "PedidoPersonalizado",
+                name: "IX_LineaFactura_productoid",
+                table: "LineaFactura",
+                column: "productoid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PedidosPersonalizados_artesanoId",
+                table: "PedidosPersonalizados",
                 column: "artesanoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PedidoPersonalizado_clienteId",
-                table: "PedidoPersonalizado",
+                name: "IX_PedidosPersonalizados_clienteId",
+                table: "PedidosPersonalizados",
                 column: "clienteId");
 
             migrationBuilder.CreateIndex(
@@ -318,17 +323,34 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 column: "Clienteid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubCategoria_categoriaid",
-                table: "SubCategoria",
+                name: "IX_Reportes_artesanoId",
+                table: "Reportes",
+                column: "artesanoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reportes_clienteId",
+                table: "Reportes",
+                column: "clienteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reportes_productoId",
+                table: "Reportes",
+                column: "productoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubCategorias_categoriaid",
+                table: "SubCategorias",
                 column: "categoriaid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_Clienteid",
+                table: "Usuarios",
+                column: "Clienteid");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Admins");
-
             migrationBuilder.DropTable(
                 name: "Comentarios");
 
@@ -336,10 +358,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 name: "LineaFactura");
 
             migrationBuilder.DropTable(
-                name: "PedidoPersonalizado");
+                name: "PedidosPersonalizados");
 
             migrationBuilder.DropTable(
-                name: "SubCategoria");
+                name: "Reportes");
+
+            migrationBuilder.DropTable(
+                name: "SubCategorias");
 
             migrationBuilder.DropTable(
                 name: "Facturas");
@@ -349,12 +374,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categorias");
-
-            migrationBuilder.DropTable(
-                name: "Artesanos");
-
-            migrationBuilder.DropTable(
-                name: "Clientes");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

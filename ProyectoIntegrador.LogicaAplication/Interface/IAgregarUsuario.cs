@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
+namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IUsuarioRepositorio : IRepositorio<Usuario>
+    public interface IAgregarUsuario
     {
-        Usuario Login(string email, string password);
+        void Ejecutar(Usuario u);
+
     }
 }

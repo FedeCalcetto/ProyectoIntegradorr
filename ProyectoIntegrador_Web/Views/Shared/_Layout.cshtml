@@ -23,9 +23,52 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        @if (Context.Session.GetString("Rol") == null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Login">Login</a>
+                            </li>
+                            @*                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Registro" asp-action="Registro">Registro</a>
+                            </li> *@
+
+                        }
+
+                        @if (Context.Session.GetString("Rol") != null)
+
+                        {
+                            if (Context.Session.GetString("Rol").ToUpper().Equals("CLIENTE"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="clienteDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Perfil
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="clienteDropdown">
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Cliente" asp-action="Perfil">editar perfil</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item text-danger" asp-area="" asp-controller="Cliente" asp-action="Logout">Cerrar sesión</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                            }
+                            if (Context.Session.GetString("Rol").ToUpper().Equals("ARTESANO"))
+                            {
+                                <li class="nav-item">
+
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Artesano" asp-action="Logout">Logout</a>
+                                </li>
+                            }
+                            if (Context.Session.GetString("Rol").ToUpper().Equals("ADMIN"))
+                            {
+                                <li class="nav-item">
+
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Logout">Logout</a>
+                                </li>
+                            }
+                        }
                     </ul>
                 </div>
             </div>
@@ -48,3 +91,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

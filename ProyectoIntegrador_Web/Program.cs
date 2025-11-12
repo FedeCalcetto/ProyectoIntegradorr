@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoIntegrador.EntityFrameWork;
+using ProyectoIntegrador.EntityFrameWork.Repositorios;
+using ProyectoIntegrador.LogicaAplication.CasosDeUso;
+using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 
 namespace ProyectoIntegrador_Web
 {
@@ -10,12 +14,29 @@ namespace ProyectoIntegrador_Web
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<ProyectoDBContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB3")));
 
 
             //Repositorios
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ProyectoDBContext>();
+            builder.Services.AddScoped<IUsuarioRepositorio, UsuarioEFRepsoitorio>();
+            builder.Services.AddScoped<IAdminRepositorio, AdminEFRepositorio>();
+            builder.Services.AddScoped<IArtesanoRepositorio, ArtesanoEFRepositorio>();
+            builder.Services.AddScoped<IProductoRepositorio, ProductoEFRepositorio>();
+            builder.Services.AddScoped<IClienteRepositorio, ClienteEFRepositorio>();
+
+            //Casos de uso
+            builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
+            builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
+            builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            }
+             );
 
             var app = builder.Build();
 
@@ -29,7 +50,7 @@ namespace ProyectoIntegrador_Web
 
             app.UseHttpsRedirection();
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapStaticAssets();
