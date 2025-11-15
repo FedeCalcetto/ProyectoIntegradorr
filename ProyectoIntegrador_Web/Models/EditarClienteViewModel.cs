@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProyectoIntegrador_Web.Models
 {
@@ -14,15 +15,12 @@ namespace ProyectoIntegrador_Web.Models
         [EmailAddress(ErrorMessage = "El correo electrónico no es válido")]
         public string Email { get; set; } 
 
-        [StringLength(30, MinimumLength = 10, ErrorMessage = "La contraseña debe tener entre 10 y 30 caracteres")]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-
         [Required(ErrorMessage = "El domicilio es obligatorio")]
         public string Domicilio { get; set; }
-
+        [Required(ErrorMessage = "El departamento es obligatorio")]
         public string Departamento { get; set; }
-
+        [Required(ErrorMessage = "El barrio es obligatorio")]
         public string Barrio { get; set; }
+        public List<string>? DepartamentosOpciones { get; set; }
     }
 }
