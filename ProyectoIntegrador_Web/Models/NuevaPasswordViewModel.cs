@@ -11,5 +11,6 @@ namespace ProyectoIntegrador_Web.Models
         [Required(ErrorMessage = "Debe confirmar la contraseña.")]
         [Compare("Password", ErrorMessage = "Las contraseñas no coinciden.")]
         public string ConfirmPassword { get; set; }
+        //xzcxz
     }
 }
