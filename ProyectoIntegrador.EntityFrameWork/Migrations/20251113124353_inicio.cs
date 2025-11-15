@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
@@ -35,14 +37,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     email_email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     rol = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
-                    Clienteid = table.Column<int>(type: "int", nullable: true),
                     direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    direccion_barrio = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    direccion_barrio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
+                    Clienteid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -262,18 +264,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 1, "ADMIN", "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
-
-            migrationBuilder.InsertData(
-                table: "Usuarios",
-                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
-                values: new object[] { 2, "CLIENTE", "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
-
-            migrationBuilder.InsertData(
-                table: "Usuarios",
-                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 3, "ARTESANO", "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" });
+                columns: new[] { "id", "TipoUsuario", "apellido", "foto", "nombre", "password", "rol", "direccion_barrio", "direccion_departamento", "direccion_domicilio", "email_email" },
+                values: new object[,]
+                {
+                    { 1, "ADMIN", "Principal", null, "Administrador", "Admin123456", "ADMIN", "Centro", "Montevideo", "Calle 123", "admin@proyecto.com" },
+                    { 2, "CLIENTE", "Cliente", null, "Juan", "Cliente123456", "CLIENTE", "Centro2", "Montevideo", "Calle 1234", "cliente@proyecto.com" },
+                    { 3, "ARTESANO", "Artesana", null, "Maria", "Artesano123456", "ARTESANO", "Centro3", "Montevideo", "Calle 12345", "artesano@proyecto.com" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentarios_artesanoId",

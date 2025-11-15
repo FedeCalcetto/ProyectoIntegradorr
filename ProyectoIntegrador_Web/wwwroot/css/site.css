@@ -29,3 +29,62 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+#divArtesano {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.cerrarSesion {
+
+    color:red;
+
+}
+
+#btnCargar {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: black;
+    background-color: white;
+}
+
+    #btnCargar:hover {
+        color: white;
+        background-color: darkgray;
+    }
+
+#nuevaP {
+    justify-content: center;
+    margin-bottom: 20px;
+    background-color: white;
+    color: black;
+}
+    #nuevaP:hover {
+        color: white;
+        background-color: darkgray;
+    }
+
+#guardarCambiosArtesano {
+    background-color: cornflowerblue;
+}
+
+
+    #guardarCambiosArtesano:hover {
+        color: forestgreen;
+        background-color: white;
+        border-color: forestgreen;
+    }
+
+#volverArtesano {
+    background-color: cornflowerblue;
+    color: white;
+    border-color:blue;
+}
+
+
+    #volverArtesano:hover {
+        color: indianred;
+        background-color: white;
+        border-color: indianred;
+    }

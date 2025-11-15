@@ -1,0 +1,93 @@
+﻿@model ProyectoIntegrador_Web.Models.EditarArtesanoViewModel
+
+@{
+    ViewData["Title"] = "Perfil";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-3 text-primary fw-semibold">Mi Perfil</h2>
+                    <p class="text-center text-muted mb-4">Actualiza tus datos personales</p>
+
+                    @if (TempData["Mensaje"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Mensaje"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form asp-action="CambiarFoto" method="post" enctype="multipart/form-data" class="text-center mb-4">
+                        <div class="d-flex justify-content-center mb-2">
+                            <img src="@(string.IsNullOrEmpty(Model.Foto)
+                                             ? "/images/usuarios/default-image.jpg"
+                                             : Model.Foto)"
+                                 class="img-thumbnail"
+                                 width="150" height="150" />
+                        </div>
+
+                        <label for="archivoFoto" class="btn btn-outline-secondary">
+                            Seleccionar foto
+                        </label>
+
+                        <input id="archivoFoto" type="file" name="archivoFoto" accept="image/*" style="display:none;" />
+
+                        <span id="archivoSeleccionado" class="text-muted d-block mt-1"></span>
+
+                        <button type="submit" class="btn btn-primary mt-2">Subir foto</button>
+                    </form>
+
+                    <form asp-action="PerfilArtesano" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="Foto" />
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label fw-semibold"></label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Tu nombre" />
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Apellido" class="form-label fw-semibold"></label>
+                            <input asp-for="Apellido" class="form-control" placeholder="Tu apellido" />
+                            <span asp-validation-for="Apellido" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email" class="form-control bg-light" readonly />
+                        </div>
+                        <input type="hidden" asp-for="Password" />
+                        <div class="d-flex justify-content-left">
+                            <a id="nuevaP" asp-action="NuevaPassword" class="btn btn-outline-secondary">Nueva contraseña</a>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Inicio" id="volverArtesano" class="btn btn-outline-secondary">Volver</a>
+                            <button id="guardarCambiosArtesano" type="submit" class="btn btn-primary">Guardar cambios</button>
+                        </div>
+
+                        
+                    </form>
+                   
+                    <script>
+                        document.getElementById("archivoFoto").addEventListener("change", function () {
+                            const archivo = this.files[0];
+                            document.getElementById("archivoSeleccionado").innerText =
+                                archivo ? archivo.name : "";
+                        });
+                    </script>
+
+                </div>
+
+            
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

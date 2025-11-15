@@ -13,12 +13,11 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
     public class Cliente : Usuario
     {
 
-        public Direccion direccion { get; set; }
         public List<Artesano> artesanosSeguidos { get; set; }
         public List<Factura> compras { get; set; } = new List<Factura>();
         public List<Producto> productosFavoritos { get; set; }
         //public List<PedidoPersonalizado> pedidosCliente { get; set; }
-
+        public Direccion? direccion { get; set; }
         public void validarEditar()
         {
 
