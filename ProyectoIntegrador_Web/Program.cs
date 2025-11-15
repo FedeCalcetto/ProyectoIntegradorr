@@ -4,6 +4,7 @@ using ProyectoIntegrador.EntityFrameWork.Repositorios;
 using ProyectoIntegrador.LogicaAplication.CasosDeUso;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
+using ProyectoIntegrador_Web.Services;
 
 namespace ProyectoIntegrador_Web
 {
@@ -30,6 +31,13 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
             builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
+
+            //REGISTRO DEL SERVICIO DE EMAIL
+            builder.Services.AddScoped<EmailService>();
+            builder.Services.AddTransient<EmailService>();
+
+
+
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);

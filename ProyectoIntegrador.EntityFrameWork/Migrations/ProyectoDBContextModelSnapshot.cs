@@ -167,6 +167,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
 
+                    b.Property<int>("SubCategoriaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("artesanoid")
                         .HasColumnType("int");
 
@@ -188,9 +191,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("stock")
                         .HasColumnType("int");
 
+                    b.Property<int>("subCategroiaId")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
                     b.HasIndex("Clienteid");
+
+                    b.HasIndex("SubCategoriaId");
 
                     b.HasIndex("artesanoid");
 
@@ -241,12 +249,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("categoriaid")
+                    b.Property<int>("categoriaId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("categoriaid");
+                    b.HasIndex("categoriaId");
 
                     b.ToTable("SubCategorias");
                 });
@@ -259,10 +267,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("CodigoVerificacion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TipoUsuario")
                         .IsRequired()
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
+
+                    b.Property<bool>("Verificado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("apellido")
                         .IsRequired()
@@ -283,7 +297,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("Usuarios", (string)null);
 
                     b.HasDiscriminator<string>("TipoUsuario").HasValue("Usuario");
 
@@ -294,6 +308,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 1,
                             TipoUsuario = "ADMIN",
+                            Verificado = false,
                             apellido = "Principal",
                             nombre = "Administrador",
                             password = "Admin123456",
@@ -303,6 +318,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 2,
                             TipoUsuario = "CLIENTE",
+                            Verificado = false,
                             apellido = "Cliente",
                             nombre = "Juan",
                             password = "Cliente123456",
@@ -312,6 +328,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 3,
                             TipoUsuario = "ARTESANO",
+                            Verificado = false,
                             apellido = "Artesana",
                             nombre = "Maria",
                             password = "Artesano123456",
@@ -437,11 +454,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .WithMany("productosFavoritos")
                         .HasForeignKey("Clienteid");
 
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", "SubCategoria")
+                        .WithMany("Productos")
+                        .HasForeignKey("SubCategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
                         .WithMany("productos")
                         .HasForeignKey("artesanoid")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("SubCategoria");
 
                     b.Navigation("artesano");
                 });
@@ -474,7 +499,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", "categoria")
                         .WithMany("categorias")
-                        .HasForeignKey("categoriaid")
+                        .HasForeignKey("categoriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -585,6 +610,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>
                 {
                     b.Navigation("comentarios");
+                });
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", b =>
+                {
+                    b.Navigation("Productos");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>

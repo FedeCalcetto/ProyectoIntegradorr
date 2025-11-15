@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 {
-    public class AdminEFRepsoitorio : IUsuarioRepositorio
+    public class UsuarioEFRepsoitorio : IUsuarioRepositorio
     {
 
         private readonly ProyectoDBContext _contexto;
 
-        public AdminEFRepsoitorio(ProyectoDBContext contexto)
+        public UsuarioEFRepsoitorio(ProyectoDBContext contexto)
         {
             _contexto = contexto;
         }
@@ -72,6 +72,26 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                                 && u.password == password);
 
             return usuario;
+        }
+
+        public Usuario BuscarPorEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            return _contexto.Usuarios
+                .FirstOrDefault(u => u.email.email.ToLower().Trim() == email.ToLower().Trim());
+        }
+
+        public void Actualizar(Usuario usuario)
+        {
+            if (usuario == null)
+                throw new ArgumentNullException(nameof(usuario));
+
+            usuario.Validar(); // si tu entidad valida antes de guardar
+
+            _contexto.Usuarios.Update(usuario);
+            _contexto.SaveChanges();
         }
     }
 }
