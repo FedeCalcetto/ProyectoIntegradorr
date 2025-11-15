@@ -20,6 +20,34 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerCliente = obtenerCliente;
         }
 
+        //seelct departamentos
+        private List<string> ObtenerDepartamentos()
+        {
+            return new List<string>
+            {
+            "Artigas",
+            "Salto",
+            "Rivera",
+            "Tacuarembó",
+            "Río Negro",
+            "Soriano",
+            "Durazno",
+            "Canelones",
+            "Rocha",
+            "Montevideo",
+            "Colonia",
+            "San José",
+            "Treinta y Tres",
+            "Florida",
+            "Cerro Largo",
+            "Paysandú",
+            "Flores",
+            "Lavalleja",
+            "Maldonado"
+            };
+        }
+
+
         // GET: ClienteController
         public ActionResult Inicio()
         {
@@ -54,11 +82,12 @@ namespace ProyectoIntegrador_Web.Controllers
             {
                 Nombre = cliente.nombre,
                 Apellido = cliente.apellido,
-                Email = cliente.email.email, 
-                Password = cliente.password,
+                Email = cliente.email.email,
                 Domicilio = cliente.direccion?.domicilio,
                 Departamento = cliente.direccion?.departamento,
-                Barrio = cliente.direccion?.barrio
+                Barrio = cliente.direccion?.barrio,
+
+                DepartamentosOpciones = ObtenerDepartamentos()
             };
 
             return View(modelo);
@@ -70,9 +99,11 @@ namespace ProyectoIntegrador_Web.Controllers
         {
 
             var email = HttpContext.Session.GetString("loginUsuario");
+            modelo.DepartamentosOpciones = ObtenerDepartamentos();
             if (!ModelState.IsValid)
             {
-                // Si hay errores de validación, vuelve a mostrar la vista
+                modelo.DepartamentosOpciones = ObtenerDepartamentos();
+
                 return View(modelo);
             }
 
@@ -86,7 +117,6 @@ namespace ProyectoIntegrador_Web.Controllers
             // Actualizar propiedades del dominio
             cliente.nombre = modelo.Nombre;
             cliente.apellido = modelo.Apellido;
-            cliente.password = modelo.Password;
             //cliente.email = new Email(modelo.Email); 
 
             cliente.direccion = new Direccion
@@ -98,14 +128,57 @@ namespace ProyectoIntegrador_Web.Controllers
 
             // Guardar cambios
             _clienteRepositorio.Actualizar(cliente);
-
+            modelo.DepartamentosOpciones = ObtenerDepartamentos();
             // Mensaje temporal para la vista
             TempData["Mensaje"] = "Perfil actualizado correctamente.";
 
             // Redirige nuevamente al perfil (GET)
             return RedirectToAction("Perfil");
         }
+        public IActionResult CambioContra()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
 
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var cliente = _obtenerCliente.Ejecutar(email);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+            return View(new CambioPassowrdCliente());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CambioContra(CambioPassowrdCliente modelo)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (!ModelState.IsValid)
+                return View(modelo);
+
+            var cliente = _obtenerCliente.Ejecutar(email);
+            if (cliente == null)
+                return NotFound();
+
+            try
+            {
+               // cliente.validarContra(modelo.Password, modelo.PasswordRepetida);
+                _clienteRepositorio.cambioContra(cliente, modelo.Password, modelo.PasswordRepetida,modelo.passwordActual);
+                TempData["Mensaje"] = "Contraseña cambiada exitosamente.";
+                return RedirectToAction("CambioContra");
+            }
+            catch (Exception  ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(modelo);
+            }
+        }
         // GET: ClienteController/Details/5
         public ActionResult Details(int id)
         {

@@ -13,6 +13,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         Cliente obtenerCliente(string email);
 
         void Actualizar(Cliente cliente);
+        void cambioContra(Cliente cliente,string contraNueva,string contraRepetida,string contraActual);
 
     }
 }

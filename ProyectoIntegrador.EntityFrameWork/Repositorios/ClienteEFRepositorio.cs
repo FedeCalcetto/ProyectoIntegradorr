@@ -34,13 +34,28 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             entidad.nombre = cliente.nombre;
             entidad.apellido = cliente.apellido;
             //entidad.email = cliente.email;
-            entidad.password = cliente.password;
+            //entidad.password = cliente.password;
             entidad.direccion = cliente.direccion;
             _contexto.Update(entidad);
             _contexto.SaveChanges();
 
         }
+        public void cambioContra(Cliente cliente,string contraNueva,string contraRepetida,string contraActual)
+        {
+            cliente.validarContra(contraNueva,contraRepetida,contraActual);
 
+            var entidad = obtenerCliente(cliente.email.email);
+
+            if (entidad is null)
+            {
+                throw new ClienteNoEncontradoException();
+            }
+
+
+            entidad.password = contraNueva;
+            _contexto.Update(entidad);
+            _contexto.SaveChanges();
+        }
         public void Agregar(Cliente entidad)
         {
             throw new NotImplementedException();

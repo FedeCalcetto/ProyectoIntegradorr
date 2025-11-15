@@ -79,7 +79,7 @@ namespace ProyectoIntegrador_Web.Controllers
                     apellido = modelo.apellido,
                     email = modelo.email,
                     password = modelo.password,
-                    //Rol = "Usuario"
+                    rol = "Artesano"
                 };
                 try
                 {
@@ -105,7 +105,7 @@ namespace ProyectoIntegrador_Web.Controllers
                     apellido = modelo.apellido,
                     email = modelo.email,
                     password = modelo.password,
-                    //Rol = "Usuario"
+                    rol = "Cliente"
                 };
                 try
                 {
