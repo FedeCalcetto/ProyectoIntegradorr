@@ -115,7 +115,11 @@ namespace ProyectoIntegrador.EntityFrameWork
                     apellido = "Principal",
                     password = "Admin123456",
                     rol = "ADMIN",
-                    TipoUsuario = "ADMIN"
+                    TipoUsuario = "ADMIN",
+                    CodigoVerificacion = (string?)null, //se agrega para que no de error las migraciones, el campo debe estar como nullo
+                    Verificado = false    //se agrega para que no de error las migraciones, este debe ser falso siempre que se registre alguien
+
+
                 },
                 new
                 {
@@ -124,7 +128,9 @@ namespace ProyectoIntegrador.EntityFrameWork
                     apellido = "Cliente",
                     password = "Cliente123456",
                     rol = "CLIENTE",
-                    TipoUsuario = "CLIENTE"
+                    TipoUsuario = "CLIENTE",
+                    CodigoVerificacion = (string?)null,
+                    Verificado = false
                 },
                 new
                 {
@@ -133,7 +139,9 @@ namespace ProyectoIntegrador.EntityFrameWork
                     apellido = "Artesana",
                     password = "Artesano123456",
                     rol = "ARTESANO",
-                    TipoUsuario = "ARTESANO"
+                    TipoUsuario = "ARTESANO",
+                    CodigoVerificacion = (string?)null,
+                    Verificado = false
                 }
             );
 

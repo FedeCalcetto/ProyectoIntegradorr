@@ -22,46 +22,56 @@
 
                     <form asp-action="Perfil" method="post">
                         @Html.AntiForgeryToken()
+
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
+                        <!-- NOMBRE -->
                         <div class="mb-3">
                             <label asp-for="Nombre" class="form-label fw-semibold"></label>
                             <input asp-for="Nombre" class="form-control" placeholder="Tu nombre" />
                             <span asp-validation-for="Nombre" class="text-danger small"></span>
                         </div>
 
+                        <!-- APELLIDO -->
                         <div class="mb-3">
                             <label asp-for="Apellido" class="form-label fw-semibold"></label>
                             <input asp-for="Apellido" class="form-control" placeholder="Tu apellido" />
                             <span asp-validation-for="Apellido" class="text-danger small"></span>
                         </div>
 
+                        <!-- EMAIL -->
                         <div class="mb-3">
                             <label asp-for="Email" class="form-label fw-semibold"></label>
                             <input asp-for="Email" class="form-control bg-light" readonly />
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label fw-semibold"></label>
-                            <input asp-for="Password" type="password" class="form-control" placeholder="Nueva contraseña" />
-                            <span asp-validation-for="Password" class="text-danger small"></span>
-                        </div>
 
+
+                        <!-- DIRECCIÓN -->
                         <h5 class="mt-4 text-secondary fw-semibold border-bottom pb-1">Dirección</h5>
 
+                        <!-- DOMICILIO -->
                         <div class="mb-3 mt-2">
                             <label asp-for="Domicilio" class="form-label fw-semibold"></label>
                             <input asp-for="Domicilio" class="form-control" placeholder="Calle y número" />
+                            <span asp-validation-for="Domicilio" class="text-danger small"></span>
                         </div>
 
+                        <!-- DEPARTAMENTO -->
                         <div class="mb-3">
                             <label asp-for="Departamento" class="form-label fw-semibold"></label>
-                            <input asp-for="Departamento" class="form-control" placeholder="Departamento / Piso" />
+                            <select asp-for="Departamento"
+                                    class="form-select"
+                                    asp-items="@(new SelectList(Model.DepartamentosOpciones))">
+                            </select>
+                            <span asp-validation-for="Departamento" class="text-danger small"></span>
                         </div>
 
+                        <!-- BARRIO -->
                         <div class="mb-4">
                             <label asp-for="Barrio" class="form-label fw-semibold"></label>
                             <input asp-for="Barrio" class="form-control" placeholder="Barrio o zona" />
+                            <span asp-validation-for="Barrio" class="text-danger small"></span>
                         </div>
 
                         <div class="d-flex justify-content-between">

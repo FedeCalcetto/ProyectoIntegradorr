@@ -73,5 +73,25 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
             return usuario;
         }
+
+        public Usuario BuscarPorEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            return _contexto.Usuarios
+                .FirstOrDefault(u => u.email.email.ToLower().Trim() == email.ToLower().Trim());
+        }
+
+        public void Actualizar(Usuario usuario)
+        {
+            if (usuario == null)
+                throw new ArgumentNullException(nameof(usuario));
+
+            usuario.Validar(); // si tu entidad valida antes de guardar
+
+            _contexto.Usuarios.Update(usuario);
+            _contexto.SaveChanges();
+        }
     }
 }

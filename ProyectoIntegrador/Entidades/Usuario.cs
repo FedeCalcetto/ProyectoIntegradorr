@@ -19,6 +19,12 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public string password { get; set; }
         public string rol { get; set; }
 
+        /////////valicadion email/////////////////////
+        public string? CodigoVerificacion { get; set; }
+        public bool Verificado { get; set; }
+        //////////////////////////////////////////////
+        
+
         public void Validar()
         {
             validarContraseñaLongitud();

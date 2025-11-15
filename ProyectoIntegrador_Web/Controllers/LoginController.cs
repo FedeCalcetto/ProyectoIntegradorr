@@ -4,6 +4,7 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Models;
+using ProyectoIntegrador_Web.Services;  // ← agregar esto
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -11,13 +12,16 @@ namespace ProyectoIntegrador_Web.Controllers
     {
         private readonly IUsuarioRepositorio _usuarioRepositorio;
         private readonly IAgregarUsuario _agregarUsuario;
+        private readonly EmailService _email;
 
-        public LoginController(IUsuarioRepositorio usuarioRepositorio, IAgregarUsuario agregarUsuario)
+        public LoginController(IUsuarioRepositorio usuarioRepositorio,
+                               IAgregarUsuario agregarUsuario,
+                               EmailService email)
         {
             _usuarioRepositorio = usuarioRepositorio;
             _agregarUsuario = agregarUsuario;
+            _email = email;
         }
-
 
         // GET: LoginController
         public ActionResult Login()
@@ -40,22 +44,23 @@ namespace ProyectoIntegrador_Web.Controllers
                 ModelState.AddModelError(string.Empty, "Email o contraseña incorrectos");
                 return View(modelo);
             }
+
+            // ❗ Bloquear login si NO verificó su correo
+            if (!usuario.Verificado)
+            {
+                ModelState.AddModelError(string.Empty, "Debes verificar tu correo antes de iniciar sesión.");
+                return View(modelo);
+            }
+
             HttpContext.Session.SetString("loginUsuario", usuario.email.email);
             HttpContext.Session.SetString("Rol", usuario.rol);
+
             if (usuario is Cliente)
-            {
                 return RedirectToAction("Inicio", "Cliente");
-
-            }
             else if (usuario is Artesano)
-            {
                 return RedirectToAction("Inicio", "Artesano");
-            }
             else
-            {
                 return RedirectToAction("Inicio", "Admin");
-            }
-
         }
 
         public IActionResult registroUsuario()
@@ -64,138 +69,96 @@ namespace ProyectoIntegrador_Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult registroUsuario(RegistroUsuarioViewModel modelo)
+        public async Task<IActionResult> registroUsuario(RegistroUsuarioViewModel modelo)
         {
             if (!ModelState.IsValid)
-            {
                 return View(modelo);
-            }
 
-            if (modelo.soyArtesano == true)
+            // 🔐 Generar código
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            Usuario entidad;
+
+            if (modelo.soyArtesano)
             {
-                var entidad = new Artesano
+                entidad = new Artesano
                 {
                     nombre = modelo.nombre,
                     apellido = modelo.apellido,
                     email = modelo.email,
                     password = modelo.password,
-                    rol = "Artesano"
+                    rol = "Artesano",
+                    CodigoVerificacion = codigo,
+                    Verificado = false
                 };
-                try
-                {
-                    _agregarUsuario.Ejecutar(entidad);
-                    return RedirectToAction("Inicio", "Artesano");
-                }
-                catch (InvalidOperationException ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                    return View(modelo);
-                }
-                catch (Exception)
-                {
-                    ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario.");
-                    return View(modelo);
-                }
             }
             else
             {
-                var entidad = new Cliente
+                entidad = new Cliente
                 {
                     nombre = modelo.nombre,
                     apellido = modelo.apellido,
                     email = modelo.email,
                     password = modelo.password,
-                    rol = "Cliente"
+                    rol = "Cliente",
+                    CodigoVerificacion = codigo,
+                    Verificado = false
                 };
-                try
-                {
-                    _agregarUsuario.Ejecutar(entidad);
-                    return RedirectToAction("Inicio", "Cliente");
-                }
-                catch (InvalidOperationException ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                    return View(modelo);
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                    return View(modelo);
-                }
             }
 
-
-            // return RedirectToAction("Index", "Home");
-        }
-
-
-        // GET: LoginController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: LoginController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: LoginController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _agregarUsuario.Ejecutar(entidad); // guarda en BD  
+
+                //  Enviar correo
+                await _email.EnviarCodigoAsync(entidad.email.email, codigo);
+
+                //  Enviar a pantalla para ingresar código
+                return RedirectToAction("VerificarEmail", new { email = entidad.email.email });
             }
-            catch
+            catch (InvalidOperationException ex)
             {
-                return View();
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(modelo);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario.");
+                return View(modelo);
             }
         }
 
-        // GET: LoginController/Edit/5
-        public ActionResult Edit(int id)
+        // GET – pantalla para ingresar código
+        public IActionResult VerificarEmail(string email)
         {
+            ViewBag.Email = email;
             return View();
         }
 
-        // POST: LoginController/Edit/5
+        // POST – verificar código
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult VerificarEmail(string email, string codigo)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            var usuario = _usuarioRepositorio.BuscarPorEmail(email);
 
-        // GET: LoginController/Delete/5
-        public ActionResult Delete(int id)
-        {
+            if (usuario == null)
+                return NotFound();
+
+            if (usuario.CodigoVerificacion == codigo)
+            {
+                usuario.Verificado = true;
+                usuario.CodigoVerificacion = null;
+
+                _usuarioRepositorio.Actualizar(usuario);
+
+                return View("VerificadoCorrectamente");
+            }
+
+            ViewBag.Error = "Código incorrecto";
+            ViewBag.Email = email;
             return View();
         }
 
-        // POST: LoginController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+
     }
 }

@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Verificar Email";
+}
+
+<h2 class="text-center mt-4">Verificación de Email</h2>
+
+<div class="container mt-4">
+    <form method="post" action="/Login/VerificarEmail" class="border p-4 rounded shadow-sm bg-light">
+
+        <input type="hidden" name="email" value="@ViewBag.Email" />
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        <div class="mb-3">
+            <label class="form-label">Código enviado a tu correo:</label>
+            <input type="text" name="codigo" class="form-control" required />
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-success">Verificar</button>
+        </div>
+    </form>
+</div>
