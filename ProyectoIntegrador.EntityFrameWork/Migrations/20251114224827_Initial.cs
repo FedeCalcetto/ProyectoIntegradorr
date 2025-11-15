@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class inicio : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,6 +35,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     email_email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     rol = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CodigoVerificacion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Verificado = table.Column<bool>(type: "bit", nullable: false),
                     TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -262,18 +264,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 1, "ADMIN", "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
+                values: new object[] { 1, null, "ADMIN", false, "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
-                values: new object[] { 2, "CLIENTE", "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
+                values: new object[] { 2, null, "CLIENTE", false, "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "TipoUsuario", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 3, "ARTESANO", "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
+                values: new object[] { 3, null, "ARTESANO", false, "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentarios_artesanoId",

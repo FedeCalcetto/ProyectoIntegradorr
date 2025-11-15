@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251112222909_inicio")]
-    partial class inicio
+    [Migration("20251114224827_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -270,10 +270,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("CodigoVerificacion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TipoUsuario")
                         .IsRequired()
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
+
+                    b.Property<bool>("Verificado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("apellido")
                         .IsRequired()
@@ -305,6 +311,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 1,
                             TipoUsuario = "ADMIN",
+                            Verificado = false,
                             apellido = "Principal",
                             nombre = "Administrador",
                             password = "Admin123456",
@@ -314,6 +321,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 2,
                             TipoUsuario = "CLIENTE",
+                            Verificado = false,
                             apellido = "Cliente",
                             nombre = "Juan",
                             password = "Cliente123456",
@@ -323,6 +331,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 3,
                             TipoUsuario = "ARTESANO",
+                            Verificado = false,
                             apellido = "Artesana",
                             nombre = "Maria",
                             password = "Artesano123456",
