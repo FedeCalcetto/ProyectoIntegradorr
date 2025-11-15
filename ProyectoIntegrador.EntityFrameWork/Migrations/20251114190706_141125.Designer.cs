@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251114190706_141125")]
+    partial class _141125
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -267,16 +270,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<string>("CodigoVerificacion")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TipoUsuario")
                         .IsRequired()
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
-
-                    b.Property<bool>("Verificado")
-                        .HasColumnType("bit");
 
                     b.Property<string>("apellido")
                         .IsRequired()
@@ -308,7 +305,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 1,
                             TipoUsuario = "ADMIN",
-                            Verificado = false,
                             apellido = "Principal",
                             nombre = "Administrador",
                             password = "Admin123456",
@@ -318,7 +314,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 2,
                             TipoUsuario = "CLIENTE",
-                            Verificado = false,
                             apellido = "Cliente",
                             nombre = "Juan",
                             password = "Cliente123456",
@@ -328,7 +323,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 3,
                             TipoUsuario = "ARTESANO",
-                            Verificado = false,
                             apellido = "Artesana",
                             nombre = "Maria",
                             password = "Artesano123456",

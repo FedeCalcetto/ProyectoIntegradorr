@@ -9,5 +9,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface IArtesanoRepositorio : IRepositorio<Artesano>
     {
+        Artesano ObtenerPorEmail(string email);
+        void Actualizar(Artesano artesano);
     }
 }

@@ -39,6 +39,7 @@ namespace ProyectoIntegrador.EntityFrameWork
             modelBuilder.Entity<Usuario>().OwnsOne(u => u.email, email =>
             {
                 email.Property(e => e.email).HasColumnName("email_email");
+
             });
 
             modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion, dir =>
@@ -152,14 +153,15 @@ namespace ProyectoIntegrador.EntityFrameWork
             );
 
             modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion).HasData(
-                new
-                {
-                    Clienteid = 2,
-                    domicilio = "Calle 123",
-                    departamento = "Montevideo",
-                    barrio = "Centro"
-                }
-            );
+     new
+     {
+         Clienteid = 2,
+         domicilio = "Calle 123",
+         departamento = "Montevideo",
+         barrio = "Centro"
+     }
+     
+ );
         }
 
     }
