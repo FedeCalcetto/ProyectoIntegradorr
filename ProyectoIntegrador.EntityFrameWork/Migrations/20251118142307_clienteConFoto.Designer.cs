@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251114224827_Initial")]
-    partial class Initial
+    [Migration("20251118142307_clienteConFoto")]
+    partial class clienteConFoto
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -358,7 +358,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("foto")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("telefono")
@@ -368,12 +367,21 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("Clienteid");
 
+                    b.ToTable("Usuarios", t =>
+                        {
+                            t.Property("foto")
+                                .HasColumnName("Artesano_foto");
+                        });
+
                     b.HasDiscriminator().HasValue("ARTESANO");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
+
+                    b.Property<string>("foto")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("CLIENTE");
                 });
@@ -596,8 +604,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                                 });
                         });
 
-                    b.Navigation("direccion")
-                        .IsRequired();
+                    b.Navigation("direccion");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>

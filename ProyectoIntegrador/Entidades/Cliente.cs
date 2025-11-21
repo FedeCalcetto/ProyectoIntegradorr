@@ -18,6 +18,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<Producto> productosFavoritos { get; set; }
         //public List<PedidoPersonalizado> pedidosCliente { get; set; }
         public Direccion? direccion { get; set; }
+        public string? foto { get; set; }
         public void validarEditar()
         {
             valdiarDireccion();
