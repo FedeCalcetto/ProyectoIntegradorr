@@ -19,10 +19,10 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public string password { get; set; }
         public string rol { get; set; }
 
-        /////////valicadion email/////////////////////
+
         public string? CodigoVerificacion { get; set; }
         public bool Verificado { get; set; }
-        //////////////////////////////////////////////
+
         
 
         public void Validar()
@@ -58,6 +58,10 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
             if (nombre.Length < 1 || apellido.Length < 1)
             {
                 throw new validarNombreException();
+            }
+            if(nombre.Any(char.IsDigit) || apellido.Any(char.IsDigit))
+            {
+                throw new ValidarNumeroEnNombreException();
             }
         }
 
