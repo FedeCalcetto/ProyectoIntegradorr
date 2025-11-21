@@ -1,0 +1,57 @@
+﻿@model ProyectoIntegrador_Web.Models.ProductosDelArtesanoViewModel
+
+@{
+    ViewData["Title"] = "Mis Productos";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4 text-center">
+        <h2 class="fw-bold">Mis Productos</h2>
+    </div>
+
+    @if (Model.Productos == null || !Model.Productos.Any())
+    {
+        <div class="alert alert-info text-center">
+            No tienes productos registrados aún.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var item in Model.Productos)
+            {
+                <div class="col">
+                    <div class="card shadow-sm h-100">
+
+                        <img src="/images/productos/@item.imagen" class="product-image" />
+
+                        <div class="card-body">
+                            <h5 class="card-title">@item.nombre</h5>
+                            <p class="card-text text-muted">@item.descripcion</p>
+
+                            <p class="fw-bold mb-1">
+                                Precio: <span class="text-success">$@item.precio</span>
+                            </p>
+
+                            <p class="mb-2">
+                                Stock: <span class="badge bg-secondary">@item.stock</span>
+                            </p>
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-between">
+                            <a asp-action="Edit" asp-route-id="@item.id" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+
+                            <a asp-action="Delete" asp-route-id="@item.id" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using ProyectoIntegrador_Web.Models;
@@ -13,10 +16,15 @@ namespace ProyectoIntegrador_Web.Controllers
     {
         // GET: ArtesanoController
         private readonly IArtesanoRepositorio _artesanorepo;
-
-        public ArtesanoController(IArtesanoRepositorio artesanorepo)
+        private readonly ICategoriaRepositorio _categoria;
+        private readonly ISubCategoriaRepositorio _SubCategoria;
+        private readonly IProductoRepositorio _producto;
+        public ArtesanoController(IArtesanoRepositorio artesanorepo, ISubCategoriaRepositorio subCategoria,ICategoriaRepositorio categoria, IProductoRepositorio producto)
         {
             _artesanorepo = artesanorepo;
+            _SubCategoria = subCategoria;
+            _categoria = categoria;
+            _producto = producto;
         }
         public ActionResult Inicio()
         {
@@ -59,6 +67,9 @@ namespace ProyectoIntegrador_Web.Controllers
 
             return View(modelo);
         }
+
+        
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -115,6 +126,127 @@ namespace ProyectoIntegrador_Web.Controllers
         // GET: ArtesanoController/Details/5
         public ActionResult Details(int id)
         {
+            var subcategorias = _SubCategoria.ObtenerTodos()
+        .Where(s => s.categoriaId == categoriaId)
+        .Select(s => new {
+            id = s.Id,
+            nombre = s.Nombre
+        });
+
+            return Json(subcategorias);
+        }
+        public IActionResult AltaProducto()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
+
+            if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var artesano = _artesanorepo.ObtenerPorEmail(email);
+
+            if (artesano == null)
+            {
+                return NotFound();
+            }
+            var model = new AltaProductoViewModel();
+            model.Categorias = _categoria.ObtenerTodos(); // Cargar categorías
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AltaProducto(AltaProductoViewModel modelo)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (!ModelState.IsValid)
+            {
+                modelo.Categorias = _categoria.ObtenerTodos();
+                return View(modelo);
+            }
+
+            var artesano = _artesanorepo.ObtenerPorEmail(email);
+            if (artesano == null)
+                return NotFound();
+
+            // Guardar imagen si se subió
+            string nombreArchivo = null;
+
+            if (modelo.ArchivoImagen != null && modelo.ArchivoImagen.Length > 0)
+            {
+                var carpeta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/productos");
+
+                if (!Directory.Exists(carpeta))
+                    Directory.CreateDirectory(carpeta);
+
+                nombreArchivo = Guid.NewGuid() + Path.GetExtension(modelo.ArchivoImagen.FileName);
+                var ruta = Path.Combine(carpeta, nombreArchivo);
+
+                using (var stream = new FileStream(ruta, FileMode.Create))
+                {
+                    modelo.ArchivoImagen.CopyTo(stream);
+                }
+            }
+
+            var entidad = new Producto
+            {
+                nombre = modelo.nombre,
+                descripcion = modelo.descripcion,
+                precio = modelo.precio,
+                stock = modelo.stock,
+                imagen =  nombreArchivo, // <-- ESTA ES LA SOLUCIÓN
+                artesano = artesano,
+                SubCategoriaId = modelo.SubCategoriaId
+            };
+
+            try
+            {
+                _producto.Agregar(entidad);
+                artesano.productos.Add(entidad);
+                TempData["Mensaje"] = "producto agregado correctamente.";
+                return RedirectToAction("AltaProducto");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
+                modelo.Categorias = _categoria.ObtenerTodos();
+                return View(modelo);
+            }
+
+
+           
+        }
+
+        public IActionResult ProductosDelArtesano()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
+
+            if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            var artesano = _artesanorepo.ObtenerProductosArtesano(email);
+
+            if (artesano == null)
+            {
+                return NotFound();
+            }
+            var productos = artesano.productos;
+
+            var model = new ProductosDelArtesanoViewModel
+            {
+                Artesano = artesano,
+                Productos = productos
+            };
+
+            return View(model);
+        }
+        // GET: ArtesanoController/Details/5
+        public ActionResult Details(int id)
+        {
             return View();
         }
 
@@ -125,61 +257,7 @@ namespace ProyectoIntegrador_Web.Controllers
         }
 
         // POST: ArtesanoController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ArtesanoController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ArtesanoController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ArtesanoController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ArtesanoController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

@@ -117,7 +117,7 @@ namespace ProyectoIntegrador.EntityFrameWork
                     rol = "ADMIN",
                     TipoUsuario = "ADMIN",
                     CodigoVerificacion = (string?)null, //se agrega para que no de error las migraciones, el campo debe estar como nullo
-                    Verificado = false    //se agrega para que no de error las migraciones, este debe ser falso siempre que se registre alguien
+                    Verificado = true    //se agrega para que no de error las migraciones, este debe ser falso siempre que se registre alguien
 
 
                 },
@@ -130,7 +130,7 @@ namespace ProyectoIntegrador.EntityFrameWork
                     rol = "CLIENTE",
                     TipoUsuario = "CLIENTE",
                     CodigoVerificacion = (string?)null,
-                    Verificado = false
+                    Verificado = true
                 },
                 new
                 {
@@ -141,8 +141,42 @@ namespace ProyectoIntegrador.EntityFrameWork
                     rol = "ARTESANO",
                     TipoUsuario = "ARTESANO",
                     CodigoVerificacion = (string?)null,
-                    Verificado = false
+                    Verificado = true
                 }
+            );
+
+            modelBuilder.Entity<Categoria>().HasData(
+            new { Id = 1, Nombre = "Cerámica" },
+            new { Id = 2, Nombre = "Textiles" },
+            new { Id = 3, Nombre = "Madera" },
+            new { Id = 4, Nombre = "Cuero" },
+            new { Id = 5, Nombre = "Joyería Artesanal" }
+            );
+            modelBuilder.Entity<SubCategoria>().HasData(
+    // Cerámica
+            new { Id = 1, Nombre = "Vasos y tazas", categoriaId = 1 },
+            new { Id = 2, Nombre = "Platos y bowls", categoriaId = 1 },
+            new { Id = 3, Nombre = "Esculturas cerámicas", categoriaId = 1 },
+
+    // Textiles
+            new { Id = 4, Nombre = "Ropa tejida", categoriaId = 2 },
+            new { Id = 5, Nombre = "Alfombras", categoriaId = 2 },
+            new { Id = 6, Nombre = "Accesorios textiles", categoriaId = 2 },
+
+    // Madera
+            new { Id = 7, Nombre = "Tallados en madera", categoriaId = 3 },
+            new { Id = 8, Nombre = "Muebles pequeños", categoriaId = 3 },
+            new { Id = 9, Nombre = "Decoración en madera", categoriaId = 3 },
+
+    // Cuero
+            new { Id = 10, Nombre = "Carteras", categoriaId = 4 },
+            new { Id = 11, Nombre = "Cinturones", categoriaId = 4 },
+            new { Id = 12, Nombre = "Accesorios de cuero", categoriaId = 4 },
+
+    // Joyería Artesanal
+            new { Id = 13, Nombre = "Collares", categoriaId = 5 },
+            new { Id = 14, Nombre = "Pulseras", categoriaId = 5 },
+            new { Id = 15, Nombre = "Aros", categoriaId = 5 }
             );
 
             // ✅ Seeding de propiedades owned (desde EF Core 8+)

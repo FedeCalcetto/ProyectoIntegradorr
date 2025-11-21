@@ -121,9 +121,9 @@ namespace ProyectoIntegrador_Web.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return View(modelo);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario.");
+                ModelState.AddModelError(string.Empty, e.Message);
                 return View(modelo);
             }
         }
