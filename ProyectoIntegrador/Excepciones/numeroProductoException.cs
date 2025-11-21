@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Excepciones
 {
-    public class MayusculaPasswordException : Exception
+    public class numeroProductoException : Exception
     {
-        public MayusculaPasswordException()
-        {
-        }
-
-        public MayusculaPasswordException(string? message) : base(message)
+        public numeroProductoException() : base("el nombre no puede tener numeros")
         {
         }
     }

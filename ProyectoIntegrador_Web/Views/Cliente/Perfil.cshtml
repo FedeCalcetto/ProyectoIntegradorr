@@ -5,20 +5,56 @@
 }
 
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-body p-4">
-                    <h2 class="text-center mb-3 text-primary fw-semibold">Mi Perfil</h2>
-                    <p class="text-center text-muted mb-4">Actualiza tus datos personales</p>
 
-                    @if (TempData["Mensaje"] != null)
-                    {
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            @TempData["Mensaje"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    }
+
+    <h2 class="text-center mb-3 fw-semibold" style="color: black;">Mi Perfil</h2>
+    <p class="text-center text-muted mb-4">Actualiza tus datos personales</p>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+                            <form asp-action="CambiarFotoCliente" method="post" enctype="multipart/form-data" class="text-center mb-4">
+                            <!-- IMAGEN -->
+                            <div class="d-flex justify-content-center mb-2">
+                                <img id="fotoPerfilCliente"
+                                     src="@(string.IsNullOrEmpty(Model.Foto) ? "/images/usuarios/default-image.jpg" : Model.Foto)"
+                                     class="img-thumbnail shadow foto-perfil">
+                            </div>
+
+                            <!-- NOMBRE DEL ARCHIVO (MOVIDO AQUÍ) -->
+                            <div class="mb-2">
+                                <span id="archivoImagenSeleccionado" class="text-muted"></span>
+                            </div>
+
+                            <!-- BOTONES -->
+                            <div class="d-flex justify-content-center gap-3">
+
+                                <label id="lblFoto" for="archivoFotoCliente" class="btn btn-outline-secondary">
+                                    Seleccionar foto
+                                </label>
+
+            <input id="archivoFotoCliente" type="file" name="archivoFotoCliente" accept="image/*" style="display:none;" />
+
+                                <button id="confirmarFotoClienteBtn" type="submit" class="btn btn-primary">
+                                    Confirmar foto
+                                </button>
+
+                            </div>
+
+                        </form>
 
                     <form asp-action="Perfil" method="post">
                         @Html.AntiForgeryToken()
@@ -79,10 +115,35 @@
                             <button type="submit" class="btn btn-primary">Guardar cambios</button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+    <script>
+        const input = document.getElementById("archivoFotoCliente");
+        const preview = document.getElementById("fotoPerfilCliente");
+        const archivoLabel = document.getElementById("archivoImagenSeleccionado");
+
+        input.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+
+                const archivo = this.files[0];
+
+                // Mensaje completo
+                archivoLabel.innerHTML = `
+                    <strong>${archivo.name}</strong><br>
+                    <span class="text-danger">
+                        Esto es solo una previsualización. Debes confirmar para guardar.
+                    </span>
+                `;
+
+                // Previsualizar imagen
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(archivo);
+            }
+        });
+    </script>
+           </div>
 
 

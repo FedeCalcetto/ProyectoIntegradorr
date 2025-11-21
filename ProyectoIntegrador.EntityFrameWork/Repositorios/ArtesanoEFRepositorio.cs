@@ -1,4 +1,5 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
+﻿using Microsoft.EntityFrameworkCore;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
@@ -30,8 +31,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             entidad.foto = artesano.foto;
             entidad.nombre = artesano.nombre;
             entidad.apellido = artesano.apellido;
-            //entidad.email = cliente.email;
             entidad.password = artesano.password;
+            entidad.descripcion = artesano.descripcion;
+
+            entidad.telefono = artesano.telefono;
             _contexto.Update(entidad);
             _contexto.SaveChanges();
         }
@@ -62,6 +65,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                       .OfType<Artesano>()
                       .FirstOrDefault(a => a.email.email == email);
 
+        }
+
+        public Artesano ObtenerProductosArtesano(string email)
+        {
+            return _contexto.Usuarios
+            .OfType<Artesano>()
+            .Include(a => a.productos)
+            .FirstOrDefault(a => a.email.email == email);
         }
 
         public IEnumerable<Artesano> ObtenerTodos()

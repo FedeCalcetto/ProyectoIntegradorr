@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Excepciones
 {
-    public class MayusculaPasswordException : Exception
+    public class ValidarNumeroEnNombreException : Exception
     {
-        public MayusculaPasswordException()
+        public ValidarNumeroEnNombreException() : base("El nombre y el apellido no puede tener numeros")
         {
-        }
 
-        public MayusculaPasswordException(string? message) : base(message)
-        {
         }
     }
 }

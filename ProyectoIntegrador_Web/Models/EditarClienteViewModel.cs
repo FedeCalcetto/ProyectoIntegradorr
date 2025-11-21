@@ -22,5 +22,6 @@ namespace ProyectoIntegrador_Web.Models
         [Required(ErrorMessage = "El barrio es obligatorio")]
         public string Barrio { get; set; }
         public List<string>? DepartamentosOpciones { get; set; }
+        public string Foto { get; set; }
     }
 }

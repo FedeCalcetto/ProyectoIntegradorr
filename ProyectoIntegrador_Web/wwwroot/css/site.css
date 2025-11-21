@@ -30,7 +30,7 @@ body {
   text-align: start;
 }
 
-#divArtesano {
+#divArtesano, #divCliente {
     position: absolute;
     top: 10px;
     right: 20px;
@@ -58,15 +58,17 @@ body {
     justify-content: center;
     margin-bottom: 20px;
     background-color: white;
-    color: black;
+    color: dimgray;
 }
     #nuevaP:hover {
         color: white;
-        background-color: darkgray;
+        background-color: dimgray;
+        border-color: dimgray;
     }
 
 #guardarCambiosArtesano {
-    background-color: cornflowerblue;
+    background-color: green;
+    border-color: forestgreen;
 }
 
 
@@ -77,9 +79,9 @@ body {
     }
 
 #volverArtesano {
-    background-color: cornflowerblue;
+    background-color: indianred;
     color: white;
-    border-color:blue;
+    border-color:darkred;
 }
 
 
@@ -88,3 +90,60 @@ body {
         background-color: white;
         border-color: indianred;
     }
+
+#confirmarFotoBtn {
+    margin-left: 20px;
+    margin-top: 10px;
+    background-color: white;
+    color: dimgray;
+    border-color: dimgray;
+    height: 40px;
+}
+
+    #confirmarFotoBtn:hover {
+        color: white;
+        background-color: dimgray;
+        border-color: dimgray;
+    }
+
+    #lblFoto {
+        margin-right: 20px;
+        margin-top: 8px;
+        height: 40px;
+        justify-content: center;
+        background-color: white;
+    }
+
+        #lblFoto:hover {
+            color: white;
+            background-color: dimgray;
+        }
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+    height: auto;
+}
+
+.barraLateral {
+    width: 250px;
+    background-color: rgba(0, 0, 0, 0.10);
+}
+
+.sidebar {
+    padding: 20px;
+}
+
+.contenido {
+    flex: 1;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0 10px 10px 0;
+}
+
+.foto-perfil {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px; 
+}

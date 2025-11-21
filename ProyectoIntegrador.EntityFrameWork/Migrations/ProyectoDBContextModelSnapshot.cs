@@ -24,19 +24,46 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("Categorias");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Cerámica"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Textiles"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Nombre = "Madera"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Nombre = "Cuero"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Nombre = "Joyería Artesanal"
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
@@ -191,9 +218,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("stock")
                         .HasColumnType("int");
 
-                    b.Property<int>("subCategroiaId")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
                     b.HasIndex("Clienteid");
@@ -257,6 +281,98 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("categoriaId");
 
                     b.ToTable("SubCategorias");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Vasos y tazas",
+                            categoriaId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Platos y bowls",
+                            categoriaId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Nombre = "Esculturas cerámicas",
+                            categoriaId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Nombre = "Ropa tejida",
+                            categoriaId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Nombre = "Alfombras",
+                            categoriaId = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Nombre = "Accesorios textiles",
+                            categoriaId = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Nombre = "Tallados en madera",
+                            categoriaId = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Nombre = "Muebles pequeños",
+                            categoriaId = 3
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Nombre = "Decoración en madera",
+                            categoriaId = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Nombre = "Carteras",
+                            categoriaId = 4
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Nombre = "Cinturones",
+                            categoriaId = 4
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Nombre = "Accesorios de cuero",
+                            categoriaId = 4
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Nombre = "Collares",
+                            categoriaId = 5
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Nombre = "Pulseras",
+                            categoriaId = 5
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Nombre = "Aros",
+                            categoriaId = 5
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", b =>
@@ -308,7 +424,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 1,
                             TipoUsuario = "ADMIN",
-                            Verificado = false,
+                            Verificado = true,
                             apellido = "Principal",
                             nombre = "Administrador",
                             password = "Admin123456",
@@ -318,7 +434,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 2,
                             TipoUsuario = "CLIENTE",
-                            Verificado = false,
+                            Verificado = true,
                             apellido = "Cliente",
                             nombre = "Juan",
                             password = "Cliente123456",
@@ -328,7 +444,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 3,
                             TipoUsuario = "ARTESANO",
-                            Verificado = false,
+                            Verificado = true,
                             apellido = "Artesana",
                             nombre = "Maria",
                             password = "Artesano123456",
@@ -364,12 +480,21 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("Clienteid");
 
+                    b.ToTable("Usuarios", t =>
+                        {
+                            t.Property("foto")
+                                .HasColumnName("Artesano_foto");
+                        });
+
                     b.HasDiscriminator().HasValue("ARTESANO");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
+
+                    b.Property<string>("foto")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("CLIENTE");
                 });

@@ -18,12 +18,14 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<Producto> productosFavoritos { get; set; }
         //public List<PedidoPersonalizado> pedidosCliente { get; set; }
         public Direccion? direccion { get; set; }
+        public string? foto { get; set; }
         public void validarEditar()
         {
             valdiarDireccion();
+            validarNombres();
         }
 
-        private void valdiarDireccion()
+        public void valdiarDireccion()
         {
             if (string.IsNullOrEmpty(direccion.barrio) ||
                 string.IsNullOrEmpty(direccion.departamento) ||
@@ -31,6 +33,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
             {
                 throw new DireccionException();
             }
+
         }
 
         public void validarContra(string contraNueva,string contraRepetida,string contraActual)

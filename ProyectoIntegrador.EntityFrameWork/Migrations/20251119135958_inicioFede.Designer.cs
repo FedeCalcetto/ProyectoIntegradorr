@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251113124353_inicio")]
-    partial class inicio
+    [Migration("20251119135958_inicioFede")]
+    partial class inicioFede
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,19 +27,46 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("Categorias");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Cerámica"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Textiles"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Nombre = "Madera"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Nombre = "Cuero"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Nombre = "Joyería Artesanal"
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
@@ -194,9 +221,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("stock")
                         .HasColumnType("int");
 
-                    b.Property<int>("subCategroiaId")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
                     b.HasIndex("Clienteid");
@@ -260,6 +284,98 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("categoriaId");
 
                     b.ToTable("SubCategorias");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Vasos y tazas",
+                            categoriaId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Platos y bowls",
+                            categoriaId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Nombre = "Esculturas cerámicas",
+                            categoriaId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Nombre = "Ropa tejida",
+                            categoriaId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Nombre = "Alfombras",
+                            categoriaId = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Nombre = "Accesorios textiles",
+                            categoriaId = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Nombre = "Tallados en madera",
+                            categoriaId = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Nombre = "Muebles pequeños",
+                            categoriaId = 3
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Nombre = "Decoración en madera",
+                            categoriaId = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Nombre = "Carteras",
+                            categoriaId = 4
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Nombre = "Cinturones",
+                            categoriaId = 4
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Nombre = "Accesorios de cuero",
+                            categoriaId = 4
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Nombre = "Collares",
+                            categoriaId = 5
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Nombre = "Pulseras",
+                            categoriaId = 5
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Nombre = "Aros",
+                            categoriaId = 5
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", b =>
@@ -270,16 +386,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("CodigoVerificacion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TipoUsuario")
                         .IsRequired()
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
 
+                    b.Property<bool>("Verificado")
+                        .HasColumnType("bit");
+
                     b.Property<string>("apellido")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("foto")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("nombre")
@@ -308,6 +427,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 1,
                             TipoUsuario = "ADMIN",
+                            Verificado = true,
                             apellido = "Principal",
                             nombre = "Administrador",
                             password = "Admin123456",
@@ -317,6 +437,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 2,
                             TipoUsuario = "CLIENTE",
+                            Verificado = true,
                             apellido = "Cliente",
                             nombre = "Juan",
                             password = "Cliente123456",
@@ -326,6 +447,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 3,
                             TipoUsuario = "ARTESANO",
+                            Verificado = true,
                             apellido = "Artesana",
                             nombre = "Maria",
                             password = "Artesano123456",
@@ -349,6 +471,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<string>("descripcion")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("foto")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("telefono")
@@ -501,57 +626,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", b =>
                 {
-                    b.OwnsOne("ProyectoIntegrador.LogicaNegocio.ValueObjects.Direccion", "direccion", b1 =>
-                        {
-                            b1.Property<int>("Usuarioid")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("barrio")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("direccion_barrio");
-
-                            b1.Property<string>("departamento")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("direccion_departamento");
-
-                            b1.Property<string>("domicilio")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("direccion_domicilio");
-
-                            b1.HasKey("Usuarioid");
-
-                            b1.ToTable("Usuarios");
-
-                            b1.WithOwner()
-                                .HasForeignKey("Usuarioid");
-
-                            b1.HasData(
-                                new
-                                {
-                                    Usuarioid = 1,
-                                    barrio = "Centro",
-                                    departamento = "Montevideo",
-                                    domicilio = "Calle 123"
-                                },
-                                new
-                                {
-                                    Usuarioid = 2,
-                                    barrio = "Centro2",
-                                    departamento = "Montevideo",
-                                    domicilio = "Calle 1234"
-                                },
-                                new
-                                {
-                                    Usuarioid = 3,
-                                    barrio = "Centro3",
-                                    departamento = "Montevideo",
-                                    domicilio = "Calle 12345"
-                                });
-                        });
-
                     b.OwnsOne("ProyectoIntegrador.LogicaNegocio.ValueObjects.Email", "email", b1 =>
                         {
                             b1.Property<int>("Usuarioid")
@@ -587,8 +661,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                                 });
                         });
 
-                    b.Navigation("direccion");
-
                     b.Navigation("email")
                         .IsRequired();
                 });
@@ -598,6 +670,48 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
                         .WithMany("artesanosSeguidos")
                         .HasForeignKey("Clienteid");
+                });
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
+                {
+                    b.OwnsOne("ProyectoIntegrador.LogicaNegocio.ValueObjects.Direccion", "direccion", b1 =>
+                        {
+                            b1.Property<int>("Clienteid")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("barrio")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("direccion_barrio");
+
+                            b1.Property<string>("departamento")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("direccion_departamento");
+
+                            b1.Property<string>("domicilio")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("direccion_domicilio");
+
+                            b1.HasKey("Clienteid");
+
+                            b1.ToTable("Usuarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("Clienteid");
+
+                            b1.HasData(
+                                new
+                                {
+                                    Clienteid = 2,
+                                    barrio = "Centro",
+                                    departamento = "Montevideo",
+                                    domicilio = "Calle 123"
+                                });
+                        });
+
+                    b.Navigation("direccion");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>

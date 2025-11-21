@@ -19,10 +19,10 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public string password { get; set; }
         public string rol { get; set; }
 
-        /////////valicadion email/////////////////////
+
         public string? CodigoVerificacion { get; set; }
         public bool Verificado { get; set; }
-        //////////////////////////////////////////////
+
         
 
         public void Validar()
@@ -46,11 +46,9 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         {
             if (!password.Any(char.IsUpper) || !password.Any(char.IsLower))
             {
-                throw new MayusculaPasswordException();
+                throw new MayusculaPasswordException("La contraseña debe contener una mayúscula");
             }
-            {
-
-            }
+            
         }
 
         public void validarNombres()
@@ -59,13 +57,17 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
             {
                 throw new validarNombreException();
             }
+            if(nombre.Any(char.IsDigit) || apellido.Any(char.IsDigit))
+            {
+                throw new ValidarNumeroEnNombreException();
+            }
         }
 
         public void validarNumero()
         {
             if (!password.Any(char.IsDigit))
             {
-                throw new numeroPassowordException();
+                throw new numeroPassowordException("La contraseña debe contener un número");
             }
         }
     }

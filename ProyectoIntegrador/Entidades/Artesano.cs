@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProyectoIntegrador.LogicaNegocio.Excepciones;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,5 +17,15 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<Producto> productos { get; set; } = new List<Producto>();
         public string? foto { get; set; }
         //public List<PedidoPersonalizado> pedidosArtesano { get; set; }
+
+        public void ValidarTelefono(string telefono)
+        {
+            if(telefono != null) {
+                if (!telefono.All(char.IsDigit))
+                    throw new TelefonoUsuarioException("El teléfono solo puede contener números.");
+            }
+        }
+           
     }
-}
+     
+    }

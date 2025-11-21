@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251114224827_Initial")]
-    partial class Initial
+    [Migration("20251117022908_161125")]
+    partial class _161125
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -358,7 +358,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("foto")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("telefono")
@@ -596,8 +595,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                                 });
                         });
 
-                    b.Navigation("direccion")
-                        .IsRequired();
+                    b.Navigation("direccion");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>

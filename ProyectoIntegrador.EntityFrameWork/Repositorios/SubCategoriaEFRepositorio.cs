@@ -1,4 +1,5 @@
 ﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Interface;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
 using System.Collections.Generic;
@@ -8,23 +9,21 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 {
-    public class ProductoEFRepositorio : IProductoRepositorio
+    public class SubCategoriaEFRepositorio : ISubCategoriaRepositorio
     {
 
         private readonly ProyectoDBContext _contexto;
 
-        public ProductoEFRepositorio(ProyectoDBContext contexto)
+        public SubCategoriaEFRepositorio(ProyectoDBContext contexto)
         {
             _contexto = contexto;
         }
-        public void Agregar(Producto entidad)
+        public void Agregar(SubCategoria entidad)
         {
-            entidad.Validar();
-            _contexto.Productos.Add(entidad);
-            _contexto.SaveChanges();
+            throw new NotImplementedException();
         }
 
-        public void Editar(Producto entidad)
+        public void Editar(SubCategoria entidad)
         {
             throw new NotImplementedException();
         }
@@ -34,14 +33,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             throw new NotImplementedException();
         }
 
-        public Producto Obtener(int id)
+        public SubCategoria Obtener(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Producto> ObtenerTodos()
+        public IEnumerable<SubCategoria> ObtenerTodos()
         {
-            throw new NotImplementedException();
+            return _contexto.SubCategorias.ToList();
         }
     }
 }
