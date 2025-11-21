@@ -2,25 +2,62 @@
     ViewBag.Title = "Verificar Email";
 }
 
-<h2 class="text-center mt-4">Verificación de Email</h2>
+<div class="d-flex justify-content-center mt-5">
+    <div class="card shadow-lg p-4" style="max-width: 420px; width: 100%; border-radius: 18px;">
 
-<div class="container mt-4">
-    <form method="post" action="/Login/VerificarEmail" class="border p-4 rounded shadow-sm bg-light">
+        <div class="text-center mb-3">
+            <i class="bi bi-shield-lock-fill text-primary" style="font-size: 3rem;"></i>
+            <h3 class="mt-2">Verificación de correo</h3>
+            <p class="text-muted">Ingresá el código que enviamos a tu email</p>
+        </div>
 
-        <input type="hidden" name="email" value="@ViewBag.Email" />
-
-        @if (ViewBag.Error != null)
+        @*  MENSAJE DE ÉXITO *@
+        @if (ViewBag.Mensaje != null)
         {
-            <div class="alert alert-danger">@ViewBag.Error</div>
+            <div class="alert alert-success text-center">
+                <i class="bi bi-check-circle-fill"></i> @ViewBag.Mensaje
+            </div>
         }
 
-        <div class="mb-3">
-            <label class="form-label">Código enviado a tu correo:</label>
-            <input type="text" name="codigo" class="form-control" required />
-        </div>
+        @*  MENSAJE DE ERROR *@
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger text-center">
+                <i class="bi bi-exclamation-triangle-fill"></i> @ViewBag.Error
+            </div>
+        }
 
-        <div class="text-center">
-            <button class="btn btn-success">Verificar</button>
+        <form method="post" action="/Login/VerificarEmail">
+
+            <input type="hidden" name="email" value="@ViewBag.Email" />
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Código de verificación</label>
+                <input type="text"
+                       name="codigo"
+                       class="form-control form-control-lg text-center"
+                       placeholder="Ej: 123456"
+                       maxlength="6"
+                       required />
+            </div>
+
+            <button class="btn btn-primary w-100 btn-lg mb-2">
+                <i class="bi bi-unlock-fill"></i> Verificar código
+            </button>
+        </form>
+
+        <form method="post" action="/Login/ReenviarCodigo" class="text-center">
+            <input type="hidden" name="email" value="@ViewBag.Email" />
+
+            <button class="btn btn-outline-warning w-100 mt-2">
+                <i class="bi bi-arrow-repeat"></i> Reenviar código
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                ¿No ves el correo? Revisá la carpeta de <strong>spam</strong>.
+            </small>
         </div>
-    </form>
+    </div>
 </div>

@@ -48,8 +48,10 @@ namespace ProyectoIntegrador_Web.Controllers
             // ❗ Bloquear login si NO verificó su correo
             if (!usuario.Verificado)
             {
-                ModelState.AddModelError(string.Empty, "Debes verificar tu correo antes de iniciar sesión.");
-                return View(modelo);
+                /* ModelState.AddModelError(string.Empty, "Debes verificar tu correo antes de iniciar sesión.");
+                 return View(modelo);*/
+
+                return RedirectToAction("VerificarEmail", new { email = usuario.email.email });
             }
 
             HttpContext.Session.SetString("loginUsuario", usuario.email.email);
@@ -113,17 +115,16 @@ namespace ProyectoIntegrador_Web.Controllers
                 //  Enviar correo
                 await _email.EnviarCodigoAsync(entidad.email.email, codigo);
 
+                // Esto hace que el codigo dure 10 minutos en la session
+                HttpContext.Session.SetString("Codigo_" + entidad.email.email, codigo);
+                HttpContext.Session.SetString("CodigoExpira_" + entidad.email.email,DateTime.Now.AddMinutes(1).ToString());
+
                 //  Enviar a pantalla para ingresar código
                 return RedirectToAction("VerificarEmail", new { email = entidad.email.email });
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                return View(modelo);
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario.");
                 return View(modelo);
             }
         }
@@ -140,25 +141,81 @@ namespace ProyectoIntegrador_Web.Controllers
         public IActionResult VerificarEmail(string email, string codigo)
         {
             var usuario = _usuarioRepositorio.BuscarPorEmail(email);
+            if (usuario == null)
+                return NotFound();
+
+            // Obtener datos de Session
+            var expiraStr = HttpContext.Session.GetString("CodigoExpira_" + email);
+            var codigoGuardado = HttpContext.Session.GetString("Codigo_" + email);
+
+            if (expiraStr == null || codigoGuardado == null)
+            {
+                ViewBag.Error = "El código expiró. Solicita uno nuevo.";
+                ViewBag.Email = email;
+                return View();
+            }
+
+            // Convertir expiración
+            DateTime expira = DateTime.Parse(expiraStr);
+
+            // Usar UtcNow para evitar errores de zona horaria
+            if (DateTime.Now > expira)
+            {
+                ViewBag.Error = "El código expiró. Solicita uno nuevo.";
+                ViewBag.Email = email;
+                return View();
+            }
+
+            // Comparar código ingresado vs código guardado
+            if (codigoGuardado != codigo)
+            {
+                ViewBag.Error = "Código incorrecto.";
+                ViewBag.Email = email;
+                return View();
+            }
+
+            // Verificación correcta → marcar usuario
+            usuario.Verificado = true;
+            usuario.CodigoVerificacion = null;
+            _usuarioRepositorio.Actualizar(usuario);
+
+            // Limpiar session
+            HttpContext.Session.Remove("Codigo_" + email);
+            HttpContext.Session.Remove("CodigoExpira_" + email);
+
+            return View("VerificadoCorrectamente");
+        }
+
+        //reenviar codigo verificacion
+        [HttpPost]
+        public async Task<IActionResult> ReenviarCodigo(string email)
+        {
+            var usuario = _usuarioRepositorio.BuscarPorEmail(email);
 
             if (usuario == null)
                 return NotFound();
 
-            if (usuario.CodigoVerificacion == codigo)
-            {
-                usuario.Verificado = true;
-                usuario.CodigoVerificacion = null;
+            // Generar nuevo código
+            var nuevoCodigo = new Random().Next(100000, 999999).ToString();
 
-                _usuarioRepositorio.Actualizar(usuario);
+            usuario.CodigoVerificacion = nuevoCodigo;
+            _usuarioRepositorio.Actualizar(usuario);
 
-                return View("VerificadoCorrectamente");
-            }
+            // Enviar correo
+            await _email.EnviarCodigoAsync(email, nuevoCodigo);
 
-            ViewBag.Error = "Código incorrecto";
+            // 👉 Guardar código y expiración en Session
+            HttpContext.Session.SetString("Codigo_" + email, nuevoCodigo);
+            HttpContext.Session.SetString("CodigoExpira_" + email,
+            DateTime.Now.AddMinutes(10).ToString());
+
             ViewBag.Email = email;
-            return View();
+            ViewBag.Mensaje = "Se envió un nuevo código a tu correo.";
+
+            return View("VerificarEmail");
         }
-
-
     }
+
+
 }
+
