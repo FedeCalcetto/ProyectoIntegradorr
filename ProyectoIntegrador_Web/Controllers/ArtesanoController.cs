@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
@@ -54,6 +56,8 @@ namespace ProyectoIntegrador_Web.Controllers
 
             var modelo = new EditarArtesanoViewModel
             {
+                Descripcion = artesano.descripcion,
+                Telefono = artesano.telefono,
                 Nombre = artesano.nombre,
                 Apellido = artesano.apellido,
                 Email = artesano.email.email,
@@ -71,11 +75,12 @@ namespace ProyectoIntegrador_Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult PerfilArtesano(EditarArtesanoViewModel modelo)
         {
-
-            var email = HttpContext.Session.GetString("loginUsuario");
+            try
+            {
+                var email = HttpContext.Session.GetString("loginUsuario");
             if (!ModelState.IsValid)
             {
-                // Si hay errores de validación, vuelve a mostrar la vista
+                TempData["Error"] = "No se puedo actualizar el perfil.";
                 return View(modelo);
             }
 
@@ -86,25 +91,40 @@ namespace ProyectoIntegrador_Web.Controllers
                 return NotFound("No se encontró el cliente para actualizar.");
             }
 
-            // Actualizar propiedades del dominio
+            
+                // Actualizar propiedades del dominio
+            artesano.descripcion = modelo.Descripcion;
+            artesano.telefono = modelo.Telefono;
             artesano.nombre = modelo.Nombre;
             artesano.apellido = modelo.Apellido;
             artesano.password = modelo.Password;
             artesano.foto = modelo.Foto ?? artesano.foto;
-            //cliente.email = new Email(modelo.Email); 
 
+                artesano.Validar();
+                artesano.ValidarTelefono(modelo.Telefono);
+                
+                _artesanorepo.Actualizar(artesano);
 
-            // Guardar cambios
-            _artesanorepo.Actualizar(artesano);
-
-            // Mensaje temporal para la vista
-            TempData["Mensaje"] = "Perfil actualizado correctamente.";
-
-            // Redirige nuevamente al perfil (GET)
-            return RedirectToAction("PerfilArtesano");
+                TempData["Mensaje"] = "Perfil actualizado correctamente.";
+                return RedirectToAction("PerfilArtesano");
+            }
+            catch (TelefonoUsuarioException ex)
+            {
+                ModelState.AddModelError("Telefono", ex.Message);
+                return View(modelo);
+            }
+            catch (validarNombreException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(modelo);
+            }
+           
         }
-        [HttpGet]
-        public JsonResult GetSubcategorias(int categoriaId)
+        
+
+
+        // GET: ArtesanoController/Details/5
+        public ActionResult Details(int id)
         {
             var subcategorias = _SubCategoria.ObtenerTodos()
         .Where(s => s.categoriaId == categoriaId)
@@ -253,7 +273,9 @@ namespace ProyectoIntegrador_Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult NuevaPassword(NuevaPasswordViewModel modelo)
         {
-            if (!ModelState.IsValid)
+            try
+            {
+                if (!ModelState.IsValid)
                 return View(modelo);
 
             var email = HttpContext.Session.GetString("loginUsuario");
@@ -262,11 +284,34 @@ namespace ProyectoIntegrador_Web.Controllers
             if (artesano == null)
                 return NotFound();
 
-            artesano.password = modelo.Password;
-            _artesanorepo.Actualizar(artesano);
+            
+                artesano.password = modelo.Password;
+                artesano.validarPasswordMaysucula();
+                artesano.validarNumero(); 
+                artesano.validarContraseñaLongitud();
+                _artesanorepo.Actualizar(artesano);
 
-            TempData["Mensaje"] = "Contraseña actualizada correctamente.";
-            return RedirectToAction("PerfilArtesano");
+                TempData["Mensaje"] = "Contraseña actualizada correctamente.";
+                return RedirectToAction("PerfilArtesano");
+            }
+            catch (MayusculaPasswordException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                return View(modelo);
+            }
+            catch (numeroPassowordException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                return View(modelo);
+            }
+            catch (passwordUsuarioException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                return View(modelo);
+            }
         }
 
         [HttpPost]

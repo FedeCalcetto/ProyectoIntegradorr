@@ -46,11 +46,9 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         {
             if (!password.Any(char.IsUpper) || !password.Any(char.IsLower))
             {
-                throw new MayusculaPasswordException();
+                throw new MayusculaPasswordException("La contraseña debe contener una mayúscula");
             }
-            {
-
-            }
+            
         }
 
         public void validarNombres()
@@ -69,7 +67,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         {
             if (!password.Any(char.IsDigit))
             {
-                throw new numeroPassowordException();
+                throw new numeroPassowordException("La contraseña debe contener un número");
             }
         }
     }

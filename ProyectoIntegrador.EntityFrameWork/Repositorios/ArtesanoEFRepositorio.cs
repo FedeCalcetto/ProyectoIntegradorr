@@ -31,8 +31,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             entidad.foto = artesano.foto;
             entidad.nombre = artesano.nombre;
             entidad.apellido = artesano.apellido;
-            //entidad.email = cliente.email;
             entidad.password = artesano.password;
+            entidad.descripcion = artesano.descripcion;
+
+            entidad.telefono = artesano.telefono;
             _contexto.Update(entidad);
             _contexto.SaveChanges();
         }

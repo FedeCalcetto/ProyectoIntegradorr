@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251118142307_clienteConFoto")]
+    partial class clienteConFoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,46 +27,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("Categorias");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Cerámica"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Textiles"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Madera"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Cuero"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Joyería Artesanal"
-                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
@@ -218,6 +194,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("stock")
                         .HasColumnType("int");
 
+                    b.Property<int>("subCategroiaId")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
                     b.HasIndex("Clienteid");
@@ -281,98 +260,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("categoriaId");
 
                     b.ToTable("SubCategorias");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Vasos y tazas",
-                            categoriaId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Platos y bowls",
-                            categoriaId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Nombre = "Esculturas cerámicas",
-                            categoriaId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Nombre = "Ropa tejida",
-                            categoriaId = 2
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Nombre = "Alfombras",
-                            categoriaId = 2
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Nombre = "Accesorios textiles",
-                            categoriaId = 2
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Nombre = "Tallados en madera",
-                            categoriaId = 3
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Nombre = "Muebles pequeños",
-                            categoriaId = 3
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Nombre = "Decoración en madera",
-                            categoriaId = 3
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Nombre = "Carteras",
-                            categoriaId = 4
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Nombre = "Cinturones",
-                            categoriaId = 4
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Nombre = "Accesorios de cuero",
-                            categoriaId = 4
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Nombre = "Collares",
-                            categoriaId = 5
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Nombre = "Pulseras",
-                            categoriaId = 5
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Nombre = "Aros",
-                            categoriaId = 5
-                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", b =>
@@ -424,7 +311,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 1,
                             TipoUsuario = "ADMIN",
-                            Verificado = true,
+                            Verificado = false,
                             apellido = "Principal",
                             nombre = "Administrador",
                             password = "Admin123456",
@@ -434,7 +321,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 2,
                             TipoUsuario = "CLIENTE",
-                            Verificado = true,
+                            Verificado = false,
                             apellido = "Cliente",
                             nombre = "Juan",
                             password = "Cliente123456",
@@ -444,7 +331,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             id = 3,
                             TipoUsuario = "ARTESANO",
-                            Verificado = true,
+                            Verificado = false,
                             apellido = "Artesana",
                             nombre = "Maria",
                             password = "Artesano123456",

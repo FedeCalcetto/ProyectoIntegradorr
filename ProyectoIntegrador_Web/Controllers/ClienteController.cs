@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using ProyectoIntegrador_Web.Models;
@@ -86,6 +87,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 Domicilio = cliente.direccion?.domicilio,
                 Departamento = cliente.direccion?.departamento,
                 Barrio = cliente.direccion?.barrio,
+                Foto = cliente.foto,
 
                 DepartamentosOpciones = ObtenerDepartamentos()
             };
@@ -97,36 +99,39 @@ namespace ProyectoIntegrador_Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Perfil(EditarClienteViewModel modelo)
         {
-
-            var email = HttpContext.Session.GetString("loginUsuario");
-            modelo.DepartamentosOpciones = ObtenerDepartamentos();
-            if (!ModelState.IsValid)
-            {
-                modelo.DepartamentosOpciones = ObtenerDepartamentos();
-
-                return View(modelo);
-            }
-
-            // Buscar el cliente por email (value object reconstruido)
-            var cliente = _obtenerCliente.Ejecutar(email);
-            if (cliente == null)
-            {
-                return NotFound("No se encontró el cliente para actualizar.");
-            }
-
-            // Actualizar propiedades del dominio
-            cliente.nombre = modelo.Nombre;
-            cliente.apellido = modelo.Apellido;
-            //cliente.email = new Email(modelo.Email); 
-
-            cliente.direccion = new Direccion
-            {
-                domicilio = modelo.Domicilio,
-                departamento = modelo.Departamento,
-                barrio = modelo.Barrio
-            };
             try
             {
+                var email = HttpContext.Session.GetString("loginUsuario");
+                modelo.DepartamentosOpciones = ObtenerDepartamentos();
+                if (!ModelState.IsValid)
+                {
+                    modelo.DepartamentosOpciones = ObtenerDepartamentos();
+
+                    return View(modelo);
+                }
+
+                // Buscar el cliente por email (value object reconstruido)
+                var cliente = _obtenerCliente.Ejecutar(email);
+                if (cliente == null)
+                {
+                    return NotFound("No se encontró el cliente para actualizar.");
+                }
+                cliente.Validar();
+
+                // Actualizar propiedades del dominio
+                cliente.nombre = modelo.Nombre;
+                cliente.apellido = modelo.Apellido;
+                //cliente.email = new Email(modelo.Email); 
+
+                cliente.direccion = new Direccion
+                {
+                    domicilio = modelo.Domicilio,
+                    departamento = modelo.Departamento,
+                    barrio = modelo.Barrio
+                };
+                cliente.foto = modelo.Foto ?? cliente.foto;
+
+                // Guardar cambios
                 _clienteRepositorio.Actualizar(cliente);
                 modelo.DepartamentosOpciones = ObtenerDepartamentos();
                 // Mensaje temporal para la vista
@@ -134,15 +139,12 @@ namespace ProyectoIntegrador_Web.Controllers
 
                 // Redirige nuevamente al perfil (GET)
                 return RedirectToAction("Perfil");
-
             }
-            catch (Exception ex) {
-
-                ModelState.AddModelError("", ex.Message);
+            catch (validarNombreException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
                 return View(modelo);
             }
-            // Guardar cambios
-            
         }
         public IActionResult CambioContra()
         {
@@ -261,5 +263,55 @@ namespace ProyectoIntegrador_Web.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
-    }
+
+        [HttpPost]
+        public IActionResult CambiarFotoCliente(IFormFile archivoFotoCliente)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var cliente = _clienteRepositorio.obtenerCliente(email);
+
+            if (archivoFotoCliente == null || archivoFotoCliente.Length == 0)
+            {
+                TempData["Error"] = "Debes seleccionar un archivo.";
+                return RedirectToAction("Perfil");
+            }
+            var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/jpg" };
+            if (!tiposPermitidos.Contains(archivoFotoCliente.ContentType))
+            {
+                TempData["Error"] = "El archivo debe ser una imagen JPG o PNG.";
+                return RedirectToAction("Perfil");
+            }
+
+            var extension = Path.GetExtension(archivoFotoCliente.FileName).ToLower();
+            var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
+
+            if (!extensionesPermitidas.Contains(extension))
+            {
+                TempData["Error"] = "Formato no permitido. Usa JPG o PNG.";
+                return RedirectToAction("Perfil");
+            }
+
+            var nombreArchivo = Guid.NewGuid() + extension;
+            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/usuarios");
+
+            if (!Directory.Exists(uploads))
+            {
+                Directory.CreateDirectory(uploads);
+            }
+
+            var filePath = Path.Combine(uploads, nombreArchivo);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                archivoFotoCliente.CopyTo(stream);
+            }
+
+            cliente.foto = "/images/usuarios/" + nombreArchivo;
+            _clienteRepositorio.Actualizar(cliente);
+
+            TempData["Mensaje"] = "¡Foto actualizada con éxito!";
+            return RedirectToAction("Perfil");
+        }
+    
+}
 }

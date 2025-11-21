@@ -5,6 +5,12 @@ namespace ProyectoIntegrador_Web.Models
 {
     public class EditarArtesanoViewModel
     {
+        [ValidateNever]
+        public string Descripcion { get; set; }
+        [ValidateNever]
+        public string Telefono { get; set; }
+
+
         [Required(ErrorMessage = "El nombre es obligatorio")]
         public string Nombre { get; set; }
 
@@ -17,6 +23,7 @@ namespace ProyectoIntegrador_Web.Models
 
         [ValidateNever]
         public string Password { get; set; }
+
 
         public string Foto { get; set; }
     }
