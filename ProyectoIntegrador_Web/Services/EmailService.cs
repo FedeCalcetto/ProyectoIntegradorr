@@ -27,12 +27,23 @@ namespace ProyectoIntegrador_Web.Services
                 EnableSsl = true
             };
 
+            // URL para que el usuario pueda verificar cuando quiera
+            string link = $"https://localhost:7131/Login/VerificarEmail?email={destino}";
+
+            string cuerpo = $@"
+Tu código de verificación es: {codigo}
+
+Podés verificar tu cuenta haciendo clic en el siguiente enlace o copiá y pegá esta URL en tu navegador:
+
+{link}
+";
+
             var mensaje = new MailMessage();
             mensaje.From = new MailAddress(from);
             mensaje.To.Add(destino);
             mensaje.Subject = "Código de verificación";
-            mensaje.Body = $"Tu código de verificación es: {codigo}";
-            mensaje.IsBodyHtml = false;
+            mensaje.Body = cuerpo;
+            mensaje.IsBodyHtml = false; // si querés HTML me avisás
 
             await smtp.SendMailAsync(mensaje);
         }

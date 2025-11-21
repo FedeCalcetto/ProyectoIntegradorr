@@ -31,8 +31,11 @@
 
                         <div class="form-group mb-3">
                             <label asp-for="Password" class="form-label"></label>
-                            <input asp-for="Password" type="password" class="form-control" placeholder="Ingrese su contraseña" />
+                            <input asp-for="Password" id="PasswordInput" type="password" class="form-control" placeholder="Ingrese su contraseña" />
                             <span asp-validation-for="Password" class="text-danger"></span>
+
+                            <!-- Mensajes dinámicos en vivo -->
+                            <div id="passwordHelp" class="text-danger mt-2"></div>
                         </div>
 
                         <div class="d-grid gap-2">
@@ -47,18 +50,9 @@
                             Registrarse
                         </a>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
-
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

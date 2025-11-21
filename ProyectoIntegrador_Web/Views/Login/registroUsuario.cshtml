@@ -38,6 +38,8 @@
                             <label asp-for="password" class="form-label fw-semibold"></label>
                             <input asp-for="password" type="password" class="form-control" placeholder="Mínimo 10 caracteres" />
                             <span asp-validation-for="password" class="text-danger small"></span>
+
+                            <div id="passwordHelp" class="text-danger mt-2"></div>
                         </div>
 
                         <div class="form-check mb-4">
@@ -68,3 +70,45 @@
         </div>
     </div>
 </div>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Detectar automáticamente el input de contraseña
+            const input =
+                document.querySelector('input[asp-for="password"]') ||   // si existe tal cual
+                document.querySelector('input[id*="password" i]') ||     // si el ID contiene "password"
+                document.querySelector('input[name*="password" i]') ||   // si el name contiene "password"
+                document.querySelector('input[type="password"]');        // último recurso
+
+            const help = document.getElementById("passwordHelp");
+
+            if (!input || !help) {
+                console.warn("No se encontró el input de password.");
+                return;
+            }
+
+            input.addEventListener("input", () => {
+                const value = input.value;
+                let errores = [];
+
+                if (value.length < 10 || value.length > 30)
+                    errores.push("• Debe tener entre 10 y 30 caracteres.");
+
+                if (!/[A-Z]/.test(value))
+                    errores.push("• Debe tener al menos una mayúscula.");
+
+                if (!/[a-z]/.test(value))
+                    errores.push("• Debe tener al menos una minúscula.");
+
+                if (!/[0-9]/.test(value))
+                    errores.push("• Debe incluir al menos un número.");
+
+                help.innerHTML = errores.join("<br>");
+            });
+
+        });
+    </script>
+}
