@@ -125,15 +125,24 @@ namespace ProyectoIntegrador_Web.Controllers
                 departamento = modelo.Departamento,
                 barrio = modelo.Barrio
             };
+            try
+            {
+                _clienteRepositorio.Actualizar(cliente);
+                modelo.DepartamentosOpciones = ObtenerDepartamentos();
+                // Mensaje temporal para la vista
+                TempData["Mensaje"] = "Perfil actualizado correctamente.";
 
+                // Redirige nuevamente al perfil (GET)
+                return RedirectToAction("Perfil");
+
+            }
+            catch (Exception ex) {
+
+                ModelState.AddModelError("", ex.Message);
+                return View(modelo);
+            }
             // Guardar cambios
-            _clienteRepositorio.Actualizar(cliente);
-            modelo.DepartamentosOpciones = ObtenerDepartamentos();
-            // Mensaje temporal para la vista
-            TempData["Mensaje"] = "Perfil actualizado correctamente.";
-
-            // Redirige nuevamente al perfil (GET)
-            return RedirectToAction("Perfil");
+            
         }
         public IActionResult CambioContra()
         {

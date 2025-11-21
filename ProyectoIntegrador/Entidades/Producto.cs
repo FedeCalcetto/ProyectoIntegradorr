@@ -16,19 +16,28 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public string nombre { get; set; }
         [Required(ErrorMessage = "La descripción es requerida")]
         public string descripcion { get; set; }
-        [Required(ErrorMessage = "El perico es requerido")]
+        [Required(ErrorMessage = "El precio es requerido")]
         public int precio { get; set; }
         [Required(ErrorMessage = "la imagen es requerida")]
         public string imagen { get; set; }
+        [Required(ErrorMessage = "el stock es requerido")]
         public int stock { get; set; }
         public Artesano artesano { get; set; }
         public List<Comentario> comentarios { get; set; } = new List<Comentario>();
-        public int subCategroiaId { get; set; }
+        public int SubCategoriaId { get; set; }
         public SubCategoria SubCategoria { get; set; }
 
         public void Validar()
         {
-            throw new NotImplementedException();
+            validarNombre();
+        }
+
+        public void validarNombre()
+        {
+            if (nombre.Any(char.IsDigit))
+            {
+
+            }
         }
     }
 }

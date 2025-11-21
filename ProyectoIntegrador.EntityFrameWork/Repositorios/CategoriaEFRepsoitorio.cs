@@ -40,7 +40,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public IEnumerable<Categoria> ObtenerTodos()
         {
-            throw new NotImplementedException();
+            return _contexto.Categorias.ToList();
         }
     }
 }

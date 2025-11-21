@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class inicioFede : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,13 +17,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 name: "Categorias",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categorias", x => x.id);
+                    table.PrimaryKey("PK_Categorias", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -38,9 +40,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     CodigoVerificacion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Verificado = table.Column<bool>(type: "bit", nullable: false),
                     TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
+                    foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Clienteid = table.Column<int>(type: "int", nullable: true),
                     direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -72,7 +74,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         name: "FK_SubCategorias_Categorias_categoriaId",
                         column: x => x.categoriaId,
                         principalTable: "Categorias",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -140,7 +142,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     imagen = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     stock = table.Column<int>(type: "int", nullable: false),
                     artesanoid = table.Column<int>(type: "int", nullable: false),
-                    subCategroiaId = table.Column<int>(type: "int", nullable: false),
                     SubCategoriaId = table.Column<int>(type: "int", nullable: false),
                     Clienteid = table.Column<int>(type: "int", nullable: true)
                 },
@@ -263,19 +264,53 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Categorias",
+                columns: new[] { "Id", "Nombre" },
+                values: new object[,]
+                {
+                    { 1, "Cerámica" },
+                    { 2, "Textiles" },
+                    { 3, "Madera" },
+                    { 4, "Cuero" },
+                    { 5, "Joyería Artesanal" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 1, null, "ADMIN", false, "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
+                values: new object[] { 1, null, "ADMIN", true, "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
-                values: new object[] { 2, null, "CLIENTE", false, "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
+                values: new object[] { 2, null, "CLIENTE", true, "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 3, null, "ARTESANO", false, "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" });
+                values: new object[] { 3, null, "ARTESANO", true, "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" });
+
+            migrationBuilder.InsertData(
+                table: "SubCategorias",
+                columns: new[] { "Id", "Nombre", "categoriaId" },
+                values: new object[,]
+                {
+                    { 1, "Vasos y tazas", 1 },
+                    { 2, "Platos y bowls", 1 },
+                    { 3, "Esculturas cerámicas", 1 },
+                    { 4, "Ropa tejida", 2 },
+                    { 5, "Alfombras", 2 },
+                    { 6, "Accesorios textiles", 2 },
+                    { 7, "Tallados en madera", 3 },
+                    { 8, "Muebles pequeños", 3 },
+                    { 9, "Decoración en madera", 3 },
+                    { 10, "Carteras", 4 },
+                    { 11, "Cinturones", 4 },
+                    { 12, "Accesorios de cuero", 4 },
+                    { 13, "Collares", 5 },
+                    { 14, "Pulseras", 5 },
+                    { 15, "Aros", 5 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentarios_artesanoId",

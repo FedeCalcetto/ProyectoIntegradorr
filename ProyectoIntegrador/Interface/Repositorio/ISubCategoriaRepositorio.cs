@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
-    public interface IArtesanoRepositorio : IRepositorio<Artesano>
+    public interface ISubCategoriaRepositorio : IRepositorio<SubCategoria>
     {
-        Artesano ObtenerPorEmail(string email);
-        void Actualizar(Artesano artesano);
-        Artesano ObtenerProductosArtesano(string email);
     }
 }

@@ -23,9 +23,11 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddDbContext<ProyectoDBContext>();
             builder.Services.AddScoped<IUsuarioRepositorio, UsuarioEFRepsoitorio>();
             builder.Services.AddScoped<IAdminRepositorio, AdminEFRepositorio>();
+            builder.Services.AddScoped<ISubCategoriaRepositorio, SubCategoriaEFRepositorio>();
             builder.Services.AddScoped<IArtesanoRepositorio, ArtesanoEFRepositorio>();
             builder.Services.AddScoped<IProductoRepositorio, ProductoEFRepositorio>();
             builder.Services.AddScoped<IClienteRepositorio, ClienteEFRepositorio>();
+            builder.Services.AddScoped<ICategoriaRepositorio, CategoriaEFRepsoitorio>();
 
             //Casos de uso
             builder.Services.AddScoped<ILogin, LoginCasoDeUso>();

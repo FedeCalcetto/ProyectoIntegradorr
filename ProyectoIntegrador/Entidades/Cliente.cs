@@ -21,16 +21,20 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public void validarEditar()
         {
             valdiarDireccion();
+            validarNombres();
         }
 
-        private void valdiarDireccion()
+        public void valdiarDireccion()
         {
-            if (direccion.barrio.IsNullOrEmpty() || direccion.departamento.IsNullOrEmpty() || direccion.domicilio.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(direccion.barrio) ||
+                string.IsNullOrEmpty(direccion.departamento) ||
+                string.IsNullOrEmpty(direccion.domicilio))
             {
                 throw new DireccionException();
             }
+
         }
-        
+
         public void validarContra(string contraNueva,string contraRepetida,string contraActual)
         {
             ValidarContraseñaLongitud(contraNueva, contraRepetida);
