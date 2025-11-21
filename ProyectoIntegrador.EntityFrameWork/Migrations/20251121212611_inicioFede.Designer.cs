@@ -12,7 +12,7 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251119135958_inicioFede")]
+    [Migration("20251121212611_inicioFede")]
     partial class inicioFede
     {
         /// <inheritdoc />
@@ -483,12 +483,21 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("Clienteid");
 
+                    b.ToTable("Usuarios", t =>
+                        {
+                            t.Property("foto")
+                                .HasColumnName("Artesano_foto");
+                        });
+
                     b.HasDiscriminator().HasValue("ARTESANO");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
+
+                    b.Property<string>("foto")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("CLIENTE");
                 });

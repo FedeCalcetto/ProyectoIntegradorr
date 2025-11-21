@@ -124,7 +124,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
 
         // GET: ArtesanoController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult GetSubcategorias(int categoriaId)
         {
             var subcategorias = _SubCategoria.ObtenerTodos()
         .Where(s => s.categoriaId == categoriaId)
@@ -245,10 +245,7 @@ namespace ProyectoIntegrador_Web.Controllers
             return View(model);
         }
         // GET: ArtesanoController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+       
 
         // GET: ArtesanoController/Create
         public ActionResult Create()

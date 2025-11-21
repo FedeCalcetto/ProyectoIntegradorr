@@ -116,7 +116,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 {
                     return NotFound("No se encontró el cliente para actualizar.");
                 }
-                cliente.Validar();
+                //cliente.Validar();
 
                 // Actualizar propiedades del dominio
                 cliente.nombre = modelo.Nombre;
