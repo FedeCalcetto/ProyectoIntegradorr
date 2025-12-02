@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
-    public interface ISubCategoriaRepositorio : IRepositorio<SubCategoria>
+    public interface IProductoFotoRepsoitorio : IRepositorio<ProductoFoto>
     {
-        List<SubCategoria> ObtenerTodas();
     }
 }

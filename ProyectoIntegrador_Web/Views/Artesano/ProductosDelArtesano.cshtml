@@ -22,29 +22,44 @@
             @foreach (var item in Model.Productos)
             {
                 <div class="col">
-                    <div class="card shadow-sm h-100">
+                    <div class="card shadow-sm h-100 border-0 hover-shadow">
 
-                        <img src="/images/productos/@item.imagen" class="product-image" />
+                        <img id="fotoPrincipal_@item.id"
+                             src="~/images/productos/@item.imagen"
+                             style="height:220px; width:100%; object-fit:cover; border-radius:8px 8px 0 0;" />
+
+                        @if (item.Fotos != null && item.Fotos.Any())
+                        {
+                            <div class="mt-2 px-2">
+                                <div class="d-flex overflow-auto gap-2">
+                                    @foreach (var foto in item.Fotos)
+                                    {
+                                        <img src="~/images/productos/@foto.UrlImagen"
+                                             style="width:70px; height:70px; object-fit:cover; border-radius:6px;
+                                                             cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,0.2);"
+                                             onclick="document.getElementById('fotoPrincipal_@item.id').src=this.src;" />
+                                    }
+                                </div>
+                            </div>
+                        }
 
                         <div class="card-body">
-                            <h5 class="card-title">@item.nombre</h5>
-                            <p class="card-text text-muted">@item.descripcion</p>
+                            <h5 class="card-title fw-bold">@item.nombre</h5>
+                            <p class="text-muted small">@item.descripcion</p>
 
-                            <p class="fw-bold mb-1">
-                                Precio: <span class="text-success">$@item.precio</span>
-                            </p>
-
-                            <p class="mb-2">
-                                Stock: <span class="badge bg-secondary">@item.stock</span>
+                            <p class="fw-bold mb-1 text-success">$@item.precio</p>
+                            <p>
+                                Stock:
+                                <span class="badge bg-secondary">@item.stock</span>
                             </p>
                         </div>
 
                         <div class="card-footer d-flex justify-content-between">
-                            <a asp-action="Edit" asp-route-id="@item.id" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-pencil-square"></i> Editar
+                            <a asp-action="EditarProducto" asp-route-id="@item.id" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil"></i> Editar
                             </a>
 
-                            <a asp-action="Delete" asp-route-id="@item.id" class="btn btn-sm btn-outline-danger">
+                            <a asp-action="EliminarProducto" asp-route-id="@item.id" class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i> Eliminar
                             </a>
                         </div>
@@ -55,3 +70,11 @@
         </div>
     }
 </div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15) !important;
+        transform: translateY(-3px);
+        transition: 0.2s ease;
+    }
+</style>

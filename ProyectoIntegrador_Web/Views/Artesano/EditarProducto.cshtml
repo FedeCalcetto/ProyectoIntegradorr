@@ -1,10 +1,11 @@
-﻿@model ProyectoIntegrador_Web.Models.AltaProductoViewModel
+﻿@model ProyectoIntegrador_Web.Models.EditarProductoViewModel
 
 <div class="container mt-5">
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0"><i class="bi bi-box-seam me-2"></i>Alta de Producto</h4>
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Editar Producto</h4>
         </div>
+
         <div class="card-body">
 
             @if (TempData["Mensaje"] != null)
@@ -15,24 +16,30 @@
                 </div>
             }
 
-            <form asp-action="AltaProducto" method="post" enctype="multipart/form-data">
+            <!-- Validaciones generales -->
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <form asp-action="EditarProducto" method="post">
+
+                <input asp-for="Id" type="hidden" />
+
                 <div class="row g-3">
 
                     <div class="col-md-6">
                         <label asp-for="nombre" class="form-label"></label>
-                        <input asp-for="nombre" class="form-control" placeholder="Ej: Mate de madera" />
+                        <input asp-for="nombre" class="form-control" />
                         <span asp-validation-for="nombre" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-6">
                         <label asp-for="precio" class="form-label"></label>
-                        <input asp-for="precio" class="form-control" placeholder="Ej: 350.00" />
+                        <input asp-for="precio" class="form-control" />
                         <span asp-validation-for="precio" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-12">
                         <label asp-for="descripcion" class="form-label"></label>
-                        <textarea asp-for="descripcion" class="form-control" rows="3" placeholder="Describe el producto..."></textarea>
+                        <textarea asp-for="descripcion" class="form-control" rows="3"></textarea>
                         <span asp-validation-for="descripcion" class="text-danger small"></span>
                     </div>
 
@@ -42,44 +49,43 @@
                         <span asp-validation-for="stock" class="text-danger small"></span>
                     </div>
 
-                    <div class="col-md-8">
-                        <label class="form-label">Imagen del producto (principal)</label>
-                        <input asp-for="ArchivoImagen" type="file" class="form-control" accept="image/*" />
-                        <span asp-validation-for="ArchivoImagen" class="text-danger small"></span>
-                    </div>
-
-                    <div class="col-md-12 mt-3">
-                        <label class="form-label">Fotos adicionales (opcional)</label>
-                        <input asp-for="Fotos" type="file" class="form-control" multiple="multiple" accept="image/*" name="Fotos" />
-                        <span asp-validation-for="Fotos" class="text-danger small"></span>
-                    </div>
-
                     <div class="col-md-6">
-                        <label asp-for="CategoriaId" class="form-label"></label>
+                        <label asp-for="CategoriaId" class="form-label">Categoría</label>
                         <select asp-for="CategoriaId" class="form-select" id="categoriaSelect">
                             <option value="">Seleccione una categoría</option>
+
                             @foreach (var c in Model.Categorias)
                             {
-                                <option value="@c.Id">@c.Nombre</option>
+                                <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">
+                                    @c.Nombre
+                                </option>
                             }
                         </select>
                         <span asp-validation-for="CategoriaId" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="SubCategoriaId" class="form-label"></label>
+                        <label asp-for="SubCategoriaId" class="form-label">SubCategoría</label>
                         <select asp-for="SubCategoriaId" class="form-select" id="subcategoriaSelect">
                             <option value="">Seleccione una subcategoría</option>
+
+                            @foreach (var sc in Model.SubCategorias)
+                            {
+                                <option value="@sc.Id" selected="@(Model.SubCategoriaId == sc.Id)">
+                                    @sc.Nombre
+                                </option>
+                            }
                         </select>
                         <span asp-validation-for="SubCategoriaId" class="text-danger small"></span>
                     </div>
                 </div>
 
                 <div class="text-end mt-4">
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-save me-1"></i>Guardar producto
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-save me-1"></i>Actualizar producto
                     </button>
                 </div>
+
             </form>
         </div>
     </div>
@@ -100,5 +106,4 @@
         });
     </script>
 }
-
 

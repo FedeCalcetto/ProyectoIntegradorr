@@ -1,4 +1,6 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
+﻿using Microsoft.EntityFrameworkCore;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
 using System.Collections.Generic;
@@ -26,17 +28,44 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public void Editar(Producto entidad)
         {
-            throw new NotImplementedException();
+            entidad.Validar();
+
+            var entidadDominio = Obtener(entidad.id);
+
+            if (entidadDominio is null)
+            {
+                throw new ProductoNoEncontradoException();
+            }
+
+            entidadDominio.nombre = entidad.nombre;
+            entidadDominio.descripcion = entidad.descripcion;
+            entidadDominio.precio = entidad.precio;
+            entidadDominio.stock = entidad.stock;
+            _contexto.Update(entidadDominio);
+            _contexto.SaveChanges();
+            
+
+
         }
 
         public void Eliminar(int id)
         {
-            throw new NotImplementedException();
+
+            var productoDominio = Obtener(id);
+
+            if(productoDominio is null) {
+                throw new ProductoNoEncontradoException();
+            }
+
+            _contexto.Productos.Remove(productoDominio);
+            _contexto.SaveChanges();
         }
 
-        public Producto Obtener(int id)
+        public Producto Obtener(int Id)
         {
-            throw new NotImplementedException();
+            return _contexto.Productos
+            .Include(x => x.Fotos)  
+            .FirstOrDefault(x => x.id == Id);
         }
 
         public IEnumerable<Producto> ObtenerTodos()

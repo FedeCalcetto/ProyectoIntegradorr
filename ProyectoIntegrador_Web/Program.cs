@@ -28,11 +28,13 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IProductoRepositorio, ProductoEFRepositorio>();
             builder.Services.AddScoped<IClienteRepositorio, ClienteEFRepositorio>();
             builder.Services.AddScoped<ICategoriaRepositorio, CategoriaEFRepsoitorio>();
-
+            builder.Services.AddScoped<IProductoFotoRepsoitorio, ProductoFotoEFRepositorio>();
             //Casos de uso
             builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
             builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
+            builder.Services.AddScoped<IEliminarProducto, EliminarProductoCasoDeUso>();
+            builder.Services.AddScoped<IEditarProducto, EditarProductoCasoDeUso>();
 
             //REGISTRO DEL SERVICIO DE EMAIL
             builder.Services.AddScoped<EmailService>();

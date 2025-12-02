@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
+namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface ISubCategoriaRepositorio : IRepositorio<SubCategoria>
+    public interface IEditarProducto
     {
-        List<SubCategoria> ObtenerTodas();
+
+        void Ejecutar(Producto entidad);
     }
 }
