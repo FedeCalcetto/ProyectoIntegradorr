@@ -218,6 +218,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("stock")
                         .HasColumnType("int");
 
+                    b.Property<int>("subCategroiaId")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
                     b.HasIndex("Clienteid");
@@ -225,6 +228,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("SubCategoriaId");
 
                     b.HasIndex("artesanoid");
+
+                    b.HasIndex("subCategroiaId");
 
                     b.ToTable("Productos");
                 });
@@ -623,6 +628,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .WithMany("Fotos")
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", "SubCategoria")
+                        .WithMany("Productos")
+                        .HasForeignKey("subCategroiaId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Producto");
