@@ -53,11 +53,11 @@ namespace ProyectoIntegrador.EntityFrameWork
             modelBuilder.Entity<Artesano>()
                 .HasMany(a => a.productos)
                 .WithOne(p => p.artesano)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Cliente>()
                 .HasMany(c => c.compras)
-                .WithOne(f => f.Cliente)
+                .WithOne(f => f.Cliente) 
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Factura>()

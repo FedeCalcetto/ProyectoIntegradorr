@@ -51,7 +51,24 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public void Eliminar(int id)
         {
-            throw new NotImplementedException();
+            var artesano = _contexto.Usuarios
+                .OfType<Artesano>()
+                .Include(a => a.productos)
+                .FirstOrDefault(a => a.id == id);
+
+            if (artesano == null)
+                throw new Exception("Artesano no encontrado");
+
+            // 1) Eliminar productos primero
+           /* foreach (var prod in artesano.productos.ToList())
+            {
+                _contexto.Productos.Remove(prod);
+            }*/
+
+            // 2) Luego eliminar el artesano
+            _contexto.Usuarios.Remove(artesano);
+
+            _contexto.SaveChanges();
         }
 
         public Artesano Obtener(int id)

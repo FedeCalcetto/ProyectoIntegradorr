@@ -1,0 +1,23 @@
+﻿@model ProyectoIntegrador_Web.Models.EliminarCuentaViewModel
+
+<h2 class="text-center text-danger mt-4">Eliminar cuenta</h2>
+<p class="text-center">Ingresá el código que enviamos a tu correo para confirmar.</p>
+<!--<p class="text-center text-muted small">
+    Todos tus productos publicados se eliminaran
+</p>-->
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-info">@TempData["Mensaje"]</div>
+}
+
+<form method="post" asp-action="EliminarCuenta">
+    <input type="hidden" name="Email" value="@Model.Email" />
+
+    <div class="mb-3">
+        <label class="form-label">Código de verificación</label>
+        <input type="text" name="Codigo" class="form-control" required />
+    </div>
+
+    <button class="btn btn-danger mt-2">Confirmar eliminación</button>
+</form>

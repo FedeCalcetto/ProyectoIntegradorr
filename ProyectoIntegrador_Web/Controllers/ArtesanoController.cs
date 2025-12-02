@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using ProyectoIntegrador.LogicaAplication.Interface;
-using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using ProyectoIntegrador_Web.Models;
+using ProyectoIntegrador_Web.Services;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -19,12 +20,16 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly ICategoriaRepositorio _categoria;
         private readonly ISubCategoriaRepositorio _SubCategoria;
         private readonly IProductoRepositorio _producto;
-        public ArtesanoController(IArtesanoRepositorio artesanorepo, ISubCategoriaRepositorio subCategoria,ICategoriaRepositorio categoria, IProductoRepositorio producto)
+        private readonly IObtenerArtesano _obtenerArtesano;
+        private readonly EmailService _email;
+        public ArtesanoController(IArtesanoRepositorio artesanorepo, ISubCategoriaRepositorio subCategoria,ICategoriaRepositorio categoria, IProductoRepositorio producto, EmailService email, IObtenerArtesano obtenerArtesano)
         {
             _artesanorepo = artesanorepo;
             _SubCategoria = subCategoria;
             _categoria = categoria;
             _producto = producto;
+            _email = email;
+            _obtenerArtesano = obtenerArtesano;
         }
         public ActionResult Inicio()
         {
@@ -124,7 +129,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
 
         // GET: ArtesanoController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult GetSubcategorias(int categoriaId)
         {
             var subcategorias = _SubCategoria.ObtenerTodos()
         .Where(s => s.categoriaId == categoriaId)
@@ -245,10 +250,10 @@ namespace ProyectoIntegrador_Web.Controllers
             return View(model);
         }
         // GET: ArtesanoController/Details/5
-        public ActionResult Details(int id)
+      /*  public ActionResult Details(int id)
         {
             return View();
-        }
+        }*/
 
         // GET: ArtesanoController/Create
         public ActionResult Create()
@@ -362,5 +367,70 @@ namespace ProyectoIntegrador_Web.Controllers
             TempData["Mensaje"] = "¡Foto actualizada con éxito!";
             return RedirectToAction("PerfilArtesano");
         }
+
+        public IActionResult CuentaEliminada()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> ConfirmarEliminacion()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (email == null)
+                return RedirectToAction("Login", "Login");
+
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            HttpContext.Session.SetString("EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString());
+
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+
+            TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
+
+            return View(new EliminarCuentaViewModel { Email = email });
+        }
+
+
+        [HttpPost]
+        public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
+        {
+            var email = modelo.Email;
+            var codigoIngresado = modelo.Codigo;
+
+            var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
+            var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
+
+            if (codigoGuardado == null || expiraStr == null)
+            {
+                TempData["Error"] = "El código expiró. Pedí uno nuevo.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            DateTime expira = DateTime.Parse(expiraStr);
+            if (DateTime.Now > expira)
+            {
+                TempData["Error"] = "El código expiró.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            if (codigoGuardado != codigoIngresado)
+            {
+                TempData["Error"] = "Código incorrecto.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            // eliminar usuario
+            var artesano = _obtenerArtesano.Ejecutar(email);
+            _artesanorepo.Eliminar(artesano.id);
+
+            // limpiar sesión
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("CuentaEliminada");
+        }
+
     }
 }

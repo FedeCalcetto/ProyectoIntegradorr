@@ -6,6 +6,7 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Services;
 
+
 namespace ProyectoIntegrador_Web
 {
     public class Program
@@ -33,6 +34,8 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
             builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
+            builder.Services.AddScoped<IObtenerArtesano, ObtenerArtesanoCasoDeUso>();
+
 
             //REGISTRO DEL SERVICIO DE EMAIL
             builder.Services.AddScoped<EmailService>();

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class inicioFede : Migration
+    public partial class inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,11 +42,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
-                    foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Artesano_foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Clienteid = table.Column<int>(type: "int", nullable: true),
                     direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    direccion_barrio = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    direccion_barrio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    foto = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

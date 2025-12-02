@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    internal interface IObtenerArtesano
+    public interface IObtenerArtesano
     {
         Artesano Ejecutar(string email);
     }
