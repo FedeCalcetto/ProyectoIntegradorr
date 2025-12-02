@@ -87,9 +87,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public Artesano ObtenerProductosArtesano(string email)
         {
             return _contexto.Usuarios
-            .OfType<Artesano>()
-            .Include(a => a.productos)
-            .FirstOrDefault(a => a.email.email == email);
+        .OfType<Artesano>()
+        .Include(a => a.productos)
+            .ThenInclude(p => p.Fotos)
+        .FirstOrDefault(a => a.email.email == email);
         }
 
         public IEnumerable<Artesano> ObtenerTodos()

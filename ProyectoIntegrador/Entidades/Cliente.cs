@@ -27,9 +27,9 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
         public void valdiarDireccion()
         {
-            if (string.IsNullOrEmpty(direccion.barrio) ||
-                string.IsNullOrEmpty(direccion.departamento) ||
-                string.IsNullOrEmpty(direccion.domicilio))
+            if (direccion.barrio.Equals("") ||
+                direccion.departamento.Equals("") ||
+                direccion.domicilio.Equals(""))
             {
                 throw new DireccionException();
             }

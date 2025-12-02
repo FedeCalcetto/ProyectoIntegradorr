@@ -229,6 +229,28 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.ToTable("Productos");
                 });
 
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.ProductoFoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UrlImagen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("ProductoFotos");
+                });
+
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Reporte", b =>
                 {
                     b.Property<int>("id")
@@ -595,6 +617,17 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Navigation("artesano");
                 });
 
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.ProductoFoto", b =>
+                {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "Producto")
+                        .WithMany("Fotos")
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Reporte", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
@@ -732,6 +765,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>
                 {
+                    b.Navigation("Fotos");
+
                     b.Navigation("comentarios");
                 });
 

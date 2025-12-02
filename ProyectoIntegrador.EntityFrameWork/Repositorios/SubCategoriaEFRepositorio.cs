@@ -42,5 +42,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             return _contexto.SubCategorias.ToList();
         }
+        public List<SubCategoria> ObtenerTodas()
+        {
+            return _contexto.SubCategorias.ToList();
+        }
     }
 }

@@ -22,7 +22,10 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IProductoRepositorio _producto;
         private readonly IObtenerArtesano _obtenerArtesano;
         private readonly EmailService _email;
-        public ArtesanoController(IArtesanoRepositorio artesanorepo, ISubCategoriaRepositorio subCategoria,ICategoriaRepositorio categoria, IProductoRepositorio producto, EmailService email, IObtenerArtesano obtenerArtesano)
+        private readonly IEliminarProducto _eliminarProducto;
+        private readonly IProductoFotoRepsoitorio _productoFoto;
+        private readonly IEditarProducto _editarProducto;
+        public ArtesanoController(IArtesanoRepositorio artesanorepo, ISubCategoriaRepositorio subCategoria,ICategoriaRepositorio categoria, IProductoRepositorio producto, IEliminarProducto eliminarProducto, IProductoFotoRepsoitorio productoFoto,IEditarProducto editarProducto)
         {
             _artesanorepo = artesanorepo;
             _SubCategoria = subCategoria;
@@ -30,6 +33,9 @@ namespace ProyectoIntegrador_Web.Controllers
             _producto = producto;
             _email = email;
             _obtenerArtesano = obtenerArtesano;
+            _eliminarProducto = eliminarProducto;
+            _productoFoto = productoFoto;
+            _editarProducto = editarProducto;
         }
         public ActionResult Inicio()
         {
@@ -132,11 +138,11 @@ namespace ProyectoIntegrador_Web.Controllers
         public ActionResult GetSubcategorias(int categoriaId)
         {
             var subcategorias = _SubCategoria.ObtenerTodos()
-        .Where(s => s.categoriaId == categoriaId)
-        .Select(s => new {
+            .Where(s => s.categoriaId == categoriaId)
+            .Select(s => new {
             id = s.Id,
             nombre = s.Nombre
-        });
+            });
 
             return Json(subcategorias);
         }
@@ -169,6 +175,7 @@ namespace ProyectoIntegrador_Web.Controllers
             if (!ModelState.IsValid)
             {
                 modelo.Categorias = _categoria.ObtenerTodos();
+                modelo.SubCategorias = _SubCategoria.ObtenerTodas();
                 return View(modelo);
             }
 
@@ -176,7 +183,7 @@ namespace ProyectoIntegrador_Web.Controllers
             if (artesano == null)
                 return NotFound();
 
-            // Guardar imagen si se subió
+
             string nombreArchivo = null;
 
             if (modelo.ArchivoImagen != null && modelo.ArchivoImagen.Length > 0)
@@ -201,27 +208,56 @@ namespace ProyectoIntegrador_Web.Controllers
                 descripcion = modelo.descripcion,
                 precio = modelo.precio,
                 stock = modelo.stock,
-                imagen =  nombreArchivo, // <-- ESTA ES LA SOLUCIÓN
+                imagen = nombreArchivo,
                 artesano = artesano,
-                SubCategoriaId = modelo.SubCategoriaId
+                SubCategoriaId = (int)modelo.SubCategoriaId,
+                Fotos = new List<ProductoFoto>()   
             };
+
+            if (modelo.Fotos != null && modelo.Fotos.Any())
+            {
+                string carpetaMultiples = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/productos");
+                Directory.CreateDirectory(carpetaMultiples);
+
+                foreach (var foto in modelo.Fotos)
+                {
+                    if (foto != null && foto.Length > 0)
+                    {
+                        string nombre = Guid.NewGuid() + Path.GetExtension(foto.FileName);
+                        var ruta = Path.Combine(carpetaMultiples, nombre);
+
+                        using (var stream = new FileStream(ruta, FileMode.Create))
+                        {
+                            foto.CopyTo(stream);
+                        }
+
+                        entidad.Fotos.Add(new ProductoFoto
+                        {
+                            UrlImagen = nombre
+                        });
+                    }
+                }
+            }
 
             try
             {
                 _producto.Agregar(entidad);
                 artesano.productos.Add(entidad);
-                TempData["Mensaje"] = "producto agregado correctamente.";
+                modelo.Categorias = _categoria.ObtenerTodos();
+                modelo.SubCategorias = _SubCategoria.ObtenerTodas();
+                TempData["Mensaje"] = "Producto agregado correctamente.";
                 return RedirectToAction("AltaProducto");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
                 modelo.Categorias = _categoria.ObtenerTodos();
+                modelo.SubCategorias = _SubCategoria.ObtenerTodas();
                 return View(modelo);
             }
 
 
-           
+
         }
 
         public IActionResult ProductosDelArtesano()
@@ -255,6 +291,64 @@ namespace ProyectoIntegrador_Web.Controllers
             return View();
         }*/
 
+            Producto producto = _producto.Obtener(modelo.Id);
+
+            if (producto == null)
+                return NotFound();
+
+            producto.nombre = modelo.nombre;
+            producto.descripcion = modelo.descripcion;
+            producto.precio = modelo.precio;
+            producto.stock = modelo.stock;
+            producto.SubCategoriaId = (int)modelo.SubCategoriaId;
+
+            try
+            {
+                _editarProducto.Ejecutar(producto);
+
+                TempData["Mensaje"] = "Producto actualizado correctamente.";
+                return RedirectToAction("EditarProducto", new { id = modelo.Id });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
+
+                modelo.Categorias = _categoria.ObtenerTodos();
+                modelo.SubCategorias = _SubCategoria.ObtenerTodas();
+
+                return View(modelo);
+            }
+        }
+
+        public IActionResult EliminarProducto(int id)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
+
+            if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            Producto producto = _producto.Obtener(id);
+
+            var modelo = new EliminarProductoViewModel
+            {
+                nombre = producto.nombre,
+                descripcion = producto.descripcion
+            };
+
+            ViewBag.Id = id;
+            return View(modelo);
+        }
+
+
+        [HttpPost]
+        public IActionResult EliminarProductoConfirmado(int id)
+        {
+            //_producto.Eliminar(id);
+            _eliminarProducto.Ejecutar(id);
+            return RedirectToAction("ProductosDelArtesano");
+        }
         // GET: ArtesanoController/Create
         public ActionResult Create()
         {

@@ -17,10 +17,11 @@ namespace ProyectoIntegrador_Web.Models
         [Required(ErrorMessage = "el stock es requerido")]
         public int stock { get; set; }
         [Required(ErrorMessage = "La categoría es requerida")]
-        public int CategoriaId { get; set; }
+        public int? CategoriaId { get; set; }
 
         [Required(ErrorMessage = "La subcategoría es requerida")]
-        public int SubCategoriaId { get; set; }
+        public int? SubCategoriaId { get; set; }
+        public List<IFormFile> Fotos { get; set; } = new();
 
         public IEnumerable<Categoria>? Categorias { get; set; }
         public List<SubCategoria> SubCategorias { get; set; } = new List<SubCategoria>();

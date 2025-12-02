@@ -17,7 +17,7 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<Factura> Facturas { get; set; }
         public DbSet<PedidoPersonalizado> PedidosPersonalizados { get; set; }
         public DbSet<Reporte> Reportes { get; set; }
-
+        public DbSet<ProductoFoto> ProductoFotos { get; set; }
 
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {
@@ -105,6 +105,12 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .WithMany()
                 .HasForeignKey(r => r.productoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Producto>()
+            .HasMany(p => p.Fotos)
+            .WithOne(f => f.Producto)
+            .HasForeignKey(f => f.ProductoId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             // 🧪 Seed principal (TPH + owned types)
             modelBuilder.Entity<Usuario>().HasData(
