@@ -25,7 +25,7 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IEliminarProducto _eliminarProducto;
         private readonly IProductoFotoRepsoitorio _productoFoto;
         private readonly IEditarProducto _editarProducto;
-        public ArtesanoController(IArtesanoRepositorio artesanorepo, ISubCategoriaRepositorio subCategoria,ICategoriaRepositorio categoria, IProductoRepositorio producto, IEliminarProducto eliminarProducto, IProductoFotoRepsoitorio productoFoto,IEditarProducto editarProducto)
+        public ArtesanoController(IArtesanoRepositorio artesanorepo, ISubCategoriaRepositorio subCategoria,ICategoriaRepositorio categoria, IProductoRepositorio producto, IEliminarProducto eliminarProducto, IProductoFotoRepsoitorio productoFoto,IEditarProducto editarProducto, EmailService email, IObtenerArtesano obtenerArtesano)
         {
             _artesanorepo = artesanorepo;
             _SubCategoria = subCategoria;
@@ -285,11 +285,43 @@ namespace ProyectoIntegrador_Web.Controllers
 
             return View(model);
         }
-        // GET: ArtesanoController/Details/5
-      /*  public ActionResult Details(int id)
+        public IActionResult EditarProducto(int id)
         {
-            return View();
-        }*/
+
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
+
+            if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            Producto producto = _producto.Obtener(id);
+
+            var modelo = new EditarProductoViewModel
+            {
+                Id = producto.id,
+                nombre = producto.nombre,
+                descripcion = producto.descripcion,
+                precio = producto.precio,
+                stock = producto.stock,
+                SubCategoriaId = producto.SubCategoriaId,
+                Categorias = _categoria.ObtenerTodos(),
+                SubCategorias = _SubCategoria.ObtenerTodas()
+            };
+            ViewBag.Id = id;
+            return View(modelo);
+
+        }
+        [HttpPost]
+        public IActionResult EditarProducto(EditarProductoViewModel modelo)
+        {
+            if (!ModelState.IsValid)
+            {
+                modelo.Categorias = _categoria.ObtenerTodos();
+                modelo.SubCategorias = _SubCategoria.ObtenerTodas();
+                return View(modelo);
+            }
 
             Producto producto = _producto.Obtener(modelo.Id);
 

@@ -55,6 +55,10 @@ namespace ProyectoIntegrador_Web
 
             var app = builder.Build();
 
+            builder.Services.AddDistributedMemoryCache();
+            
+
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -67,6 +71,7 @@ namespace ProyectoIntegrador_Web
             app.UseRouting();
             app.UseSession();
             app.UseAuthorization();
+            app.UseSession();
 
             app.MapStaticAssets();
             app.MapControllerRoute(

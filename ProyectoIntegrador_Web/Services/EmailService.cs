@@ -37,23 +37,23 @@ namespace ProyectoIntegrador_Web.Services
 
                 asunto = "Código de verificación";
                 cuerpo = $@"
-Tu código de verificación es: {codigo}
+                Tu código de verificación es: {codigo}
 
-También podés verificar tu cuenta entrando a:
-{link}
-";
+                También podés verificar tu cuenta entrando a:
+                {link}
+                ";
             }
             else if (tipo == "eliminacion")
             {
                 asunto = "Código para eliminar tu cuenta";
                 cuerpo = $@"
-Recibimos tu solicitud para eliminar tu cuenta.
+                Recibimos tu solicitud para eliminar tu cuenta.
 
-Tu código para confirmar la eliminación es: {codigo}
+                Tu código para confirmar la eliminación es: {codigo}
 
-⚠️ IMPORTANTE
-Si tú no pediste esto, no compartas este código con nadie.
-";
+                ⚠️ IMPORTANTE
+                Si tú no pediste esto, no compartas este código con nadie.
+                ";
             }
             else
             {
