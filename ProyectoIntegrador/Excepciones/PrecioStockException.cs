@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Excepciones
 {
-    public class numeroProductoException : Exception
+    public class PrecioStockException : Exception
     {
-        public numeroProductoException() : base("el nombre no puede tener numeros")
+        public PrecioStockException() : base("Tanto el precio como el stock deben ser mayores a 0")
         {
         }
     }

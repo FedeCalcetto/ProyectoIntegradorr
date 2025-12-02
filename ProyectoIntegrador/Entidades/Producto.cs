@@ -1,4 +1,5 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Interface.Validacion;
+﻿using ProyectoIntegrador.LogicaNegocio.Excepciones;
+using ProyectoIntegrador.LogicaNegocio.Interface.Validacion;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int precio { get; set; }
         [Required(ErrorMessage = "la imagen es requerida")]
         public string imagen { get; set; }
+        public List<ProductoFoto> Fotos { get; set; } = new();
         [Required(ErrorMessage = "el stock es requerido")]
         public int stock { get; set; }
         public Artesano artesano { get; set; }
@@ -29,14 +31,14 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
         public void Validar()
         {
-            validarNombre();
+            validarNegativo();
         }
 
-        public void validarNombre()
+        public void validarNegativo()
         {
-            if (nombre.Any(char.IsDigit))
+            if (stock <1 || precio < 1)
             {
-
+                throw new PrecioStockException();
             }
         }
     }
