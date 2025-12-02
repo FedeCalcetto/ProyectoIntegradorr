@@ -68,7 +68,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public void Eliminar(int id)
         {
-            throw new NotImplementedException();
+            var cliente = _contexto.Usuarios
+                                   .OfType<Cliente>()
+                                   .FirstOrDefault(c => c.id == id);
+
+            if (cliente == null)
+                throw new ClienteNoEncontradoException();
+
+            _contexto.Usuarios.Remove(cliente);
+            _contexto.SaveChanges();
         }
 
         public Cliente Obtener(int id)

@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using ProyectoIntegrador.LogicaAplication.Interface;
-using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using ProyectoIntegrador_Web.Models;
+using ProyectoIntegrador_Web.Services;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -19,6 +20,8 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly ICategoriaRepositorio _categoria;
         private readonly ISubCategoriaRepositorio _SubCategoria;
         private readonly IProductoRepositorio _producto;
+        private readonly IObtenerArtesano _obtenerArtesano;
+        private readonly EmailService _email;
         private readonly IEliminarProducto _eliminarProducto;
         private readonly IProductoFotoRepsoitorio _productoFoto;
         private readonly IEditarProducto _editarProducto;
@@ -28,6 +31,8 @@ namespace ProyectoIntegrador_Web.Controllers
             _SubCategoria = subCategoria;
             _categoria = categoria;
             _producto = producto;
+            _email = email;
+            _obtenerArtesano = obtenerArtesano;
             _eliminarProducto = eliminarProducto;
             _productoFoto = productoFoto;
             _editarProducto = editarProducto;
@@ -280,44 +285,11 @@ namespace ProyectoIntegrador_Web.Controllers
 
             return View(model);
         }
-        
-        public IActionResult EditarProducto(int id)
+        // GET: ArtesanoController/Details/5
+      /*  public ActionResult Details(int id)
         {
-
-            var email = HttpContext.Session.GetString("loginUsuario");
-            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
-
-            if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
-            {
-                return RedirectToAction("Login", "Login");
-            }
-
-            Producto producto = _producto.Obtener(id);
-
-            var modelo = new EditarProductoViewModel
-            {
-                Id = producto.id,
-                nombre = producto.nombre,
-                descripcion = producto.descripcion,
-                precio = producto.precio,
-                stock = producto.stock,
-                SubCategoriaId = producto.SubCategoriaId,
-                Categorias = _categoria.ObtenerTodos(),
-                SubCategorias = _SubCategoria.ObtenerTodas()
-            };
-            ViewBag.Id = id;
-            return View(modelo);
-
-        }
-        [HttpPost]
-        public IActionResult EditarProducto(EditarProductoViewModel modelo)
-        {
-            if (!ModelState.IsValid)
-            {
-                modelo.Categorias = _categoria.ObtenerTodos();
-                modelo.SubCategorias = _SubCategoria.ObtenerTodas();
-                return View(modelo);
-            }
+            return View();
+        }*/
 
             Producto producto = _producto.Obtener(modelo.Id);
 
@@ -489,5 +461,70 @@ namespace ProyectoIntegrador_Web.Controllers
             TempData["Mensaje"] = "¡Foto actualizada con éxito!";
             return RedirectToAction("PerfilArtesano");
         }
+
+        public IActionResult CuentaEliminada()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> ConfirmarEliminacion()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (email == null)
+                return RedirectToAction("Login", "Login");
+
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            HttpContext.Session.SetString("EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString());
+
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+
+            TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
+
+            return View(new EliminarCuentaViewModel { Email = email });
+        }
+
+
+        [HttpPost]
+        public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
+        {
+            var email = modelo.Email;
+            var codigoIngresado = modelo.Codigo;
+
+            var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
+            var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
+
+            if (codigoGuardado == null || expiraStr == null)
+            {
+                TempData["Error"] = "El código expiró. Pedí uno nuevo.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            DateTime expira = DateTime.Parse(expiraStr);
+            if (DateTime.Now > expira)
+            {
+                TempData["Error"] = "El código expiró.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            if (codigoGuardado != codigoIngresado)
+            {
+                TempData["Error"] = "Código incorrecto.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            // eliminar usuario
+            var artesano = _obtenerArtesano.Ejecutar(email);
+            _artesanorepo.Eliminar(artesano.id);
+
+            // limpiar sesión
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("CuentaEliminada");
+        }
+
     }
 }

@@ -6,6 +6,7 @@ using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using ProyectoIntegrador_Web.Models;
+using ProyectoIntegrador_Web.Services;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -14,11 +15,15 @@ namespace ProyectoIntegrador_Web.Controllers
 
         private readonly IClienteRepositorio _clienteRepositorio;
         private readonly IObtenerCliente _obtenerCliente;
+        private readonly EmailService _email; //esto se agrega siempre que se precise enviar un email
 
-        public ClienteController(IClienteRepositorio clienteRepositorio, IObtenerCliente obtenerCliente)
+        public ClienteController(IClienteRepositorio clienteRepositorio,
+                          IObtenerCliente obtenerCliente,
+                          EmailService email)
         {
             _clienteRepositorio = clienteRepositorio;
             _obtenerCliente = obtenerCliente;
+            _email = email;
         }
 
         //seelct departamentos
@@ -312,6 +317,72 @@ namespace ProyectoIntegrador_Web.Controllers
             TempData["Mensaje"] = "¡Foto actualizada con éxito!";
             return RedirectToAction("Perfil");
         }
-    
-}
+
+        public async Task<IActionResult> ConfirmarEliminacion()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (email == null)
+                return RedirectToAction("Login", "Login");
+
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            HttpContext.Session.SetString("EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString());
+
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+
+            TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
+
+            return View(new EliminarCuentaViewModel { Email = email });
+        }   
+
+
+        public IActionResult CuentaEliminada()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
+        {
+            var email = modelo.Email;
+            var codigoIngresado = modelo.Codigo;
+
+            var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
+            var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
+
+            if (codigoGuardado == null || expiraStr == null)
+            {
+                TempData["Error"] = "El código expiró. Pedí uno nuevo.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            DateTime expira = DateTime.Parse(expiraStr);
+            if (DateTime.Now > expira)
+            {
+                TempData["Error"] = "El código expiró.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            if (codigoGuardado != codigoIngresado)
+            {
+                TempData["Error"] = "Código incorrecto.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            // eliminar usuario
+            var cliente = _obtenerCliente.Ejecutar(email);
+            _clienteRepositorio.Eliminar(cliente.id);
+
+            // limpiar sesión
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("CuentaEliminada");
+        }
+
+
+    }
 }
