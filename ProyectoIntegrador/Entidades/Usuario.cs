@@ -24,8 +24,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public bool Verificado { get; set; }
 
         
-
-        public string rol { get; set; }
         public void Validar()
         {
             validarContraseñaLongitud();
