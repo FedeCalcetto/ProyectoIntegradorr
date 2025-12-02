@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IObtenerArtesano
+    public interface IObtenerSubcategorias
     {
-        Artesano Ejecutar(string email);
+        IEnumerable<SubCategoria> obtenerTodas();
     }
 }

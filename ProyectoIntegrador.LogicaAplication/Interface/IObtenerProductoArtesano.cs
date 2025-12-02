@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IObtenerArtesano
+    public interface IObtenerProductoArtesano
     {
-        Artesano Ejecutar(string email);
+        Artesano obtenerProductos(string email);
     }
 }

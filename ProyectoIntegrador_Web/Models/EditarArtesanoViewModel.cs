@@ -17,14 +17,13 @@ namespace ProyectoIntegrador_Web.Models
         [Required(ErrorMessage = "El apellido es obligatorio")]
         public string Apellido { get; set; }
 
-        [Required]
-        [EmailAddress(ErrorMessage = "El correo electrónico no es válido")]
+        [ValidateNever]
         public string Email { get; set; }
 
         [ValidateNever]
         public string Password { get; set; }
 
 
-        public string Foto { get; set; }
+        public string? Foto { get; set; }
     }
 }

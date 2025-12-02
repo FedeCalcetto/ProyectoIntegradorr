@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
@@ -12,15 +13,17 @@ namespace ProyectoIntegrador_Web.Controllers
     {
         private readonly IUsuarioRepositorio _usuarioRepositorio;
         private readonly IAgregarUsuario _agregarUsuario;
+        private readonly ILogin _loginCu;
         private readonly EmailService _email;
 
         public LoginController(IUsuarioRepositorio usuarioRepositorio,
                                IAgregarUsuario agregarUsuario,
-                               EmailService email)
+                               EmailService email, ILogin login)
         {
             _usuarioRepositorio = usuarioRepositorio;
             _agregarUsuario = agregarUsuario;
             _email = email;
+            _loginCu = login;
         }
 
         // GET: LoginController
@@ -37,7 +40,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View(modelo);
             }
 
-            Usuario usuario = _usuarioRepositorio.Login(modelo.Email, modelo.Password);
+            Usuario usuario = _loginCu.Ejecutar(modelo.Email, modelo.Password);
 
             if (usuario == null)
             {
@@ -81,36 +84,45 @@ namespace ProyectoIntegrador_Web.Controllers
 
             Usuario entidad;
 
-            if (modelo.soyArtesano)
+            var dto = new AgregarUsuarioDto
             {
-                entidad = new Artesano
-                {
-                    nombre = modelo.nombre,
-                    apellido = modelo.apellido,
-                    email = modelo.email,
-                    password = modelo.password,
-                    rol = "Artesano",
-                    CodigoVerificacion = codigo,
-                    Verificado = false
-                };
-            }
-            else
-            {
-                entidad = new Cliente
-                {
-                    nombre = modelo.nombre,
-                    apellido = modelo.apellido,
-                    email = modelo.email,
-                    password = modelo.password,
-                    rol = "Cliente",
-                    CodigoVerificacion = codigo,
-                    Verificado = false
-                };
-            }
+                Nombre = modelo.nombre,
+                Apellido = modelo.apellido,
+                Email = modelo.email.email,
+                Password = modelo.password,
+                EsArtesano = modelo.soyArtesano
+            };
+
+            //if (modelo.soyArtesano)
+            //{
+            //    entidad = new Artesano
+            //    {
+            //        nombre = modelo.nombre,
+            //        apellido = modelo.apellido,
+            //        email = modelo.email,
+            //        password = modelo.password,
+            //        rol = "Artesano",
+            //        CodigoVerificacion = codigo,
+            //        Verificado = false
+            //    };
+            //}
+            //else
+            //{
+            //    entidad = new Cliente
+            //    {
+            //        nombre = modelo.nombre,
+            //        apellido = modelo.apellido,
+            //        email = modelo.email,
+            //        password = modelo.password,
+            //        rol = "Cliente",
+            //        CodigoVerificacion = codigo,
+            //        Verificado = false
+            //    };
+            //}
 
             try
             {
-                _agregarUsuario.Ejecutar(entidad); // guarda en BD  
+                _agregarUsuario.Ejecutar(dto, codigo); // guarda en BD  
 
                 //  Enviar correo
                 await _email.EnviarCodigoAsync(entidad.email.email, codigo);

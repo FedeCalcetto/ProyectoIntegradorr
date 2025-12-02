@@ -17,7 +17,6 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddDbContext<ProyectoDBContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB3")));
 
-
             //Repositorios
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ProyectoDBContext>();
@@ -30,9 +29,17 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<ICategoriaRepositorio, CategoriaEFRepsoitorio>();
 
             //Casos de uso
-            builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
+            builder.Services.AddScoped<IAgregarProducto, AgregarProductoCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
+            builder.Services.AddScoped<ICambiarPassword, CambiarPasswordCasoDeUso>();
+            builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
+            builder.Services.AddScoped<IEditarArtesano, EditarArtesanoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerCategorias, ObtenerCategoriasCasoDeUso>();
             builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
+            builder.Services.AddScoped<IObtenerProductoArtesano, ObtenerProductoArtesanoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerSubcategorias, ObtenerSubCategoriasCasoDeUso>();
+            builder.Services.AddScoped<IObtenerUsuario, ObtenerUsuarioCasoDeUso>();
+            builder.Services.AddScoped<IObtenerArtesano, ObtenerArtesanoCasoDeUso>();
 
             //REGISTRO DEL SERVICIO DE EMAIL
             builder.Services.AddScoped<EmailService>();
@@ -62,6 +69,8 @@ namespace ProyectoIntegrador_Web
             app.UseRouting();
             app.UseSession();
             app.UseAuthorization();
+
+            app.UseStaticFiles();
 
             app.MapStaticAssets();
             app.MapControllerRoute(

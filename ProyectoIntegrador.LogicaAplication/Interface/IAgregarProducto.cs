@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IAgregarUsuario
+    public interface IAgregarProducto
     {
-        void Ejecutar(AgregarUsuarioDto u, string codigoVerificacion);
-
+        void Ejecutar(AgregarProductoDto dto, Artesano artesano);
     }
 }

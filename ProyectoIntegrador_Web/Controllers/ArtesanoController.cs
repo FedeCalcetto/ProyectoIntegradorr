@@ -15,16 +15,20 @@ namespace ProyectoIntegrador_Web.Controllers
     public class ArtesanoController : Controller
     {
         // GET: ArtesanoController
-        private readonly IArtesanoRepositorio _artesanorepo;
-        private readonly ICategoriaRepositorio _categoria;
-        private readonly ISubCategoriaRepositorio _SubCategoria;
-        private readonly IProductoRepositorio _producto;
-        public ArtesanoController(IArtesanoRepositorio artesanorepo, ISubCategoriaRepositorio subCategoria,ICategoriaRepositorio categoria, IProductoRepositorio producto)
+        
+
+        //---------------------------------------------------//
+        private readonly IObtenerArtesano _obtenerArtesano;
+        private readonly IEditarArtesano _editarAresano;
+        private readonly IObtenerProductoArtesano _obtenerProductoArtesano;
+        private readonly IWebHostEnvironment _env;
+
+        public ArtesanoController(IWebHostEnvironment env, IObtenerArtesano obtenerArtesano, IEditarArtesano editarAresano, IObtenerProductoArtesano obtenerProductoArtesano)
         {
-            _artesanorepo = artesanorepo;
-            _SubCategoria = subCategoria;
-            _categoria = categoria;
-            _producto = producto;
+            _obtenerArtesano = obtenerArtesano;
+            _editarAresano = editarAresano;
+            _obtenerProductoArtesano = obtenerProductoArtesano;
+            _env = env;
         }
         public ActionResult Inicio()
         {
@@ -47,7 +51,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            var artesano = _artesanorepo.ObtenerPorEmail(email);
+            var artesano = _obtenerArtesano.Ejecutar(email);
 
             if (artesano == null)
             {
@@ -68,45 +72,82 @@ namespace ProyectoIntegrador_Web.Controllers
             return View(modelo);
         }
 
-        
+
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult PerfilArtesano(EditarArtesanoViewModel modelo)
+        public IActionResult PerfilArtesano(EditarArtesanoViewModel modelo, IFormFile archivoFoto)
         {
-            try
-            {
-                var email = HttpContext.Session.GetString("loginUsuario");
+            var email = HttpContext.Session.GetString("loginUsuario");
+            ModelState.Remove("archivoFoto");
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "No se puedo actualizar el perfil.";
+                TempData["Error"] = "No se pudo actualizar el perfil.";
                 return View(modelo);
             }
 
-            // Buscar el cliente por email (value object reconstruido)
-            var artesano = _artesanorepo.ObtenerPorEmail(email);
+            // Obtener artesano
+            var artesano = _obtenerArtesano.Ejecutar(email);
             if (artesano == null)
             {
-                return NotFound("No se encontró el cliente para actualizar.");
+                return NotFound("No se encontró el artesano para actualizar.");
             }
 
-            
-                // Actualizar propiedades del dominio
-            artesano.descripcion = modelo.Descripcion;
-            artesano.telefono = modelo.Telefono;
-            artesano.nombre = modelo.Nombre;
-            artesano.apellido = modelo.Apellido;
-            artesano.password = modelo.Password;
-            artesano.foto = modelo.Foto ?? artesano.foto;
+            try
+            {
+                // =========================
+                //   SI SUBIÓ FOTO NUEVA
+                // =========================
+                if (archivoFoto != null && archivoFoto.Length > 0)
+                {
+                    var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/jpg" };
+                    if (!tiposPermitidos.Contains(archivoFoto.ContentType))
+                    {
+                        TempData["Error"] = "El archivo debe ser una imagen JPG o PNG.";
+                        return RedirectToAction("PerfilArtesano");
+                    }
 
+                    var extension = Path.GetExtension(archivoFoto.FileName).ToLower();
+                    var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
+
+                    if (!extensionesPermitidas.Contains(extension))
+                    {
+                        TempData["Error"] = "Formato no permitido. Usa JPG o PNG.";
+                        return RedirectToAction("PerfilArtesano");
+                    }
+
+                    // Guardado físico
+                    var nombreArchivo = Guid.NewGuid() + extension; //genera un identificador único
+                    var uploads = Path.Combine(_env.WebRootPath, "images/usuarios"); //Esto construye la ruta completa donde se guardará el archivo ej: C:\proyecto\wwwroot\images\usuarios
+
+                    var filePath = Path.Combine(uploads, nombreArchivo); //Construye la ruta completa del archivo ej: C:\proyecto\wwwroot\images\usuarios\a8f2e9c1-4135-4e37-9b35-51f12e77a0fb.jpg
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                        archivoFoto.CopyTo(stream);
+
+                    artesano.foto = "/images/usuarios/" + nombreArchivo; 
+
+
+                    // ======================
+                    //  ACTUALIZAR CAMPOS
+                    // ======================
+                }
+                artesano.descripcion = modelo.Descripcion;
+                artesano.telefono = modelo.Telefono;
+                artesano.nombre = modelo.Nombre;
+                artesano.apellido = modelo.Apellido;
+                artesano.password = modelo.Password;
+
+                // Validaciones de dominio
                 artesano.Validar();
                 artesano.ValidarTelefono(modelo.Telefono);
-                
-                _artesanorepo.Actualizar(artesano);
 
+                // Guardar cambios
+                _editarAresano.Actualizar(artesano);
                 TempData["Mensaje"] = "Perfil actualizado correctamente.";
+                
                 return RedirectToAction("PerfilArtesano");
+             
             }
             catch (TelefonoUsuarioException ex)
             {
@@ -118,134 +159,36 @@ namespace ProyectoIntegrador_Web.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return View(modelo);
             }
-           
-        }
-        
-
-
-        // GET: ArtesanoController/Details/5
-        public ActionResult GetSubcategorias(int categoriaId)
-        {
-            var subcategorias = _SubCategoria.ObtenerTodos()
-        .Where(s => s.categoriaId == categoriaId)
-        .Select(s => new {
-            id = s.Id,
-            nombre = s.Nombre
-        });
-
-            return Json(subcategorias);
-        }
-        public IActionResult AltaProducto()
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
-            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
-
-            if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
-            {
-                return RedirectToAction("Login", "Login");
-            }
-
-            var artesano = _artesanorepo.ObtenerPorEmail(email);
-
-            if (artesano == null)
-            {
-                return NotFound();
-            }
-            var model = new AltaProductoViewModel();
-            model.Categorias = _categoria.ObtenerTodos(); // Cargar categorías
-            return View(model);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult AltaProducto(AltaProductoViewModel modelo)
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
-
-            if (!ModelState.IsValid)
-            {
-                modelo.Categorias = _categoria.ObtenerTodos();
-                return View(modelo);
-            }
-
-            var artesano = _artesanorepo.ObtenerPorEmail(email);
-            if (artesano == null)
-                return NotFound();
-
-            // Guardar imagen si se subió
-            string nombreArchivo = null;
-
-            if (modelo.ArchivoImagen != null && modelo.ArchivoImagen.Length > 0)
-            {
-                var carpeta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/productos");
-
-                if (!Directory.Exists(carpeta))
-                    Directory.CreateDirectory(carpeta);
-
-                nombreArchivo = Guid.NewGuid() + Path.GetExtension(modelo.ArchivoImagen.FileName);
-                var ruta = Path.Combine(carpeta, nombreArchivo);
-
-                using (var stream = new FileStream(ruta, FileMode.Create))
-                {
-                    modelo.ArchivoImagen.CopyTo(stream);
-                }
-            }
-
-            var entidad = new Producto
-            {
-                nombre = modelo.nombre,
-                descripcion = modelo.descripcion,
-                precio = modelo.precio,
-                stock = modelo.stock,
-                imagen =  nombreArchivo, // <-- ESTA ES LA SOLUCIÓN
-                artesano = artesano,
-                SubCategoriaId = modelo.SubCategoriaId
-            };
-
-            try
-            {
-                _producto.Agregar(entidad);
-                artesano.productos.Add(entidad);
-                TempData["Mensaje"] = "producto agregado correctamente.";
-                return RedirectToAction("AltaProducto");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
-                modelo.Categorias = _categoria.ObtenerTodos();
-                return View(modelo);
-            }
-
-
-           
         }
 
         public IActionResult ProductosDelArtesano()
         {
+            // Obtener el email del usuario logueado
             var email = HttpContext.Session.GetString("loginUsuario");
-            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
-            if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
+            if (string.IsNullOrEmpty(email))
             {
                 return RedirectToAction("Login", "Login");
             }
-            var artesano = _artesanorepo.ObtenerProductosArtesano(email);
 
+            // Obtener al artesano por email
+            var artesano = _obtenerProductoArtesano.obtenerProductos(email);
             if (artesano == null)
             {
-                return NotFound();
+                return RedirectToAction("Login", "Login");
             }
-            var productos = artesano.productos;
 
-            var model = new ProductosDelArtesanoViewModel
+            // Obtener los productos del artesano
+            var productos =  artesano.productos;
+
+            // Crear el modelo para la vista
+            var modelo = new ProductosDelArtesanoViewModel
             {
-                Artesano = artesano,
                 Productos = productos
             };
 
-            return View(model);
+            return View(modelo);
         }
-        // GET: ArtesanoController/Details/5
-       
 
         // GET: ArtesanoController/Create
         public ActionResult Create()
@@ -261,103 +204,5 @@ namespace ProyectoIntegrador_Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult NuevaPassword()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult NuevaPassword(NuevaPasswordViewModel modelo)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                return View(modelo);
-
-            var email = HttpContext.Session.GetString("loginUsuario");
-            var artesano = _artesanorepo.ObtenerPorEmail(email);
-
-            if (artesano == null)
-                return NotFound();
-
-            
-                artesano.password = modelo.Password;
-                artesano.validarPasswordMaysucula();
-                artesano.validarNumero(); 
-                artesano.validarContraseñaLongitud();
-                _artesanorepo.Actualizar(artesano);
-
-                TempData["Mensaje"] = "Contraseña actualizada correctamente.";
-                return RedirectToAction("PerfilArtesano");
-            }
-            catch (MayusculaPasswordException ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-
-                return View(modelo);
-            }
-            catch (numeroPassowordException ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-
-                return View(modelo);
-            }
-            catch (passwordUsuarioException ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-
-                return View(modelo);
-            }
-        }
-
-        [HttpPost]
-        public IActionResult CambiarFoto(IFormFile archivoFoto)
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
-            var artesano = _artesanorepo.ObtenerPorEmail(email);
-
-            if (archivoFoto == null || archivoFoto.Length == 0)
-            {
-                TempData["Error"] = "Debes seleccionar un archivo.";
-                return RedirectToAction("PerfilArtesano");
-            }
-            var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/jpg" };
-            if (!tiposPermitidos.Contains(archivoFoto.ContentType))
-            {
-                TempData["Error"] = "El archivo debe ser una imagen JPG o PNG.";
-                return RedirectToAction("PerfilArtesano");
-            }
-
-            var extension = Path.GetExtension(archivoFoto.FileName).ToLower();
-            var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
-
-            if (!extensionesPermitidas.Contains(extension))
-            {
-                TempData["Error"] = "Formato no permitido. Usa JPG o PNG.";
-                return RedirectToAction("PerfilArtesano");
-            }
-
-            var nombreArchivo = Guid.NewGuid() + extension;
-            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/usuarios");
-
-            if (!Directory.Exists(uploads))
-            {
-                Directory.CreateDirectory(uploads);
-            }
-
-            var filePath = Path.Combine(uploads, nombreArchivo);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                archivoFoto.CopyTo(stream);
-            }
-
-            artesano.foto = "/images/usuarios/" + nombreArchivo;
-            _artesanorepo.Actualizar(artesano);
-
-            TempData["Mensaje"] = "¡Foto actualizada con éxito!";
-            return RedirectToAction("PerfilArtesano");
-        }
     }
 }

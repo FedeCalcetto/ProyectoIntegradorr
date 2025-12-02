@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IObtenerArtesano
+    public interface IObtenerUsuario
     {
-        Artesano Ejecutar(string email);
+        Usuario Ejecutar(string email);
     }
 }
