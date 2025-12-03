@@ -6,6 +6,7 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Services;
 
+
 namespace ProyectoIntegrador_Web
 {
     public class Program
@@ -27,7 +28,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IProductoRepositorio, ProductoEFRepositorio>();
             builder.Services.AddScoped<IClienteRepositorio, ClienteEFRepositorio>();
             builder.Services.AddScoped<ICategoriaRepositorio, CategoriaEFRepsoitorio>();
-
+            builder.Services.AddScoped<IProductoFotoRepsoitorio, ProductoFotoEFRepositorio>();
             //Casos de uso
             builder.Services.AddScoped<IAgregarProducto, AgregarProductoCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
@@ -36,10 +37,10 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IEditarArtesano, EditarArtesanoCasoDeUso>();
             builder.Services.AddScoped<IObtenerCategorias, ObtenerCategoriasCasoDeUso>();
             builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
-            builder.Services.AddScoped<IObtenerProductoArtesano, ObtenerProductoArtesanoCasoDeUso>();
-            builder.Services.AddScoped<IObtenerSubcategorias, ObtenerSubCategoriasCasoDeUso>();
-            builder.Services.AddScoped<IObtenerUsuario, ObtenerUsuarioCasoDeUso>();
             builder.Services.AddScoped<IObtenerArtesano, ObtenerArtesanoCasoDeUso>();
+
+            builder.Services.AddScoped<IEliminarProducto, EliminarProductoCasoDeUso>();
+            builder.Services.AddScoped<IEditarProducto, EditarProductoCasoDeUso>();
 
             //REGISTRO DEL SERVICIO DE EMAIL
             builder.Services.AddScoped<EmailService>();
@@ -57,6 +58,10 @@ namespace ProyectoIntegrador_Web
 
             var app = builder.Build();
 
+            builder.Services.AddDistributedMemoryCache();
+            
+
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -69,6 +74,7 @@ namespace ProyectoIntegrador_Web
             app.UseRouting();
             app.UseSession();
             app.UseAuthorization();
+            app.UseSession();
 
             app.UseStaticFiles();
 

@@ -5,7 +5,8 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Models;
-using ProyectoIntegrador_Web.Services;  // ← agregar esto
+using ProyectoIntegrador_Web.Services;
+using System.Net.Http.Json;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -15,28 +16,67 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IAgregarUsuario _agregarUsuario;
         private readonly ILogin _loginCu;
         private readonly EmailService _email;
+        private readonly IConfiguration _config;
 
-        public LoginController(IUsuarioRepositorio usuarioRepositorio,
-                               IAgregarUsuario agregarUsuario,
-                               EmailService email, ILogin login)
+        public LoginController(
+            IUsuarioRepositorio usuarioRepositorio,
+            IAgregarUsuario agregarUsuario,
+            EmailService email,
+            IConfiguration config)
         {
             _usuarioRepositorio = usuarioRepositorio;
             _agregarUsuario = agregarUsuario;
             _email = email;
-            _loginCu = login;
+            _config = config;
         }
 
-        // GET: LoginController
+        // ===========================================================
+        // 🟦 VALIDACIÓN reCAPTCHA
+        // ===========================================================
+        private async Task<bool> ValidarReCaptcha()
+        {
+            var secretKey = _config["GoogleReCaptcha:SecretKey"];
+            var captchaResponse = Request.Form["g-recaptcha-response"];
+
+            if (string.IsNullOrEmpty(captchaResponse))
+                return false;
+
+            using var client = new HttpClient();
+            var result = await client.PostAsync(
+                $"https://www.google.com/recaptcha/api/siteverify?secret={secretKey}&response={captchaResponse}",
+                null
+            );
+
+            var json = await result.Content.ReadFromJsonAsync<ReCaptchaResponse>();
+            return json.success;
+        }
+
+        public class ReCaptchaResponse
+        {
+            public bool success { get; set; }
+        }
+
+        // ===========================================================
+        // LOGIN GET
+        // ===========================================================
         public ActionResult Login()
         {
             return View();
         }
 
+        // ===========================================================
+        // LOGIN POST
+        // ===========================================================
         [HttpPost]
-        public IActionResult Login(LoginViewModel modelo)
+        public async Task<IActionResult> Login(LoginViewModel modelo)
         {
             if (!ModelState.IsValid)
+                return View(modelo);
+
+            // 🟦 Validar reCAPTCHA
+            if (!await ValidarReCaptcha())
             {
+                ModelState.AddModelError("", "Debes completar el reCAPTCHA.");
                 return View(modelo);
             }
 
@@ -48,15 +88,11 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View(modelo);
             }
 
-            // ❗ Bloquear login si NO verificó su correo
+            // 🛑 usuario sin verificar
             if (!usuario.Verificado)
-            {
-                /* ModelState.AddModelError(string.Empty, "Debes verificar tu correo antes de iniciar sesión.");
-                 return View(modelo);*/
-
                 return RedirectToAction("VerificarEmail", new { email = usuario.email.email });
-            }
 
+            // Login OK
             HttpContext.Session.SetString("loginUsuario", usuario.email.email);
             HttpContext.Session.SetString("Rol", usuario.rol);
 
@@ -68,70 +104,76 @@ namespace ProyectoIntegrador_Web.Controllers
                 return RedirectToAction("Inicio", "Admin");
         }
 
+        // ===========================================================
+        // REGISTRO GET
+        // ===========================================================
         public IActionResult registroUsuario()
         {
             return View();
         }
 
+        // ===========================================================
+        // REGISTRO POST
+        // ===========================================================
         [HttpPost]
         public async Task<IActionResult> registroUsuario(RegistroUsuarioViewModel modelo)
         {
             if (!ModelState.IsValid)
                 return View(modelo);
 
-            // 🔐 Generar código
+            ///////////////////captcha///////////////////
+            var captchaOK = await ValidarReCaptcha();
+            if (!captchaOK)
+            {
+                ModelState.AddModelError("", "Debes completar el reCAPTCHA.");
+                return View(modelo);
+            }
+            /////////////////////////////////////////////
+
             string codigo = new Random().Next(100000, 999999).ToString();
 
             Usuario entidad;
 
-            var dto = new AgregarUsuarioDto
+            if (modelo.soyArtesano)
             {
-                Nombre = modelo.nombre,
-                Apellido = modelo.apellido,
-                Email = modelo.email.email,
-                Password = modelo.password,
-                EsArtesano = modelo.soyArtesano
-            };
-
-            //if (modelo.soyArtesano)
-            //{
-            //    entidad = new Artesano
-            //    {
-            //        nombre = modelo.nombre,
-            //        apellido = modelo.apellido,
-            //        email = modelo.email,
-            //        password = modelo.password,
-            //        rol = "Artesano",
-            //        CodigoVerificacion = codigo,
-            //        Verificado = false
-            //    };
-            //}
-            //else
-            //{
-            //    entidad = new Cliente
-            //    {
-            //        nombre = modelo.nombre,
-            //        apellido = modelo.apellido,
-            //        email = modelo.email,
-            //        password = modelo.password,
-            //        rol = "Cliente",
-            //        CodigoVerificacion = codigo,
-            //        Verificado = false
-            //    };
-            //}
+                entidad = new Artesano
+                {
+                    nombre = modelo.nombre,
+                    apellido = modelo.apellido,
+                    email = modelo.email,
+                    password = modelo.password,
+                    rol = "Artesano",
+                    CodigoVerificacion = codigo,
+                    Verificado = false
+                };
+            }
+            else
+            {
+                entidad = new Cliente
+                {
+                    nombre = modelo.nombre,
+                    apellido = modelo.apellido,
+                    email = modelo.email,
+                    password = modelo.password,
+                    rol = "Cliente",
+                    CodigoVerificacion = codigo,
+                    Verificado = false
+                };
+            }
 
             try
             {
-                _agregarUsuario.Ejecutar(dto, codigo); // guarda en BD  
+                _agregarUsuario.Ejecutar(entidad);
 
-                //  Enviar correo
-                await _email.EnviarCodigoAsync(entidad.email.email, codigo);
+                await _email.EnviarCodigoAsync(entidad.email.email, codigo, "verificacion");
 
-                // Esto hace que el codigo dure 10 minutos en la session
+                // Guardar expiración del código
                 HttpContext.Session.SetString("Codigo_" + entidad.email.email, codigo);
-                HttpContext.Session.SetString("CodigoExpira_" + entidad.email.email,DateTime.Now.AddMinutes(1).ToString());
+                HttpContext.Session.SetString(
+                    "CodigoExpira_" + entidad.email.email,
+                    DateTime.Now.AddMinutes(10).ToString()
+                );
 
-                //  Enviar a pantalla para ingresar código
                 return RedirectToAction("VerificarEmail", new { email = entidad.email.email });
             }
             catch (Exception ex)
@@ -141,14 +183,18 @@ namespace ProyectoIntegrador_Web.Controllers
             }
         }
 
-        // GET – pantalla para ingresar código
+        // ===========================================================
+        // VERIFICAR EMAIL GET
+        // ===========================================================
         public IActionResult VerificarEmail(string email)
         {
             ViewBag.Email = email;
             return View();
         }
 
-        // POST – verificar código
+        // ===========================================================
+        // VERIFICAR EMAIL POST
+        // ===========================================================
         [HttpPost]
         public IActionResult VerificarEmail(string email, string codigo)
         {
@@ -156,7 +202,6 @@ namespace ProyectoIntegrador_Web.Controllers
             if (usuario == null)
                 return NotFound();
 
-            // Obtener datos de Session
             var expiraStr = HttpContext.Session.GetString("CodigoExpira_" + email);
             var codigoGuardado = HttpContext.Session.GetString("Codigo_" + email);
 
@@ -167,10 +212,8 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View();
             }
 
-            // Convertir expiración
             DateTime expira = DateTime.Parse(expiraStr);
 
-            // Usar UtcNow para evitar errores de zona horaria
             if (DateTime.Now > expira)
             {
                 ViewBag.Error = "El código expiró. Solicita uno nuevo.";
@@ -178,7 +221,6 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View();
             }
 
-            // Comparar código ingresado vs código guardado
             if (codigoGuardado != codigo)
             {
                 ViewBag.Error = "Código incorrecto.";
@@ -186,19 +228,19 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View();
             }
 
-            // Verificación correcta → marcar usuario
             usuario.Verificado = true;
             usuario.CodigoVerificacion = null;
             _usuarioRepositorio.Actualizar(usuario);
 
-            // Limpiar session
             HttpContext.Session.Remove("Codigo_" + email);
             HttpContext.Session.Remove("CodigoExpira_" + email);
 
             return View("VerificadoCorrectamente");
         }
 
-        //reenviar codigo verificacion
+        // ===========================================================
+        // REENVIAR CÓDIGO
+        // ===========================================================
         [HttpPost]
         public async Task<IActionResult> ReenviarCodigo(string email)
         {
@@ -207,19 +249,18 @@ namespace ProyectoIntegrador_Web.Controllers
             if (usuario == null)
                 return NotFound();
 
-            // Generar nuevo código
             var nuevoCodigo = new Random().Next(100000, 999999).ToString();
 
             usuario.CodigoVerificacion = nuevoCodigo;
             _usuarioRepositorio.Actualizar(usuario);
 
-            // Enviar correo
-            await _email.EnviarCodigoAsync(email, nuevoCodigo);
+            await _email.EnviarCodigoAsync(email, nuevoCodigo, "verificacion");
 
-            // 👉 Guardar código y expiración en Session
             HttpContext.Session.SetString("Codigo_" + email, nuevoCodigo);
-            HttpContext.Session.SetString("CodigoExpira_" + email,
-            DateTime.Now.AddMinutes(10).ToString());
+            HttpContext.Session.SetString(
+                "CodigoExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString()
+            );
 
             ViewBag.Email = email;
             ViewBag.Mensaje = "Se envió un nuevo código a tu correo.";
@@ -227,7 +268,4 @@ namespace ProyectoIntegrador_Web.Controllers
             return View("VerificarEmail");
         }
     }
-
-
 }
-

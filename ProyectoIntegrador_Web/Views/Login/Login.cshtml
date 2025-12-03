@@ -1,5 +1,7 @@
 ﻿@model ProyectoIntegrador_Web.Models.LoginViewModel
+@inject IConfiguration Configuration
 @{
+
     ViewData["Title"] = "Login";
 }
 
@@ -41,6 +43,15 @@
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
                         </div>
+                          
+                        
+                        
+                        <div class="d-flex justify-content-center mt-3 mb-3">
+                            <div class="g-recaptcha" data-sitekey="@Configuration["GoogleReCaptcha:SiteKey"]"></div>
+                        </div>
+
+                        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
                     </form>
 
                     <hr />

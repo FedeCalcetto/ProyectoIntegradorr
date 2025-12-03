@@ -14,7 +14,7 @@ namespace ProyectoIntegrador_Web.Services
             _config = config;
         }
 
-        public async Task EnviarCodigoAsync(string destino, string codigo)
+        public async Task EnviarCodigoAsync(string destino, string codigo, string tipo)
         {
             var from = _config["EmailSettings:From"];
             var password = _config["EmailSettings:Password"];
@@ -27,23 +27,48 @@ namespace ProyectoIntegrador_Web.Services
                 EnableSsl = true
             };
 
-            // URL para que el usuario pueda verificar cuando quiera
-            string link = $"https://localhost:7131/Login/VerificarEmail?email={destino}";
+            // ----- TEXTO SEGÚN TIPO -----
+            string asunto;
+            string cuerpo;
 
-            string cuerpo = $@"
-Tu código de verificación es: {codigo}
+            if (tipo == "verificacion")
+            {
+                string link = $"https://localhost:7131/Login/VerificarEmail?email={destino}";
 
-Podés verificar tu cuenta haciendo clic en el siguiente enlace o copiá y pegá esta URL en tu navegador:
+                asunto = "Código de verificación";
+                cuerpo = $@"
+                Tu código de verificación es: {codigo}
 
-{link}
-";
+                También podés verificar tu cuenta entrando a:
+                {link}
+                ";
+            }
+            else if (tipo == "eliminacion")
+            {
+                asunto = "Código para eliminar tu cuenta";
+                cuerpo = $@"
+                Recibimos tu solicitud para eliminar tu cuenta.
+
+                Tu código para confirmar la eliminación es: {codigo}
+
+                ⚠️ IMPORTANTE
+                Si tú no pediste esto, no compartas este código con nadie.
+                ";
+            }
+            else
+            {
+                asunto = "Código";
+                cuerpo = "Tu código es: " + codigo;
+            }
+
+            //-------------------------------------------------------
 
             var mensaje = new MailMessage();
             mensaje.From = new MailAddress(from);
             mensaje.To.Add(destino);
-            mensaje.Subject = "Código de verificación";
+            mensaje.Subject = asunto;
             mensaje.Body = cuerpo;
-            mensaje.IsBodyHtml = false; // si querés HTML me avisás
+            mensaje.IsBodyHtml = false;
 
             await smtp.SendMailAsync(mensaje);
         }

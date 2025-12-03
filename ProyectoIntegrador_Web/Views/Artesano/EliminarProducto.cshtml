@@ -1,0 +1,38 @@
+﻿@model ProyectoIntegrador_Web.Models.EliminarProductoViewModel
+
+@{
+    ViewData["Title"] = "Eliminar Producto";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow-lg border-0" style="width: 420px;">
+        <div class="card-body text-center">
+
+            <h4 class="text-danger mb-3">
+                <i class="bi bi-exclamation-triangle-fill"></i> Eliminar Producto
+            </h4>
+
+            <p class="text-muted">
+                ¿Estás seguro de que deseas eliminar este producto?
+            </p>
+
+            <div class="text-start mt-4 mb-4">
+                <p><strong>Nombre:</strong> @Model.nombre</p>
+                <p><strong>Descripción:</strong> @Model.descripcion</p>
+            </div>
+
+            <form asp-action="EliminarProductoConfirmado" method="post">
+                <input type="hidden" name="id" value="@ViewBag.Id" />
+
+                <button type="submit" class="btn btn-danger w-100 mb-2">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+
+                <a asp-action="ProductosDelArtesano" class="btn btn-outline-secondary w-100">
+                    Cancelar
+                </a>
+            </form>
+
+        </div>
+    </div>
+</div>

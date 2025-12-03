@@ -11,16 +11,16 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 {
     public class ObtenerArtesanoCasoDeUso : IObtenerArtesano
     {
-        private readonly IArtesanoRepositorio _artesanoRepo;
+        private readonly IArtesanoRepositorio _artesanoRepositorio;
 
-        public ObtenerArtesanoCasoDeUso(IArtesanoRepositorio artesanoRepo)
+        public ObtenerArtesanoCasoDeUso(IArtesanoRepositorio artesanoRepositorio)
         {
-            _artesanoRepo = artesanoRepo;
+            _artesanoRepositorio = artesanoRepositorio;
         }
 
         public Artesano Ejecutar(string email)
         {
-            return _artesanoRepo.ObtenerPorEmail(email);
+            return _artesanoRepositorio.ObtenerPorEmail(email);
         }
     }
 }

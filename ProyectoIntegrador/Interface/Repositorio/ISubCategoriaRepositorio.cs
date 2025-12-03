@@ -9,5 +9,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface ISubCategoriaRepositorio : IRepositorio<SubCategoria>
     {
+        List<SubCategoria> ObtenerTodas();
     }
 }

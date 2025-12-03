@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 
@@ -17,12 +18,12 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<Factura> Facturas { get; set; }
         public DbSet<PedidoPersonalizado> PedidosPersonalizados { get; set; }
         public DbSet<Reporte> Reportes { get; set; }
-
+        public DbSet<ProductoFoto> ProductoFotos { get; set; }
 
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {
-
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -65,11 +66,11 @@ namespace ProyectoIntegrador.EntityFrameWork
             modelBuilder.Entity<Artesano>()
                 .HasMany(a => a.productos)
                 .WithOne(p => p.artesano)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Cliente>()
                 .HasMany(c => c.compras)
-                .WithOne(f => f.Cliente)
+                .WithOne(f => f.Cliente) 
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Factura>()
@@ -117,6 +118,12 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .WithMany()
                 .HasForeignKey(r => r.productoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Producto>()
+            .HasMany(p => p.Fotos)
+            .WithOne(f => f.Producto)
+            .HasForeignKey(f => f.ProductoId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             // 🧪 Seed principal (TPH + owned types)
             modelBuilder.Entity<Usuario>().HasData(

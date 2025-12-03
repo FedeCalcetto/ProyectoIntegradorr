@@ -24,7 +24,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public bool Verificado { get; set; }
 
         
-
         public void Validar()
         {
             validarNombres();

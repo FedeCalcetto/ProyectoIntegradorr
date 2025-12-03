@@ -17,6 +17,7 @@
 
             <form asp-controller="Producto" asp-action="AltaProducto" method="post" enctype="multipart/form-data">
                 <div class="row g-3">
+
                     <div class="col-md-6">
                         <label asp-for="nombre" class="form-label"></label>
                         <input asp-for="nombre" class="form-control" placeholder="Ej: Mate de madera" />
@@ -42,9 +43,15 @@
                     </div>
 
                     <div class="col-md-8">
-                        <label class="form-label">Imagen del producto</label>
+                        <label class="form-label">Imagen del producto (principal)</label>
                         <input asp-for="ArchivoImagen" type="file" class="form-control" accept="image/*" />
                         <span asp-validation-for="ArchivoImagen" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                        <label class="form-label">Fotos adicionales (opcional)</label>
+                        <input asp-for="Fotos" type="file" class="form-control" multiple="multiple" accept="image/*" name="Fotos" />
+                        <span asp-validation-for="Fotos" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-6">

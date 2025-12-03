@@ -6,6 +6,7 @@ using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using ProyectoIntegrador_Web.Models;
+using ProyectoIntegrador_Web.Services;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -14,12 +15,15 @@ namespace ProyectoIntegrador_Web.Controllers
 
         private readonly IClienteRepositorio _clienteRepositorio;
         private readonly IObtenerCliente _obtenerCliente;
-        private readonly IWebHostEnvironment _env;
-        public ClienteController(IWebHostEnvironment env, IClienteRepositorio clienteRepositorio, IObtenerCliente obtenerCliente)
+        private readonly EmailService _email; //esto se agrega siempre que se precise enviar un email
+
+        public ClienteController(IClienteRepositorio clienteRepositorio,
+                          IObtenerCliente obtenerCliente,
+                          EmailService email)
         {
             _clienteRepositorio = clienteRepositorio;
             _obtenerCliente = obtenerCliente;
-            _env = env;
+            _email = email;
         }
 
         //seelct departamentos
@@ -100,49 +104,22 @@ namespace ProyectoIntegrador_Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Perfil(EditarClienteViewModel modelo, IFormFile archivoFotoCliente)
         {
-            var email = HttpContext.Session.GetString("loginUsuario");
-
-            modelo.DepartamentosOpciones = ObtenerDepartamentos();
-            ModelState.Remove("archivoFotoCliente");
-            if (!ModelState.IsValid)
-                return View(modelo);
-
-            var cliente = _obtenerCliente.Ejecutar(email);
-            if (cliente == null)
-                return NotFound("No se encontró el cliente para actualizar.");
-
             try
             {
-                // =============================
-                //     SI SUBIÓ FOTO NUEVA
-                // =============================
-                if (archivoFotoCliente != null && archivoFotoCliente.Length > 0)
+                var email = HttpContext.Session.GetString("loginUsuario");
+                modelo.DepartamentosOpciones = ObtenerDepartamentos();
+                if (!ModelState.IsValid)
                 {
-                    var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/jpg" };
-                    if (!tiposPermitidos.Contains(archivoFotoCliente.ContentType))
-                    {
-                        TempData["Error"] = "El archivo debe ser una imagen JPG o PNG.";
-                        return RedirectToAction("Perfil");
-                    }
+                    modelo.DepartamentosOpciones = ObtenerDepartamentos();
 
-                    var extension = Path.GetExtension(archivoFotoCliente.FileName).ToLower();
-                    var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
+                    return View(modelo);
+                }
 
-                    if (!extensionesPermitidas.Contains(extension))
-                    {
-                        TempData["Error"] = "Formato no permitido. Usa JPG o PNG.";
-                        return RedirectToAction("Perfil");
-                    }
-
-                    var nombreArchivo = Guid.NewGuid() + extension;
-                    var uploads = Path.Combine(_env.WebRootPath, "images/usuarios");
-
-                    var filePath = Path.Combine(uploads, nombreArchivo);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                        archivoFotoCliente.CopyTo(stream);
-
-                    cliente.foto = "/images/usuarios/" + nombreArchivo;
+                // Buscar el cliente por email (value object reconstruido)
+                var cliente = _obtenerCliente.Ejecutar(email);
+                if (cliente == null)
+                {
+                    return NotFound("No se encontró el cliente para actualizar.");
                 }
 
                 // =============================
@@ -159,7 +136,8 @@ namespace ProyectoIntegrador_Web.Controllers
                 };
 
                 _clienteRepositorio.Actualizar(cliente);
-
+                modelo.DepartamentosOpciones = ObtenerDepartamentos();
+                // Mensaje temporal para la vista
                 TempData["Mensaje"] = "Perfil actualizado correctamente.";
                 return RedirectToAction("Perfil");
             }
@@ -244,6 +222,72 @@ namespace ProyectoIntegrador_Web.Controllers
             return RedirectToAction("Index", "Home");
        
         }
-    
-}
+
+        public async Task<IActionResult> ConfirmarEliminacion()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (email == null)
+                return RedirectToAction("Login", "Login");
+
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            HttpContext.Session.SetString("EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString());
+
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+
+            TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
+
+            return View(new EliminarCuentaViewModel { Email = email });
+        }   
+
+
+        public IActionResult CuentaEliminada()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
+        {
+            var email = modelo.Email;
+            var codigoIngresado = modelo.Codigo;
+
+            var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
+            var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
+
+            if (codigoGuardado == null || expiraStr == null)
+            {
+                TempData["Error"] = "El código expiró. Pedí uno nuevo.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            DateTime expira = DateTime.Parse(expiraStr);
+            if (DateTime.Now > expira)
+            {
+                TempData["Error"] = "El código expiró.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            if (codigoGuardado != codigoIngresado)
+            {
+                TempData["Error"] = "Código incorrecto.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            // eliminar usuario
+            var cliente = _obtenerCliente.Ejecutar(email);
+            _clienteRepositorio.Eliminar(cliente.id);
+
+            // limpiar sesión
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("CuentaEliminada");
+        }
+
+
+    }
 }
