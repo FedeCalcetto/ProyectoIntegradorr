@@ -37,16 +37,17 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .HasValue<Admin>("ADMIN");
 
             // 🧱 Crea tabla ClienteProductoFavorito 
-            modelBuilder.Entity<Cliente>()
-            .HasMany(c => c.productosFavoritos)
-            .WithMany()
-            .UsingEntity(j => j.ToTable("ClienteProductoFavorito"));
+            //modelBuilder.Entity<Cliente>()
+            //.HasMany(c => c.productosFavoritos)
+            //.WithMany()
+            //.UsingEntity(j => j.ToTable("ClienteProductoFavorito"));
 
-            // 🧱 Crea tabla ClienteArtesanoSeguido
-            modelBuilder.Entity<Cliente>()
-            .HasMany(c => c.artesanosSeguidos)
-            .WithMany()
-            .UsingEntity(j => j.ToTable("ClienteArtesanoSeguido"));
+            //// 🧱 Crea tabla ClienteArtesanoSeguido
+            //modelBuilder.Entity<Cliente>()
+            //.HasMany(c => c.artesanosSeguidos)
+            //.WithMany()
+
+            //.UsingEntity(j => j.ToTable("ClienteArtesanoSeguido"));
 
             // 🔹 Propiedades "owned" (Email, Direccion)
             modelBuilder.Entity<Usuario>().OwnsOne(u => u.email, email =>

@@ -36,9 +36,12 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
             builder.Services.AddScoped<IEditarArtesano, EditarArtesanoCasoDeUso>();
             builder.Services.AddScoped<IObtenerCategorias, ObtenerCategoriasCasoDeUso>();
+            builder.Services.AddScoped<IObtenerSubcategorias, ObtenerSubCategoriasCasoDeUso>();
             builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
             builder.Services.AddScoped<IObtenerArtesano, ObtenerArtesanoCasoDeUso>();
-
+            builder.Services.AddScoped<IObtenerUsuario, ObtenerUsuarioCasoDeUso>();
+            builder.Services.AddScoped<IObtenerProducto, ObtenerProductoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerProductoArtesano, ObtenerProductoArtesanoCasoDeUso>();
             builder.Services.AddScoped<IEliminarProducto, EliminarProductoCasoDeUso>();
             builder.Services.AddScoped<IEditarProducto, EditarProductoCasoDeUso>();
 

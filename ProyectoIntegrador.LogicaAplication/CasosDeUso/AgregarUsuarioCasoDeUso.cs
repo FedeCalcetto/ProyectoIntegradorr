@@ -20,7 +20,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             _usuarioRepositorio = usuarioRepositorio;
         }
 
-        public void Ejecutar(AgregarUsuarioDto dto, string codigoVerificacion)
+        public Usuario Ejecutar(AgregarUsuarioDto dto, string codigoVerificacion)
         {
             Usuario entidad;
             var email = new Email(dto.Email);
@@ -52,6 +52,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             }
 
             _usuarioRepositorio.Agregar(entidad);
+            return entidad;
         }
     }
 }

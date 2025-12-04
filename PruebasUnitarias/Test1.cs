@@ -1,5 +1,7 @@
-﻿using Moq;
+﻿using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Moq;
 using ProyectoIntegrador.LogicaAplication.CasosDeUso;
+using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
@@ -19,7 +21,7 @@ namespace PruebasUnitarias
             var repo = new Mock<IUsuarioRepositorio>();
             var esperado = new Cliente
             {
-                email = new Email { email = "test@mail.com" },
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
                 password = "Password123"
             };
 
@@ -59,7 +61,8 @@ namespace PruebasUnitarias
             var repo = new Mock<IClienteRepositorio>();
             var esperado = new Cliente
             {
-                email = new Email { email = "cliente@mail.com" }
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
+                password = "Password123"
             };
 
             repo.Setup(r => r.obtenerCliente("cliente@mail.com")).Returns(esperado);
@@ -97,18 +100,17 @@ namespace PruebasUnitarias
         {
             var repo = new Mock<IUsuarioRepositorio>();
             var caso = new AgregarUsuarioCasoDeUso(repo.Object);
-
-            var usuario = new Cliente
+            var dto = new AgregarUsuarioDto
             {
-                nombre = "Juan",
-                apellido = "Lopez",
-                email = new Email { email = "a@b.com" },
-                password = "Password123"
+                Nombre = "Juan",
+                Apellido = "Lopez",
+                Email = "test@mail.com",
+                Password = "Password123"
             };
 
-            caso.Ejecutar(usuario);
+            caso.Ejecutar(dto, "123456");
 
-            repo.Verify(r => r.Agregar(usuario), Times.Once);
+            repo.Verify(r => r.Agregar(It.IsAny<Usuario>()), Times.Once);
         }
     }
 
@@ -121,11 +123,12 @@ namespace PruebasUnitarias
         [TestMethod]
         public void Validar_ContraseñaSinMayuscula_LanzaExcepcion()
         {
+
             var usuario = new Cliente
             {
                 nombre = "Test",
                 apellido = "User",
-                email = new Email { email = "t@t.com" },
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("t@t.com"),
                 password = "password123"
             };
 
@@ -139,7 +142,7 @@ namespace PruebasUnitarias
             {
                 nombre = "Test",
                 apellido = "User",
-                email = new Email { email = "t@t.com" },
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("t@t.com"),
                 password = "Ab1"
             };
 
@@ -153,7 +156,7 @@ namespace PruebasUnitarias
             {
                 nombre = "Juan2",
                 apellido = "Perez",
-                email = new Email { email = "t@t.com" },
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("t@t.com"),
                 password = "Password123"
             };
 
@@ -173,7 +176,7 @@ namespace PruebasUnitarias
             var cliente = new Cliente
             {
                 password = "Password123",
-                email = new Email { email = "cliente@mail.com" }
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("cliente@mail.com" )
             };
 
             Assert.ThrowsException<NoCoincideException>(() =>
@@ -187,7 +190,7 @@ namespace PruebasUnitarias
             {
                 nombre = "Juan",
                 apellido = "Lopez",
-                email = new Email { email = "cliente@mail.com" },
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("cliente@mail.com"),
                 direccion = new Direccion { barrio = "", departamento = "", domicilio = "" }
             };
 
@@ -206,7 +209,7 @@ namespace PruebasUnitarias
         {
             var artesano = new Artesano
             {
-                email = new Email { email = "art@mail.com" }
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("art@mail.com")
             };
 
             Assert.ThrowsException<TelefonoUsuarioException>(() =>
@@ -218,7 +221,7 @@ namespace PruebasUnitarias
         {
             var artesano = new Artesano
             {
-                email = new Email { email = "art@mail.com" }
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("art@mail.com")
             };
 
             artesano.ValidarTelefono("091234567");

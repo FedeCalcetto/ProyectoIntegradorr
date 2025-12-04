@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Models;
 
@@ -20,7 +21,7 @@ namespace ProyectoIntegrador_Web.Controllers
         
             public IActionResult CambioContra(string returnUrl)
         {
-            ViewBag.ReturnUrl = returnUrl;
+            ViewBag.ReturnUrl = returnUrl ?? "/"; 
             return View();
         }
 
@@ -30,8 +31,10 @@ namespace ProyectoIntegrador_Web.Controllers
         {
 
             if (!ModelState.IsValid)
+            {
+                ViewBag.ReturnUrl = returnUrl;
                 return View(modelo);
-
+            }
             var email = HttpContext.Session.GetString("loginUsuario");
 
             if (email == null)
@@ -43,13 +46,46 @@ namespace ProyectoIntegrador_Web.Controllers
 
                 TempData["Mensaje"] = "Contraseña actualizada correctamente.";
 
-                return RedirectToAction("CambioContra", new { returnUrl });
+                return Redirect(returnUrl ?? "/");
+            }
+            catch (MayusculaPasswordException ex)
+            {
+                ModelState.AddModelError("", "La contraseña debe contener mayúsucla");
+                ViewBag.ReturnUrl = returnUrl;
+                return View(modelo);
+            }
+            catch (ContraActualException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                ViewBag.ReturnUrl = returnUrl;
+                return View(modelo);
+            }
+            catch (NoCoincideException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                ViewBag.ReturnUrl = returnUrl;
+                return View(modelo);
+            }
+            catch (SonIgualesException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                ViewBag.ReturnUrl = returnUrl;
+                return View(modelo);
+            }
+            catch (numeroPassowordException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                ViewBag.ReturnUrl = returnUrl;
+                return View(modelo);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                ModelState.AddModelError("", "Ocurrió un error inesperado.");
+                ViewBag.ReturnUrl = returnUrl;
                 return View(modelo);
             }
+          
+            
         }
         
         // GET: UsuarioController

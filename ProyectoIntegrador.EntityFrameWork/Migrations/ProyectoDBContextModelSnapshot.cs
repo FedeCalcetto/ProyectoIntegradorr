@@ -22,36 +22,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ArtesanoCliente", b =>
-                {
-                    b.Property<int>("Clienteid")
-                        .HasColumnType("int");
-
-                    b.Property<int>("artesanosSeguidosid")
-                        .HasColumnType("int");
-
-                    b.HasKey("Clienteid", "artesanosSeguidosid");
-
-                    b.HasIndex("artesanosSeguidosid");
-
-                    b.ToTable("ClienteArtesanoSeguido", (string)null);
-                });
-
-            modelBuilder.Entity("ClienteProducto", b =>
-                {
-                    b.Property<int>("Clienteid")
-                        .HasColumnType("int");
-
-                    b.Property<int>("productosFavoritosid")
-                        .HasColumnType("int");
-
-                    b.HasKey("Clienteid", "productosFavoritosid");
-
-                    b.HasIndex("productosFavoritosid");
-
-                    b.ToTable("ClienteProductoFavorito", (string)null);
-                });
-
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>
                 {
                     b.Property<int>("Id")
@@ -221,6 +191,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<int?>("Clienteid")
+                        .HasColumnType("int");
+
                     b.Property<int>("SubCategoriaId")
                         .HasColumnType("int");
 
@@ -245,16 +218,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("stock")
                         .HasColumnType("int");
 
-                    b.Property<int>("subCategroiaId")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
+
+                    b.HasIndex("Clienteid");
 
                     b.HasIndex("SubCategoriaId");
 
                     b.HasIndex("artesanoid");
-
-                    b.HasIndex("subCategroiaId");
 
                     b.ToTable("Productos");
                 });
@@ -515,6 +485,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
 
+                    b.Property<int?>("Clienteid")
+                        .HasColumnType("int");
+
                     b.Property<string>("descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -526,6 +499,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired()
                         .HasMaxLength(9)
                         .HasColumnType("nvarchar(9)");
+
+                    b.HasIndex("Clienteid");
 
                     b.ToTable("Usuarios", t =>
                         {
@@ -544,36 +519,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("CLIENTE");
-                });
-
-            modelBuilder.Entity("ArtesanoCliente", b =>
-                {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
-                        .WithMany()
-                        .HasForeignKey("Clienteid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", null)
-                        .WithMany()
-                        .HasForeignKey("artesanosSeguidosid")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ClienteProducto", b =>
-                {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
-                        .WithMany()
-                        .HasForeignKey("Clienteid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", null)
-                        .WithMany()
-                        .HasForeignKey("productosFavoritosid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
@@ -651,6 +596,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>
                 {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
+                        .WithMany("productosFavoritos")
+                        .HasForeignKey("Clienteid");
+
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", "SubCategoria")
                         .WithMany("Productos")
                         .HasForeignKey("SubCategoriaId")
@@ -660,7 +609,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
                         .WithMany("productos")
                         .HasForeignKey("artesanoid")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SubCategoria");
@@ -674,12 +623,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .WithMany("Fotos")
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", "SubCategoria")
-                        .WithMany("Productos")
-                        .HasForeignKey("subCategroiaId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Producto");
@@ -761,6 +704,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
+                {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
+                        .WithMany("artesanosSeguidos")
+                        .HasForeignKey("Clienteid");
+                });
+
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.OwnsOne("ProyectoIntegrador.LogicaNegocio.ValueObjects.Direccion", "direccion", b1 =>
@@ -834,7 +784,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
+                    b.Navigation("artesanosSeguidos");
+
                     b.Navigation("compras");
+
+                    b.Navigation("productosFavoritos");
                 });
 #pragma warning restore 612, 618
         }

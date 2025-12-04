@@ -15,5 +15,7 @@ namespace ProyectoIntegrador.LogicaAplication.Dtos
         public int SubCategoriaId { get; set; }
         public string Imagen { get; set; }
 
+        public List<string> Fotos { get; set; } = new();
+
     }
 }

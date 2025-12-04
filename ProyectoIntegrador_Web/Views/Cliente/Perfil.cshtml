@@ -107,9 +107,15 @@
 
                         <div>
 
-            <div class="d-flex justify-content-left">
-                <a id="nuevaP" asp-route-returnUrl="/Cliente/Perfil" asp-controller="Usuario" asp-action="CambioContra" class="btn btn-outline-secondary">Nueva contraseña</a>
-            </div>
+                        <div class="d-flex justify-content-left">
+                            <a id="nuevaP"
+                               asp-controller="Usuario"
+                               asp-action="CambioContra"
+                               asp-route-returnUrl="/Cliente/Perfil"
+                               class="btn btn-outline-secondary">
+                                Nueva contraseña
+                            </a>
+                        </div>
 
                         </div>
                     </form>

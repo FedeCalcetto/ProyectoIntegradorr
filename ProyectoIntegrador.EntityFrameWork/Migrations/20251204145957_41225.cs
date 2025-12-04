@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class _2911 : Migration
+    public partial class _41225 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -165,7 +165,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         column: x => x.artesanoid,
                         principalTable: "Usuarios",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -225,6 +225,26 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     table.ForeignKey(
                         name: "FK_LineaFactura_Productos_productoid",
                         column: x => x.productoid,
+                        principalTable: "Productos",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductoFotos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UrlImagen = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductoFotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductoFotos_Productos_ProductoId",
+                        column: x => x.ProductoId,
                         principalTable: "Productos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -359,6 +379,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 column: "clienteId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductoFotos_ProductoId",
+                table: "ProductoFotos",
+                column: "ProductoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Productos_artesanoid",
                 table: "Productos",
                 column: "artesanoid");
@@ -410,6 +435,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.DropTable(
                 name: "PedidosPersonalizados");
+
+            migrationBuilder.DropTable(
+                name: "ProductoFotos");
 
             migrationBuilder.DropTable(
                 name: "Reportes");

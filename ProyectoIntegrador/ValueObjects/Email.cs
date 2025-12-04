@@ -20,5 +20,7 @@ namespace ProyectoIntegrador.LogicaNegocio.ValueObjects
 
             email = valor;
         }
+
+        private Email() { }
     }
 }

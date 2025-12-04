@@ -10,7 +10,7 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
 {
     public interface IAgregarUsuario
     {
-        void Ejecutar(AgregarUsuarioDto u, string codigoVerificacion);
+        Usuario Ejecutar(AgregarUsuarioDto u, string codigoVerificacion);
 
     }
 }

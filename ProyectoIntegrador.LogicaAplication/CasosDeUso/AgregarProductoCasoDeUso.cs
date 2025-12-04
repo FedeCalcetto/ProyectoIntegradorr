@@ -32,8 +32,23 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                 stock = dto.Stock,
                 imagen = dto.Imagen,
                 SubCategoriaId = dto.SubCategoriaId,
-                artesano = a
+                artesano = a,
+                Fotos = new List<ProductoFoto>()
             };
+
+            // -----------------------------
+            //  Mapeo de fotos adicionales
+            // -----------------------------
+            if (dto.Fotos != null && dto.Fotos.Any())
+            {
+                foreach (var foto in dto.Fotos)
+                {
+                    producto.Fotos.Add(new ProductoFoto
+                    {
+                        UrlImagen = foto
+                    });
+                }
+            }
 
             _agregarProducto.Agregar(producto);
 

@@ -22,12 +22,13 @@ namespace ProyectoIntegrador_Web.Controllers
             IUsuarioRepositorio usuarioRepositorio,
             IAgregarUsuario agregarUsuario,
             EmailService email,
-            IConfiguration config)
+            IConfiguration config, ILogin login)
         {
             _usuarioRepositorio = usuarioRepositorio;
             _agregarUsuario = agregarUsuario;
             _email = email;
             _config = config;
+            _loginCu = login;
         }
 
         // ===========================================================
@@ -132,38 +133,18 @@ namespace ProyectoIntegrador_Web.Controllers
 
             string codigo = new Random().Next(100000, 999999).ToString();
 
-            Usuario entidad;
-
-            if (modelo.soyArtesano)
+            var dto = new AgregarUsuarioDto
             {
-                entidad = new Artesano
-                {
-                    nombre = modelo.nombre,
-                    apellido = modelo.apellido,
-                    email = modelo.email,
-                    password = modelo.password,
-                    rol = "Artesano",
-                    CodigoVerificacion = codigo,
-                    Verificado = false
-                };
-            }
-            else
-            {
-                entidad = new Cliente
-                {
-                    nombre = modelo.nombre,
-                    apellido = modelo.apellido,
-                    email = modelo.email,
-                    password = modelo.password,
-                    rol = "Cliente",
-                    CodigoVerificacion = codigo,
-                    Verificado = false
-                };
-            }
+                Nombre = modelo.nombre,
+                Apellido = modelo.apellido,
+                Email = modelo.email,
+                Password = modelo.password,
+                EsArtesano = modelo.soyArtesano
+            };
 
             try
             {
-                _agregarUsuario.Ejecutar(entidad);
+                var entidad = _agregarUsuario.Ejecutar(dto, codigo);
 
                 await _email.EnviarCodigoAsync(entidad.email.email, codigo, "verificacion");
 

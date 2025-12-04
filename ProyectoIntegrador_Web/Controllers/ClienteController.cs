@@ -16,14 +16,16 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IClienteRepositorio _clienteRepositorio;
         private readonly IObtenerCliente _obtenerCliente;
         private readonly EmailService _email; //esto se agrega siempre que se precise enviar un email
+        private readonly IWebHostEnvironment _env;
 
-        public ClienteController(IClienteRepositorio clienteRepositorio,
+        public ClienteController(IWebHostEnvironment env, IClienteRepositorio clienteRepositorio,
                           IObtenerCliente obtenerCliente,
                           EmailService email)
         {
             _clienteRepositorio = clienteRepositorio;
             _obtenerCliente = obtenerCliente;
             _email = email;
+            _env = env;
         }
 
         //seelct departamentos
@@ -122,28 +124,68 @@ namespace ProyectoIntegrador_Web.Controllers
                     return NotFound("No se encontró el cliente para actualizar.");
                 }
 
-                // =============================
-                //     ACTUALIZAR CAMPOS
-                // =============================
-                cliente.nombre = modelo.Nombre;
-                cliente.apellido = modelo.Apellido;
-
-                cliente.direccion = new Direccion
+                try
                 {
-                    domicilio = modelo.Domicilio,
-                    departamento = modelo.Departamento,
-                    barrio = modelo.Barrio
-                };
+                    // =========================
+                    //   SI SUBIÓ FOTO NUEVA
+                    // =========================
+                    if (archivoFotoCliente != null && archivoFotoCliente.Length > 0)
+                    {
+                        var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/jpg" };
+                        if (!tiposPermitidos.Contains(archivoFotoCliente.ContentType))
+                        {
+                            TempData["Error"] = "El archivo debe ser una imagen JPG o PNG.";
+                            return RedirectToAction("PerfilArtesano");
+                        }
 
-                _clienteRepositorio.Actualizar(cliente);
-                modelo.DepartamentosOpciones = ObtenerDepartamentos();
-                // Mensaje temporal para la vista
-                TempData["Mensaje"] = "Perfil actualizado correctamente.";
-                return RedirectToAction("Perfil");
+                        var extension = Path.GetExtension(archivoFotoCliente.FileName).ToLower();
+                        var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
+
+                        if (!extensionesPermitidas.Contains(extension))
+                        {
+                            TempData["Error"] = "Formato no permitido. Usa JPG o PNG.";
+                            return RedirectToAction("PerfilArtesano");
+                        }
+
+                        var nombreArchivo = Guid.NewGuid() + extension;
+                        var uploads = Path.Combine(_env.WebRootPath, "images/usuarios");
+
+                        var filePath = Path.Combine(uploads, nombreArchivo);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                            archivoFotoCliente.CopyTo(stream);
+
+                        cliente.foto = "/images/usuarios/" + nombreArchivo;
+                    }
+
+                    // =============================
+                    //     ACTUALIZAR CAMPOS
+                    // =============================
+                    cliente.nombre = modelo.Nombre;
+                    cliente.apellido = modelo.Apellido;
+
+                    cliente.direccion = new Direccion
+                    {
+                        domicilio = modelo.Domicilio,
+                        departamento = modelo.Departamento,
+                        barrio = modelo.Barrio
+                    };
+
+                    _clienteRepositorio.Actualizar(cliente);
+                    modelo.DepartamentosOpciones = ObtenerDepartamentos();
+                    // Mensaje temporal para la vista
+                    TempData["Mensaje"] = "Perfil actualizado correctamente.";
+                    return RedirectToAction("Perfil");
+                }
+                catch (validarNombreException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return View(modelo);
+                }
             }
-            catch (validarNombreException ex)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
+                // Si querés podés manejar excepciones acá
+                TempData["Error"] = "Error inesperado.";
                 return View(modelo);
             }
         }

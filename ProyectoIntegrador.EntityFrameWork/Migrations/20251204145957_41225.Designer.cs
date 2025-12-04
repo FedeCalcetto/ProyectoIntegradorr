@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251129205756_2911")]
-    partial class _2911
+    [Migration("20251204145957_41225")]
+    partial class _41225
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -230,6 +230,28 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("artesanoid");
 
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.ProductoFoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UrlImagen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("ProductoFotos");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Reporte", b =>
@@ -590,12 +612,23 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
                         .WithMany("productos")
                         .HasForeignKey("artesanoid")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SubCategoria");
 
                     b.Navigation("artesano");
+                });
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.ProductoFoto", b =>
+                {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "Producto")
+                        .WithMany("Fotos")
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producto");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Reporte", b =>
@@ -735,6 +768,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>
                 {
+                    b.Navigation("Fotos");
+
                     b.Navigation("comentarios");
                 });
 

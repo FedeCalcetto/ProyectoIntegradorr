@@ -30,29 +30,30 @@ namespace ProyectoIntegrador_Web.Controllers
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
             if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
-            {
                 return RedirectToAction("Login", "Login");
-            }
 
             var artesano = _obtenerArtesano.Ejecutar(email);
-
             if (artesano == null)
-            {
                 return NotFound();
-            }
-            var model = new AltaProductoViewModel();
-            model.Categorias = _obtenerCategorias.ObtenerTodos(); // Cargar categorías
+
+            var model = new AltaProductoViewModel
+            {
+                Categorias = _obtenerCategorias.ObtenerTodos()
+            };
+
             return View(model);
         }
+
 
         public ActionResult GetSubcategorias(int categoriaId)
         {
             var subcategorias = _subCategoria.obtenerTodas()
-        .Where(s => s.categoriaId == categoriaId)
-        .Select(s => new {
-            id = s.Id,
-            nombre = s.Nombre
-        });
+                .Where(s => s.categoriaId == categoriaId)
+                .Select(s => new
+                {
+                    id = s.Id,
+                    nombre = s.Nombre
+                });
 
             return Json(subcategorias);
         }
@@ -67,6 +68,7 @@ namespace ProyectoIntegrador_Web.Controllers
             if (!ModelState.IsValid)
             {
                 modelo.Categorias = _obtenerCategorias.ObtenerTodos();
+                modelo.SubCategorias = _subCategoria.obtenerTodas();
                 return View(modelo);
             }
 
@@ -74,26 +76,55 @@ namespace ProyectoIntegrador_Web.Controllers
             if (artesano == null)
                 return NotFound();
 
-            // Guardar imagen si se subió
+            // -----------------------------
+            //  IMAGEN PRINCIPAL
+            // -----------------------------
             string nombreArchivo = null;
 
             if (modelo.ArchivoImagen != null && modelo.ArchivoImagen.Length > 0)
             {
-
-
                 var carpeta = Path.Combine(_env.WebRootPath, "images/productos");
+
+                if (!Directory.Exists(carpeta))
+                    Directory.CreateDirectory(carpeta);
 
                 nombreArchivo = Guid.NewGuid() + Path.GetExtension(modelo.ArchivoImagen.FileName);
                 var ruta = Path.Combine(carpeta, nombreArchivo);
 
-                using (var stream = new FileStream(ruta, FileMode.Create))
+                using var stream = new FileStream(ruta, FileMode.Create);
+                modelo.ArchivoImagen.CopyTo(stream);
+            }
+
+            // -----------------------------
+            //   MÚLTIPLES FOTOS
+            // -----------------------------
+            List<string> fotosExtras = new List<string>();
+
+            if (modelo.Fotos != null && modelo.Fotos.Any())
+            {
+                var carpeta = Path.Combine(_env.WebRootPath, "images/productos");
+                if (!Directory.Exists(carpeta))
+                    Directory.CreateDirectory(carpeta);
+
+                foreach (var foto in modelo.Fotos)
                 {
-                    modelo.ArchivoImagen.CopyTo(stream);
+                    if (foto != null && foto.Length > 0)
+                    {
+                        var nombre = Guid.NewGuid() + Path.GetExtension(foto.FileName);
+                        var ruta = Path.Combine(carpeta, nombre);
+
+                        using var stream = new FileStream(ruta, FileMode.Create);
+                        foto.CopyTo(stream);
+
+                        fotosExtras.Add(nombre);
+                    }
                 }
             }
 
+            // -----------------------------
+            //       DTO FINAL
+            // -----------------------------
             try
-
             {
                 var dto = new AgregarProductoDto
                 {
@@ -102,10 +133,12 @@ namespace ProyectoIntegrador_Web.Controllers
                     Precio = modelo.precio,
                     Stock = modelo.stock,
                     SubCategoriaId = modelo.SubCategoriaId,
-                    Imagen = nombreArchivo
+                    Imagen = nombreArchivo,
+                    Fotos = fotosExtras
                 };
 
                 _agregarProducto.Ejecutar(dto, artesano);
+
                 TempData["Mensaje"] = "Producto agregado correctamente.";
                 return RedirectToAction("AltaProducto");
             }
@@ -113,9 +146,12 @@ namespace ProyectoIntegrador_Web.Controllers
             {
                 ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
                 modelo.Categorias = _obtenerCategorias.ObtenerTodos();
+                modelo.SubCategorias = _subCategoria.obtenerTodas();
                 return View(modelo);
             }
         }
+    
+
 
 
         // GET: ProductoController
