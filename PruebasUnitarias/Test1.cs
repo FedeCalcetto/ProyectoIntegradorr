@@ -1,5 +1,6 @@
 ﻿using Moq;
 using ProyectoIntegrador.LogicaAplication.CasosDeUso;
+using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
@@ -193,6 +194,43 @@ namespace PruebasUnitarias
 
             Assert.ThrowsException<DireccionException>(() => cliente.validarEditar());
         }
+
+        [TestMethod]
+        public void Ejecutar_ClienteExiste_LlamaEliminar()
+        {
+            var repo = new Mock<IClienteRepositorio>();
+            var obtener = new Mock<IObtenerCliente>();
+
+            var cliente = new Cliente { id = 10 };
+
+            obtener.Setup(o => o.Ejecutar("cliente@mail.com"))
+                   .Returns(cliente);
+
+            var caso = new EliminarClienteCasoDeUso(obtener.Object, repo.Object);
+
+            caso.Ejecutar("cliente@mail.com");
+
+            repo.Verify(r => r.Eliminar(10), Times.Once);
+        }
+
+        [TestMethod]
+        public void Ejecutar_ClienteNoExiste_LanzaExcepcion()
+        {
+            var repo = new Mock<IClienteRepositorio>();
+            var obtener = new Mock<IObtenerCliente>();
+
+            obtener.Setup(o => o.Ejecutar("noexiste@mail.com"))
+                   .Returns((Cliente)null);
+
+            var caso = new EliminarClienteCasoDeUso(obtener.Object, repo.Object);
+
+            Assert.ThrowsException<Exception>(() =>
+                caso.Ejecutar("noexiste@mail.com")
+            );
+
+            // Verifica que NO se llamó a eliminar ningún ID
+            repo.Verify(r => r.Eliminar(It.IsAny<int>()), Times.Never);
+        }
     }
 
     // -------------------------------------------------------------------
@@ -224,6 +262,73 @@ namespace PruebasUnitarias
             artesano.ValidarTelefono("091234567");
 
             Assert.IsTrue(true);
+        }
+
+        [TestMethod] //eliminar artesano ok, explicacion para no olvidarme xd: Mock<> crea una imitación falsa de la interfaz, para que no use la base de datos real. Esto es lo que permite que un test unitario funcione en aislamiento.
+        public void Ejecutar_ArtesanoExiste_LlamaEliminar()
+        {
+            var repo = new Mock<IArtesanoRepositorio>();
+            var obtener = new Mock<IObtenerArtesano>();
+
+            var artesano = new Artesano { id = 4 };
+
+            obtener.Setup(o => o.Ejecutar("art@mail.com")).Returns(artesano); //Acá ya se esta usando las clases del sistema, pero con repositorios falsos.
+
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+
+            caso.Ejecutar("art@mail.com");
+
+            repo.Verify(r => r.Eliminar(4), Times.Once);
+        }
+
+
+
+        [TestMethod]
+        public void Ejecutar_ArtesanoExistePeroIdNoExiste_LanzaExcepcion() //por id
+        {
+            var repo = new Mock<IArtesanoRepositorio>();
+            var obtener = new Mock<IObtenerArtesano>();
+
+            // Artesano existente con ID = 9999
+            var artesano = new Artesano { id = 9999 };
+
+            // El email existe → devuelve un artesano válido
+            obtener.Setup(o => o.Ejecutar("art@mail.com"))
+                   .Returns(artesano);
+
+            // PERO el repositorio lanza excepción porque ese ID no existe en BD
+            repo.Setup(r => r.Eliminar(9999))
+                .Throws(new Exception("No existe artesano con ese ID"));
+
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+
+            // Test: el caso de uso debe lanzar excepción
+            Assert.ThrowsException<Exception>(() =>
+                caso.Ejecutar("art@mail.com")
+            );
+
+            // Y verificar que realmente intentó eliminar ese ID
+            repo.Verify(r => r.Eliminar(9999), Times.Once);
+        }
+
+        [TestMethod]
+        public void Ejecutar_ArtesanoNoExiste_LanzaExcepcion() // por email
+        {
+            var repo = new Mock<IArtesanoRepositorio>();
+            var obtener = new Mock<IObtenerArtesano>();
+
+            // Simula que NO existe artesano con ese email
+            obtener.Setup(o => o.Ejecutar("noexiste@mail.com"))
+                   .Returns((Artesano)null);
+
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+
+            Assert.ThrowsException<Exception>(() =>
+                caso.Ejecutar("noexiste@mail.com")
+            );
+
+            // Verifica que NO se llamó a eliminar
+            repo.Verify(r => r.Eliminar(It.IsAny<int>()), Times.Never);
         }
     }
 }
