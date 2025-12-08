@@ -28,28 +28,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
      
         public void Validar()
         {
-            validarContraseñaLongitud();
-            validarPasswordMaysucula();
             validarNombres();
-            validarNumero();
-        }
-
-
-        public void validarContraseñaLongitud()
-        {
-            if (password.Length < 10 || password.Length > 30)
-            {
-                throw new passwordUsuarioException();
-            }
-        }
-
-        public void validarPasswordMaysucula()
-        {
-            if (!password.Any(char.IsUpper) || !password.Any(char.IsLower))
-            {
-                throw new MayusculaPasswordException("La contraseña debe contener una mayúscula");
-            }
-            
         }
 
         public void validarNombres()
@@ -64,11 +43,55 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
             }
         }
 
-        public void validarNumero()
+        public void validarContra(string contraNueva, string contraRepetida, string contraActual)
         {
-            if (!password.Any(char.IsDigit))
+            ValidarContraseñaLongitud(contraNueva, contraRepetida);
+            ValidarPasswordMaysucula(contraNueva, contraRepetida);
+            ValidarNumero(contraNueva, contraRepetida);
+            SonIguales(contraNueva, contraRepetida, contraActual);
+        }
+
+        private void ValidarContraseñaLongitud(string contraNueva, string contraRepetida)
+        {
+            if (contraNueva.Length < 10 || contraNueva.Length > 30 || contraRepetida.Length < 10 || contraRepetida.Length > 30)
             {
-                throw new numeroPassowordException("La contraseña debe contener un número");
+                throw new passwordUsuarioException();
+            }
+        }
+
+        private void ValidarPasswordMaysucula(string contraNueva, string contraRepetida)
+        {
+            if (!contraNueva.Any(char.IsUpper) || !contraNueva.Any(char.IsLower) || !contraRepetida.Any(char.IsUpper) || !contraRepetida.Any(char.IsUpper))
+            {
+                throw new MayusculaPasswordException();
+            }
+
+        }
+
+        private void ValidarNumero(string contraNueva, string contraRepetida)
+        {
+            if (!contraNueva.Any(char.IsDigit) || !contraRepetida.Any(char.IsDigit))
+            {
+                throw new numeroPassowordException();
+            }
+        }
+
+        private void SonIguales(string contraNueva, string contraRepetida, string contraActual)
+        {
+            if (!contraActual.Equals(password))
+            {
+                throw new ContraActualException();
+            }
+
+
+            if (contraNueva.Equals(password))
+            {
+                throw new SonIgualesException();
+            }
+
+            if (!contraNueva.Equals(contraRepetida))
+            {
+                throw new NoCoincideException();
             }
         }
     }

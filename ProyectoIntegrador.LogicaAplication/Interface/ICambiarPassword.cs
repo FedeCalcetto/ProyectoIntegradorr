@@ -1,5 +1,4 @@
 ﻿using ProyectoIntegrador.LogicaAplication.Dtos;
-using ProyectoIntegrador.LogicaNegocio.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IAgregarUsuario
+    public interface ICambiarPassword
     {
-        Usuario Ejecutar(AgregarUsuarioDto u, string codigoVerificacion);
-
+        void Ejecutar(string password, string passwordRepetida, string passwordActual, string email);
     }
 }

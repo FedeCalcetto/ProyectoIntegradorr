@@ -18,7 +18,6 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddDbContext<ProyectoDBContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("ProyectoDB3")));
 
-
             //Repositorios
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ProyectoDBContext>();
@@ -31,11 +30,18 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<ICategoriaRepositorio, CategoriaEFRepsoitorio>();
             builder.Services.AddScoped<IProductoFotoRepsoitorio, ProductoFotoEFRepositorio>();
             //Casos de uso
-            builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
+            builder.Services.AddScoped<IAgregarProducto, AgregarProductoCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
+            builder.Services.AddScoped<ICambiarPassword, CambiarPasswordCasoDeUso>();
+            builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
+            builder.Services.AddScoped<IEditarArtesano, EditarArtesanoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerCategorias, ObtenerCategoriasCasoDeUso>();
+            builder.Services.AddScoped<IObtenerSubcategorias, ObtenerSubCategoriasCasoDeUso>();
             builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
             builder.Services.AddScoped<IObtenerArtesano, ObtenerArtesanoCasoDeUso>();
-
+            builder.Services.AddScoped<IObtenerUsuario, ObtenerUsuarioCasoDeUso>();
+            builder.Services.AddScoped<IObtenerProducto, ObtenerProductoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerProductoArtesano, ObtenerProductoArtesanoCasoDeUso>();
             builder.Services.AddScoped<IEliminarProducto, EliminarProductoCasoDeUso>();
             builder.Services.AddScoped<IEditarProducto, EditarProductoCasoDeUso>();
 
@@ -72,6 +78,8 @@ namespace ProyectoIntegrador_Web
             app.UseSession();
             app.UseAuthorization();
             app.UseSession();
+
+            app.UseStaticFiles();
 
             app.MapStaticAssets();
             app.MapControllerRoute(

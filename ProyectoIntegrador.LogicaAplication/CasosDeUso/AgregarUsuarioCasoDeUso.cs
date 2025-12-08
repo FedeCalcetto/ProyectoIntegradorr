@@ -1,6 +1,8 @@
-﻿using ProyectoIntegrador.LogicaAplication.Interface;
+﻿using ProyectoIntegrador.LogicaAplication.Dtos;
+using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
+using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +20,39 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             _usuarioRepositorio = usuarioRepositorio;
         }
 
-        public void Ejecutar(Usuario u)
+        public Usuario Ejecutar(AgregarUsuarioDto dto, string codigoVerificacion)
         {
-            _usuarioRepositorio.Agregar(u);
+            Usuario entidad;
+            var email = new Email(dto.Email);
+            if (dto.EsArtesano)
+            {
+                entidad = new Artesano
+                {
+                    nombre = dto.Nombre,
+                    apellido = dto.Apellido,
+                    email = email,
+                    password = dto.Password,
+                    rol = "Artesano",
+                    CodigoVerificacion = codigoVerificacion,
+                    Verificado = false
+                };
+            }
+            else
+            {
+                entidad = new Cliente
+                {
+                    nombre = dto.Nombre,
+                    apellido = dto.Apellido,
+                    email = email,
+                    password = dto.Password,
+                    rol = "Cliente",
+                    CodigoVerificacion = codigoVerificacion,
+                    Verificado = false
+                };
+            }
+
+            _usuarioRepositorio.Agregar(entidad);
+            return entidad;
         }
     }
 }

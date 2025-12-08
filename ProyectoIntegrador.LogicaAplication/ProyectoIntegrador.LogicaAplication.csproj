@@ -12,4 +12,8 @@
     <ProjectReference Include="..\ProyectoIntegrador\ProyectoIntegrador.LogicaNegocio.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MapeosDtos\" />
+  </ItemGroup>
+
 </Project>

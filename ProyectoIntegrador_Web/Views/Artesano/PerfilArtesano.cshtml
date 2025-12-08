@@ -4,7 +4,6 @@
     ViewData["Title"] = "Perfil";
 }
 
-
 <div class="layout">
 
     <div class="barraLateral">
@@ -14,17 +13,16 @@
         </div>
     </div>
 
-
     <div class="contenido py-5">
 
         <h2 class="text-center mb-3 fw-semibold" style="color: black;">Mi Perfil</h2>
-                    <p class="text-center text-muted mb-4">Actualiza tus datos personales</p>
+        <p class="text-center text-muted mb-4">Actualiza tus datos personales</p>
 
         @if (TempData["Mensaje"] != null)
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 @TempData["Mensaje"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
 
@@ -32,127 +30,101 @@
         {
             <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
                 @TempData["Error"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
 
-                    <form asp-action="CambiarFoto" method="post" enctype="multipart/form-data" class="text-center mb-4">
-                            <!-- IMAGEN -->
-                            <div class="d-flex justify-content-center mb-2">
-                                <img id="fotoPerfil"
-                                     src="@(string.IsNullOrEmpty(Model.Foto)
-                                                         ? "/images/usuarios/default-image.jpg"
-                                                         : Model.Foto)"
-                                     class="img-thumbnail shadow foto-perfil">
-                            </div>
+        <!-- ÚNICO FORMULARIO -->
+        <form asp-action="PerfilArtesano" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                            <!-- NOMBRE DEL ARCHIVO (MOVIDO AQUÍ) -->
-                            <div class="mb-2">
-                                <span id="archivoSeleccionado" class="text-muted"></span>
-                            </div>
+            <!-- FOTO -->
+            <div class="d-flex justify-content-center mb-2">
+                <img id="fotoPerfil"
+                     src="@(string.IsNullOrEmpty(Model.Foto)
+                                             ? "/images/usuarios/default-image.jpg"
+                                             : Model.Foto)"
+                     class="img-thumbnail shadow foto-perfil">
+            </div>
 
-                            <!-- BOTONES -->
-                            <div class="d-flex justify-content-center gap-3">
+            <div class="text-center mb-3">
+                <label class="btn btn-outline-secondary">
+                    Seleccionar foto
+                    <input id="archivoFoto" type="file" name="archivoFoto" accept="image/*" hidden />
+                </label>
 
-                                <label id="lblFoto" for="archivoFoto" class="btn btn-outline-secondary">
-                                    Seleccionar foto
-                                </label>
+                <div id="archivoSeleccionado" class="mt-2 text-muted"></div>
+            </div>
 
-                                <input id="archivoFoto" type="file" name="archivoFoto" accept="image/*" style="display:none;" />
+            <!-- CAMPOS -->
+            <input type="hidden" asp-for="Foto" />
 
-                                <button id="confirmarFotoBtn" type="submit" class="btn btn-primary">
-                                    Confirmar foto
-                                </button>
+            <div class="mb-3">
+                <label asp-for="Nombre" class="form-label fw-semibold"></label>
+                <input asp-for="Nombre" class="form-control" />
+                <span asp-validation-for="Nombre" class="text-danger small"></span>
+            </div>
 
-                                </div>
-                        
-                    </form>
+            <div class="mb-3">
+                <label asp-for="Apellido" class="form-label fw-semibold"></label>
+                <input asp-for="Apellido" class="form-control" />
+                <span asp-validation-for="Apellido" class="text-danger small"></span>
+            </div>
 
-                    <form asp-action="PerfilArtesano" method="post">
-                        @Html.AntiForgeryToken()
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                        <input type="hidden" asp-for="Foto" />
-                        
-                        
-                        <div class="mb-3">
-                            <label asp-for="Nombre" class="form-label fw-semibold"></label>
-                            <input asp-for="Nombre" class="form-control" placeholder="Tu nombre" />
-                            <span asp-validation-for="Nombre" class="text-danger small"></span>
-                        </div>
+            <div class="mb-3">
+                <label asp-for="Descripcion" class="form-label fw-semibold"></label>
+                <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger small"></span>
+            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Apellido" class="form-label fw-semibold"></label>
-                            <input asp-for="Apellido" class="form-control" placeholder="Tu apellido" />
-                            <span asp-validation-for="Apellido" class="text-danger small"></span>
-                        </div>
+            <div class="mb-3">
+                <label asp-for="Telefono" class="form-label fw-semibold"></label>
+                <input asp-for="Telefono" class="form-control" />
+                <span asp-validation-for="Telefono" class="text-danger small"></span>
+            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Descripcion" class="form-label fw-semibold"></label>
-                            <textarea asp-for="Descripcion" class="form-control" rows="4" placeholder="Agrega una descripción"></textarea>
-                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
-                        </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <input asp-for="Email" class="form-control bg-light" readonly />
+            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Telefono" class="form-label fw-semibold"></label>
-                            <input asp-for="Telefono" class="form-control" placeholder="Tu teléfono" />
-                            <span asp-validation-for="Telefono" class="text-danger small"></span>
-                        </div>
+            <input type="hidden" asp-for="Password" />
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold"></label>
-                            <input asp-for="Email" class="form-control bg-light" readonly />
-                        </div>
-                        <input type="hidden" asp-for="Password" />
-                        <div class="d-flex justify-content-left">
-                            <a id="nuevaP" asp-action="NuevaPassword" class="btn btn-outline-secondary">Nueva contraseña</a>
-                        </div>
-
-
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Inicio" id="volverArtesano" class="btn btn-outline-secondary">Volver</a>
-                            <button id="guardarCambiosArtesano" type="submit" class="btn btn-primary">Guardar cambios</button>
-                        </div>
-
-            <div class="mt-4 text-center">
-                <a asp-action="ConfirmarEliminacion" class="btn btn-danger">
-                    Eliminar mi cuenta
+            <div class="mb-3">
+                <a asp-controller="Usuario"
+                   asp-action="CambioContra"
+                   asp-route-returnUrl="/Artesano/PerfilArtesano"
+                   class="btn btn-outline-secondary">
+                    Nueva contraseña
                 </a>
             </div>
-                        
-                    </form>
 
-                    <script>
-                    const input = document.getElementById("archivoFoto");
-                    const preview = document.getElementById("fotoPerfil");
-                    const archivoLabel = document.getElementById("archivoSeleccionado");
+            <!-- BOTONES -->
+            <div class="d-flex justify-content-between">
+                <a asp-action="Inicio" class="btn btn-outline-secondary">Volver</a>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+        </form>
 
-                    input.addEventListener("change", function () {
-                        if (this.files && this.files[0]) {
+        <!-- PREVISUALIZACIÓN -->
+        <script>
+            const input = document.getElementById("archivoFoto");
+            const preview = document.getElementById("fotoPerfil");
+            const archivoLabel = document.getElementById("archivoSeleccionado");
 
-                            const archivo = this.files[0];
+            input.addEventListener("change", function () {
+                if (this.files && this.files[0]) {
+                    const archivo = this.files[0];
+                    archivoLabel.innerHTML = `<strong>${archivo.name}</strong>`;
 
-                            // Mensaje completo
-                            archivoLabel.innerHTML = `
-                                <strong>${archivo.name}</strong><br>
-                                <span class="text-danger">
-                                    Esto es solo una previsualización. Debes confirmar para guardar.
-                                </span>
-                            `;
+                    const reader = new FileReader();
+                    reader.onload = e => preview.src = e.target.result;
+                    reader.readAsDataURL(archivo);
+                }
+            });
+        </script>
 
-                            // Previsualizar imagen
-                            const reader = new FileReader();
-                            reader.onload = function (e) {
-                                preview.src = e.target.result;
-                            };
-                            reader.readAsDataURL(archivo);
-                        }
-                    });
-                </script>
-            
-        
     </div>
-
 </div>
-
-
 

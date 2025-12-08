@@ -16,14 +16,16 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IClienteRepositorio _clienteRepositorio;
         private readonly IObtenerCliente _obtenerCliente;
         private readonly EmailService _email; //esto se agrega siempre que se precise enviar un email
+        private readonly IWebHostEnvironment _env;
 
-        public ClienteController(IClienteRepositorio clienteRepositorio,
+        public ClienteController(IWebHostEnvironment env, IClienteRepositorio clienteRepositorio,
                           IObtenerCliente obtenerCliente,
                           EmailService email)
         {
             _clienteRepositorio = clienteRepositorio;
             _obtenerCliente = obtenerCliente;
             _email = email;
+            _env = env;
         }
 
         //seelct departamentos
@@ -102,7 +104,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Perfil(EditarClienteViewModel modelo)
+        public IActionResult Perfil(EditarClienteViewModel modelo, IFormFile archivoFotoCliente)
         {
             try
             {
@@ -121,80 +123,73 @@ namespace ProyectoIntegrador_Web.Controllers
                 {
                     return NotFound("No se encontró el cliente para actualizar.");
                 }
-                //cliente.Validar();
 
-                // Actualizar propiedades del dominio
-                cliente.nombre = modelo.Nombre;
-                cliente.apellido = modelo.Apellido;
-                //cliente.email = new Email(modelo.Email); 
-
-                cliente.direccion = new Direccion
+                try
                 {
-                    domicilio = modelo.Domicilio,
-                    departamento = modelo.Departamento,
-                    barrio = modelo.Barrio
-                };
-                cliente.foto = modelo.Foto ?? cliente.foto;
+                    // =========================
+                    //   SI SUBIÓ FOTO NUEVA
+                    // =========================
+                    if (archivoFotoCliente != null && archivoFotoCliente.Length > 0)
+                    {
+                        var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/jpg" };
+                        if (!tiposPermitidos.Contains(archivoFotoCliente.ContentType))
+                        {
+                            TempData["Error"] = "El archivo debe ser una imagen JPG o PNG.";
+                            return RedirectToAction("PerfilArtesano");
+                        }
 
-                // Guardar cambios
-                _clienteRepositorio.Actualizar(cliente);
-                modelo.DepartamentosOpciones = ObtenerDepartamentos();
-                // Mensaje temporal para la vista
-                TempData["Mensaje"] = "Perfil actualizado correctamente.";
+                        var extension = Path.GetExtension(archivoFotoCliente.FileName).ToLower();
+                        var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
 
-                // Redirige nuevamente al perfil (GET)
-                return RedirectToAction("Perfil");
+                        if (!extensionesPermitidas.Contains(extension))
+                        {
+                            TempData["Error"] = "Formato no permitido. Usa JPG o PNG.";
+                            return RedirectToAction("PerfilArtesano");
+                        }
+
+                        var nombreArchivo = Guid.NewGuid() + extension;
+                        var uploads = Path.Combine(_env.WebRootPath, "images/usuarios");
+
+                        var filePath = Path.Combine(uploads, nombreArchivo);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                            archivoFotoCliente.CopyTo(stream);
+
+                        cliente.foto = "/images/usuarios/" + nombreArchivo;
+                    }
+
+                    // =============================
+                    //     ACTUALIZAR CAMPOS
+                    // =============================
+                    cliente.nombre = modelo.Nombre;
+                    cliente.apellido = modelo.Apellido;
+
+                    cliente.direccion = new Direccion
+                    {
+                        domicilio = modelo.Domicilio,
+                        departamento = modelo.Departamento,
+                        barrio = modelo.Barrio
+                    };
+
+                    _clienteRepositorio.Actualizar(cliente);
+                    modelo.DepartamentosOpciones = ObtenerDepartamentos();
+                    // Mensaje temporal para la vista
+                    TempData["Mensaje"] = "Perfil actualizado correctamente.";
+                    return RedirectToAction("Perfil");
+                }
+                catch (validarNombreException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return View(modelo);
+                }
             }
-            catch (validarNombreException ex)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
+                // Si querés podés manejar excepciones acá
+                TempData["Error"] = "Error inesperado.";
                 return View(modelo);
             }
         }
-        public IActionResult CambioContra()
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
 
-            if (string.IsNullOrEmpty(email))
-            {
-                return RedirectToAction("Login", "Login");
-            }
-
-            var cliente = _obtenerCliente.Ejecutar(email);
-
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-            return View(new CambioPassowrdCliente());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CambioContra(CambioPassowrdCliente modelo)
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
-
-            if (!ModelState.IsValid)
-                return View(modelo);
-
-            var cliente = _obtenerCliente.Ejecutar(email);
-            if (cliente == null)
-                return NotFound();
-
-            try
-            {
-               // cliente.validarContra(modelo.Password, modelo.PasswordRepetida);
-                _clienteRepositorio.cambioContra(cliente, modelo.Password, modelo.PasswordRepetida,modelo.passwordActual);
-                TempData["Mensaje"] = "Contraseña cambiada exitosamente.";
-                return RedirectToAction("CambioContra");
-            }
-            catch (Exception  ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                return View(modelo);
-            }
-        }
         // GET: ClienteController/Details/5
         public ActionResult Details(int id)
         {
@@ -267,55 +262,7 @@ namespace ProyectoIntegrador_Web.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
-        }
-
-        [HttpPost]
-        public IActionResult CambiarFotoCliente(IFormFile archivoFotoCliente)
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
-            var cliente = _clienteRepositorio.obtenerCliente(email);
-
-            if (archivoFotoCliente == null || archivoFotoCliente.Length == 0)
-            {
-                TempData["Error"] = "Debes seleccionar un archivo.";
-                return RedirectToAction("Perfil");
-            }
-            var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/jpg" };
-            if (!tiposPermitidos.Contains(archivoFotoCliente.ContentType))
-            {
-                TempData["Error"] = "El archivo debe ser una imagen JPG o PNG.";
-                return RedirectToAction("Perfil");
-            }
-
-            var extension = Path.GetExtension(archivoFotoCliente.FileName).ToLower();
-            var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
-
-            if (!extensionesPermitidas.Contains(extension))
-            {
-                TempData["Error"] = "Formato no permitido. Usa JPG o PNG.";
-                return RedirectToAction("Perfil");
-            }
-
-            var nombreArchivo = Guid.NewGuid() + extension;
-            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/usuarios");
-
-            if (!Directory.Exists(uploads))
-            {
-                Directory.CreateDirectory(uploads);
-            }
-
-            var filePath = Path.Combine(uploads, nombreArchivo);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                archivoFotoCliente.CopyTo(stream);
-            }
-
-            cliente.foto = "/images/usuarios/" + nombreArchivo;
-            _clienteRepositorio.Actualizar(cliente);
-
-            TempData["Mensaje"] = "¡Foto actualizada con éxito!";
-            return RedirectToAction("Perfil");
+       
         }
 
         public async Task<IActionResult> ConfirmarEliminacion()

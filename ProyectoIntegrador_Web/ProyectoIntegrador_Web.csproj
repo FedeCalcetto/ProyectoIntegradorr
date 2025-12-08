@@ -25,4 +25,8 @@
     <ProjectReference Include="..\ProyectoIntegrador.SeguridadEncriptacion\ProyectoIntegrador.SeguridadEncriptacion.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\productos\" />
+  </ItemGroup>
+
 </Project>

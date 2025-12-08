@@ -26,40 +26,30 @@
         </div>
     }
 
-                            <form asp-action="CambiarFotoCliente" method="post" enctype="multipart/form-data" class="text-center mb-4">
-                            <!-- IMAGEN -->
-                            <div class="d-flex justify-content-center mb-2">
-                                <img id="fotoPerfilCliente"
-                                     src="@(string.IsNullOrEmpty(Model.Foto) ? "/images/usuarios/default-image.jpg" : Model.Foto)"
-                                     class="img-thumbnail shadow foto-perfil">
-                            </div>
+    <form asp-action="Perfil" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                            <!-- NOMBRE DEL ARCHIVO (MOVIDO AQUÍ) -->
-                            <div class="mb-2">
-                                <span id="archivoImagenSeleccionado" class="text-muted"></span>
-                            </div>
+        <!-- FOTO -->
+        <div class="d-flex justify-content-center mb-2">
+            <img id="fotoPerfilCliente"
+                 src="@(string.IsNullOrEmpty(Model.Foto)
+                                                              ? "/images/usuarios/default-image.jpg"
+                                                              : Model.Foto)"
+                 class="img-thumbnail shadow foto-perfil">
+        </div>
 
-                            <!-- BOTONES -->
-                            <div class="d-flex justify-content-center gap-3">
+        <div class="text-center mb-3">
+            <label class="btn btn-outline-secondary">
+                Seleccionar foto
+                <input id="archivoFotoCliente" type="file" name="archivoFotoCliente" accept="image/*" hidden />
+            </label>
 
-                                <label id="lblFoto" for="archivoFotoCliente" class="btn btn-outline-secondary">
-                                    Seleccionar foto
-                                </label>
+            <div id="archivoImagenSeleccionado" class="mt-2 text-muted"></div>
+        </div>
 
-            <input id="archivoFotoCliente" type="file" name="archivoFotoCliente" accept="image/*" style="display:none;" />
-
-                                <button id="confirmarFotoClienteBtn" type="submit" class="btn btn-primary">
-                                    Confirmar foto
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                    <form asp-action="Perfil" method="post">
-                        @Html.AntiForgeryToken()
-
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <!-- CAMPOS -->
+        <input type="hidden" asp-for="Foto" />
 
                         <!-- NOMBRE -->
                         <div class="mb-3">
@@ -115,17 +105,20 @@
                             <button type="submit" class="btn btn-primary">Guardar cambios</button>
                         </div>
 
-                       <hr class="mt-5" />
+                        <div>
 
-        <div class="mt-4 text-center">
-            <a asp-action="ConfirmarEliminacion" class="btn btn-danger">
-                Eliminar mi cuenta
-            </a>
-        </div>
+                        <div class="d-flex justify-content-left">
+                            <a id="nuevaP"
+                               asp-controller="Usuario"
+                               asp-action="CambioContra"
+                               asp-route-returnUrl="/Cliente/Perfil"
+                               class="btn btn-outline-secondary">
+                                Nueva contraseña
+                            </a>
+                        </div>
 
-
+                        </div>
                     </form>
-
 
     <script>
         const input = document.getElementById("archivoFotoCliente");
@@ -134,22 +127,11 @@
 
         input.addEventListener("change", function () {
             if (this.files && this.files[0]) {
-
                 const archivo = this.files[0];
+                archivoLabel.innerHTML = `<strong>${archivo.name}</strong>`;
 
-                // Mensaje completo
-                archivoLabel.innerHTML = `
-                    <strong>${archivo.name}</strong><br>
-                    <span class="text-danger">
-                        Esto es solo una previsualización. Debes confirmar para guardar.
-                    </span>
-                `;
-
-                // Previsualizar imagen
                 const reader = new FileReader();
-                reader.onload = function (e) {
-                    preview.src = e.target.result;
-                };
+                reader.onload = e => preview.src = e.target.result;
                 reader.readAsDataURL(archivo);
             }
         });

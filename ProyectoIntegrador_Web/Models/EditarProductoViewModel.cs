@@ -20,6 +20,6 @@ namespace ProyectoIntegrador_Web.Models
         [Required(ErrorMessage = "La subcategoría es requerida")]
         public int? SubCategoriaId { get; set; }
         public IEnumerable<Categoria>? Categorias { get; set; }
-        public List<SubCategoria> SubCategorias { get; set; } = new List<SubCategoria>();
+        public IEnumerable<SubCategoria>? SubCategorias { get; set; }
     }
 }
