@@ -1,4 +1,5 @@
-﻿using ProyectoIntegrador.LogicaAplication.Interface;
+﻿using ProyectoIntegrador.LogicaAplication.Dtos;
+using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
@@ -19,9 +20,24 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             _productoRepositorio = productoRepositorio;
         }
 
-        public void Ejecutar(Producto entidad)
+        public void Ejecutar(EditarProductoDto dto)
         {
-            _productoRepositorio.Editar(entidad);
+            var producto = _productoRepositorio.Obtener(dto.Id);
+
+            if (producto == null)
+                throw new Exception("Producto no encontrado");
+
+            producto.nombre = dto.Nombre;
+            producto.descripcion = dto.Descripcion;
+            producto.precio = dto.Precio;
+            producto.stock = dto.Stock;
+            producto.SubCategoriaId = dto.SubCategoriaId;
+            producto.imagen = dto.ImagenPrincipal;
+            //producto.Fotos = dto.Fotos
+            //.Select(x => new ProductoFoto { UrlImagen = x })
+            //.ToList();
+
+            _productoRepositorio.Editar(producto, dto.Fotos);
         }
     }
 }

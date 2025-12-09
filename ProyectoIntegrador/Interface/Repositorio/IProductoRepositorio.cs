@@ -9,5 +9,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface IProductoRepositorio : IRepositorio<Producto>
     {
+        void Editar(Producto producto, List<string> fotos);
+
     }
 }

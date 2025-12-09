@@ -18,63 +18,115 @@
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @foreach (var item in Model.Productos)
-            {
-                <div class="col">
-                    <div class="card shadow-sm h-100 border-0 hover-shadow">
+        <div class="product-slider-container">
+            <button class="slider-btn prev-btn">&#10094;</button>
+            <div class="slider-wrapper">
+            <div class="product-slider">
+                @foreach (var item in Model.Productos)
+                {
+                    <div class="product-card">
 
-                        <img id="fotoPrincipal_@item.id"
-                             src="~/images/productos/@item.imagen"
-                             style="height:220px; width:100%; object-fit:cover; border-radius:8px 8px 0 0;" />
+                        <div class="card shadow-sm h-100 border-0 hover-shadow">
 
-                        @if (item.Fotos != null && item.Fotos.Any())
-                        {
-                            <div class="mt-2 px-2">
-                                <div class="d-flex overflow-auto gap-2">
-                                    @foreach (var foto in item.Fotos)
-                                    {
-                                        <img src="~/images/productos/@foto.UrlImagen"
-                                             style="width:70px; height:70px; object-fit:cover; border-radius:6px;
-                                                             cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,0.2);"
-                                             onclick="document.getElementById('fotoPrincipal_@item.id').src=this.src;" />
-                                    }
+                            <img id="fotoPrincipal_@item.id"
+                                 src="~/images/productos/@item.imagen"
+                                 style="height:220px; width:100%; object-fit:contain; border-radius:8px 8px 0 0;" />
+
+                            @if (item.Fotos != null && item.Fotos.Any())
+                            {
+                                <div class="mt-2 px-2">
+                                    <div class="d-flex overflow-auto gap-2">
+                                        @foreach (var foto in item.Fotos)
+                                        {
+                                            <img src="~/images/productos/@foto.UrlImagen"
+                                                 style="width:70px; height:70px; object-fit:cover; border-radius:6px;
+                                                                cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,0.2);"
+                                                 onclick="document.getElementById('fotoPrincipal_@item.id').src=this.src;" />
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">@item.nombre</h5>
+                                <p class="text-muted small">@item.descripcion</p>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="fw-bold mb-1 text-success mb-0">$@item.precio</p>
+
+                                    <p class="mb-0">
+                                        Stock:
+                                        <span class="badge bg-secondary">@item.stock</span>
+                                    </p>
                                 </div>
                             </div>
-                        }
 
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">@item.nombre</h5>
-                            <p class="text-muted small">@item.descripcion</p>
+                            <div class="card-footer d-flex justify-content-between">
+                                <a asp-action="EditarProducto" asp-route-id="@item.id" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
 
-                            <p class="fw-bold mb-1 text-success">$@item.precio</p>
-                            <p>
-                                Stock:
-                                <span class="badge bg-secondary">@item.stock</span>
-                            </p>
-                        </div>
+                                <a asp-action="EliminarProducto" asp-route-id="@item.id" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                            </div>
 
-                        <div class="card-footer d-flex justify-content-between">
-                            <a asp-action="EditarProducto" asp-route-id="@item.id" class="btn btn-primary btn-sm">
-                                <i class="bi bi-pencil"></i> Editar
-                            </a>
-
-                            <a asp-action="EliminarProducto" asp-route-id="@item.id" class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </a>
                         </div>
 
                     </div>
-                </div>
-            }
+                }
+            </div>
+          </div>
+
+            <button class="slider-btn next-btn">&#10095;</button>
         </div>
     }
 </div>
 
-<style>
-    .hover-shadow:hover {
-        box-shadow: 0 6px 16px rgba(0,0,0,0.15) !important;
-        transform: translateY(-3px);
-        transition: 0.2s ease;
+<script>
+    const slider = document.querySelector(".product-slider"); //tiene varias cards una al lado de la otra
+    const prev = document.querySelector(".prev-btn"); //botones de izq y der
+    const next = document.querySelector(".next-btn");
+
+    let currentScroll = 0;
+
+    function getCardWidth() { //calcula el ancho de una card
+        const card = slider.querySelector(".product-card");
+        return card.offsetWidth + 20; // ancho + gap
     }
-</style>
+
+        function updateArrows() {
+        const cardWidth = getCardWidth();
+        const maxScroll = (slider.children.length * cardWidth) - (cardWidth * 3);
+
+        //  Ocultar flecha izquierda si está al inicio
+        prev.style.display = currentScroll <= 0 ? "none" : "flex";
+
+        //  Ocultar flecha derecha si llegó al final
+        next.style.display = currentScroll >= maxScroll ? "none" : "flex";
+    }
+
+    next.addEventListener("click", () => {
+        const cardWidth = getCardWidth(); //Calcula el ancho de una card y calcula hasta dónde puede moverse el slider:
+        const maxScroll = (slider.children.length * cardWidth) - (cardWidth * 3); 
+
+        if (currentScroll < maxScroll) { //deja siempre visibles 3 cards
+            currentScroll += cardWidth;
+            slider.style.transform = `translateX(-${currentScroll}px)`; //Si no llegó al límite: mueve el slider una card hacia la izquierda (se ve como que avanza hacia la derecha).
+               updateArrows();
+        }
+    });
+
+    prev.addEventListener("click", () => {
+        const cardWidth = getCardWidth();
+
+        if (currentScroll > 0) {
+            currentScroll -= cardWidth;
+            slider.style.transform = `translateX(-${currentScroll}px)`;
+                updateArrows();
+        }
+    });
+
+            updateArrows();
+
+</script>

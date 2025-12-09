@@ -147,3 +147,101 @@ body {
     object-fit: cover;
     border-radius: 10px; 
 }
+
+/*Mis productos (Artesano)*/
+/* CONTENEDOR GENERAL */
+.product-slider-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 50px;
+}
+
+/* CARRUSEL (horizontal) */
+.product-slider {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.5s ease;
+}
+
+/* CADA TARJETA (3 por fila) */
+.product-card {
+    flex: 0 0 calc(33.333% - 20px); /* 3 por vista */
+}
+
+/* FLECHAS */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 0px 15px;
+    border-radius: 70%;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+}
+
+.prev-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
+
+.slider-btn:hover {
+    background: #eee;
+}
+
+
+
+.hover-shadow:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15) !important;
+    transform: translateY(-3px);
+    transition: 0.2s ease;
+}
+
+.slider-wrapper {
+    width: 100%;
+    overflow: hidden; 
+}
+
+/*Editar producto fotos secundarias slider*/
+
+.secondary-slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.secondary-wrapper {
+    overflow: hidden;
+    width: 100%;
+}
+
+.secondary-slider {
+    display: flex;
+    gap: 15px;
+    transition: transform 0.3s ease;
+}
+
+.secondary-card {
+    min-width: 120px;
+    flex: 0 0 auto;
+}
+
+.sec-btn {
+    background: #ddd;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}

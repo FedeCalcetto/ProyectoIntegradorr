@@ -1,4 +1,5 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
+﻿using ProyectoIntegrador.LogicaAplication.Dtos;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
 {
     public interface IEditarProducto
     {
-
-        void Ejecutar(Producto entidad);
+        void Ejecutar(EditarProductoDto dto);
     }
+
 }

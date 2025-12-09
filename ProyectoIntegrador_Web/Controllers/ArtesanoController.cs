@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
@@ -124,24 +126,22 @@ namespace ProyectoIntegrador_Web.Controllers
                 var artesano = _obtenerArtesano.Ejecutar(email);
                 if (artesano == null)
                 {
-                    return NotFound("No se encontró el cliente para actualizar.");
+                    return NotFound("No se encontró el artesano para actualizar.");
                 }
 
                 try
                 {
-                    // =========================
                     //   SI SUBIÓ FOTO NUEVA
-                    // =========================
                     if (archivoFoto != null && archivoFoto.Length > 0)
                     {
                         var tiposPermitidos = new[] { "image/jpeg", "image/png", "image/jpg" };
-                        if (!tiposPermitidos.Contains(archivoFoto.ContentType))
+                        if (!tiposPermitidos.Contains(archivoFoto.ContentType)) //validamos el tipo de imagen
                         {
                             TempData["Error"] = "El archivo debe ser una imagen JPG o PNG.";
                             return RedirectToAction("PerfilArtesano");
                         }
 
-                        var extension = Path.GetExtension(archivoFoto.FileName).ToLower();
+                        var extension = Path.GetExtension(archivoFoto.FileName).ToLower(); //GetExtension trae la extensión del archivo
                         var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png" };
 
                         if (!extensionesPermitidas.Contains(extension))
@@ -150,19 +150,23 @@ namespace ProyectoIntegrador_Web.Controllers
                             return RedirectToAction("PerfilArtesano");
                         }
 
-                        var nombreArchivo = Guid.NewGuid() + extension;
+                        var nombreArchivo = Guid.NewGuid() + extension; //NewGuid crea un identificador único
                         var uploads = Path.Combine(_env.WebRootPath, "images/usuarios");
+                        //_env.WebRootPath: ruta física a wwwroot en el servidor (ej. C:\app\wwwroot o /home/site/wwwroot).
+                        //Path combine construye la ruta donde guardar las imgs
 
-                        var filePath = Path.Combine(uploads, nombreArchivo);
+                        var filePath = Path.Combine(uploads, nombreArchivo); //Contruye la ruta física del archivo
+
                         using (var stream = new FileStream(filePath, FileMode.Create))
                             archivoFoto.CopyTo(stream);
+
+                        //️ _env.WebRootPath = C:\Proyecto\wwwroot
+                        //"images/usuarios" =  C:\Proyecto\wwwroot\images\usuarios (uploads)
+                        //nombreArchivo=  C:\Proyecto\wwwroot\images\usuarios\foto123.jpg   (filePath)
 
                         artesano.foto = "/images/usuarios/" + nombreArchivo;
                     }
 
-                    // ======================
-                    //  ACTUALIZAR CAMPOS
-                    // ======================
                     artesano.descripcion = modelo.Descripcion;
                     artesano.telefono = modelo.Telefono;
                     artesano.nombre = modelo.Nombre;
@@ -197,133 +201,6 @@ namespace ProyectoIntegrador_Web.Controllers
         } 
 
 
-
-
-        // GET: ArtesanoController/Details/5
-        //public ActionResult GetSubcategorias(int categoriaId)
-        //{
-        //    var subcategorias = _obtenerSubCategorias.obtenerTodas()
-        //    .Where(s => s.categoriaId == categoriaId)
-        //    .Select(s => new {
-        //    id = s.Id,
-        //    nombre = s.Nombre
-        //    });
-
-        //    return Json(subcategorias);
-        //}
-        //public IActionResult AltaProducto()
-        //{
-        //    // Obtener el email del usuario logueado
-        //    var email = HttpContext.Session.GetString("loginUsuario");
-
-        //    if (string.IsNullOrEmpty(email))
-        //    {
-        //        return RedirectToAction("Login", "Login");
-        //    }
-
-        //    var artesano = _artesanorepo.ObtenerPorEmail(email);
-
-        //    if (artesano == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var model = new AltaProductoViewModel();
-        //    model.Categorias = _categoria.ObtenerTodos(); // Cargar categorías
-        //    return View(model);
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult AltaProducto(AltaProductoViewModel modelo)
-        //{
-        //    var email = HttpContext.Session.GetString("loginUsuario");
-
-        //    if (!ModelState.IsValid)
-        //    {
-        //        modelo.Categorias = _categoria.ObtenerTodos();
-        //        modelo.SubCategorias = _SubCategoria.ObtenerTodas();
-        //        return View(modelo);
-        //    }
-
-        //    var artesano = _artesanorepo.ObtenerPorEmail(email);
-        //    if (artesano == null)
-        //        return NotFound();
-
-
-        //    string nombreArchivo = null;
-
-        //    if (modelo.ArchivoImagen != null && modelo.ArchivoImagen.Length > 0)
-        //    {
-        //        var carpeta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/productos");
-
-        //        if (!Directory.Exists(carpeta))
-        //            Directory.CreateDirectory(carpeta);
-
-        //        nombreArchivo = Guid.NewGuid() + Path.GetExtension(modelo.ArchivoImagen.FileName);
-        //        var ruta = Path.Combine(carpeta, nombreArchivo);
-
-        //        using (var stream = new FileStream(ruta, FileMode.Create))
-        //        {
-        //            modelo.ArchivoImagen.CopyTo(stream);
-        //        }
-        //    }
-
-        //    var entidad = new Producto
-        //    {
-        //        nombre = modelo.nombre,
-        //        descripcion = modelo.descripcion,
-        //        precio = modelo.precio,
-        //        stock = modelo.stock,
-        //        imagen = nombreArchivo,
-        //        artesano = artesano,
-        //        SubCategoriaId = (int)modelo.SubCategoriaId,
-        //        Fotos = new List<ProductoFoto>()   
-        //    };
-
-        //    if (modelo.Fotos != null && modelo.Fotos.Any())
-        //    {
-        //        string carpetaMultiples = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/productos");
-        //        Directory.CreateDirectory(carpetaMultiples);
-
-        //        foreach (var foto in modelo.Fotos)
-        //        {
-        //            if (foto != null && foto.Length > 0)
-        //            {
-        //                string nombre = Guid.NewGuid() + Path.GetExtension(foto.FileName);
-        //                var ruta = Path.Combine(carpetaMultiples, nombre);
-
-        //                using (var stream = new FileStream(ruta, FileMode.Create))
-        //                {
-        //                    foto.CopyTo(stream);
-        //                }
-
-        //                entidad.Fotos.Add(new ProductoFoto
-        //                {
-        //                    UrlImagen = nombre
-        //                });
-        //            }
-        //        }
-        //    }
-
-        //    try
-        //    {
-        //        _producto.Agregar(entidad);
-        //        artesano.productos.Add(entidad);
-        //        modelo.Categorias = _categoria.ObtenerTodos();
-        //        modelo.SubCategorias = _SubCategoria.ObtenerTodas();
-        //        TempData["Mensaje"] = "Producto agregado correctamente.";
-        //        return RedirectToAction("AltaProducto");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
-        //        modelo.Categorias = _categoria.ObtenerTodos();
-        //        modelo.SubCategorias = _SubCategoria.ObtenerTodas();
-        //        return View(modelo);
-        //    }
-
-
-
-//        }
 
         public IActionResult ProductosDelArtesano()
         {
@@ -366,9 +243,12 @@ namespace ProyectoIntegrador_Web.Controllers
                 descripcion = producto.descripcion,
                 precio = producto.precio,
                 stock = producto.stock,
+                imagen = producto.imagen,
+                FotosActuales = producto.Fotos,
                 SubCategoriaId = producto.SubCategoriaId,
-                Categorias = _obtenerCategorias.ObtenerTodos(),
-                SubCategorias = _obtenerSubCategorias.obtenerTodas()
+                SubCategorias = _obtenerSubCategorias.obtenerTodas(),
+                 CategoriaId = producto.SubCategoria.categoriaId,
+                Categorias = _obtenerCategorias.ObtenerTodos()
             };
             ViewBag.Id = id;
             return View(modelo);
@@ -389,15 +269,61 @@ namespace ProyectoIntegrador_Web.Controllers
             if (producto == null)
                 return NotFound();
 
-            producto.nombre = modelo.nombre;
-            producto.descripcion = modelo.descripcion;
-            producto.precio = modelo.precio;
-            producto.stock = modelo.stock;
-            producto.SubCategoriaId = (int)modelo.SubCategoriaId;
+
+            string imagenPrincipal = producto.imagen;
+            if (modelo.ArchivoImagen != null && modelo.ArchivoImagen.Length > 0)
+            {
+                string nombreImagen = Guid.NewGuid() + Path.GetExtension(modelo.ArchivoImagen.FileName);
+                string ruta = Path.Combine(_env.WebRootPath, "images/productos", nombreImagen);
+
+                using (var stream = new FileStream(ruta, FileMode.Create))
+                {
+                    modelo.ArchivoImagen.CopyTo(stream);
+                }
+
+                imagenPrincipal = nombreImagen;
+                modelo.imagen = imagenPrincipal;
+            }
+            var fotosNuevas = new List<string>();
+            fotosNuevas.Add(imagenPrincipal);
+            if (modelo.FotosNuevas != null)
+            {
+                foreach (var foto in modelo.FotosNuevas)
+                {
+                    if (foto != null && foto.Length > 0)
+                    {
+                        string nombre = Guid.NewGuid() + Path.GetExtension(foto.FileName);
+                        string ruta = Path.Combine(_env.WebRootPath, "images/productos", nombre);
+
+                        using (var stream = new FileStream(ruta, FileMode.Create))
+                        {
+                            foto.CopyTo(stream);
+                        }
+
+                        fotosNuevas.Add(nombre);
+                    }
+                }
+            }
+
+            //----------------------------------------------------
+            // ARMAR DTO PARA CU
+            //----------------------------------------------------
+            var dto = new EditarProductoDto
+            {
+                Id = modelo.Id,
+                Nombre = modelo.nombre,
+                Descripcion = modelo.descripcion,
+                Precio = modelo.precio,
+                Stock = modelo.stock,
+                SubCategoriaId = modelo.SubCategoriaId,
+
+                ImagenPrincipal = modelo.imagen,
+                Fotos = fotosNuevas
+            };
 
             try
             {
-                _editarProducto.Ejecutar(producto);
+                _editarProducto.Ejecutar(dto);
 
                 TempData["Mensaje"] = "Producto actualizado correctamente.";
                 return RedirectToAction("EditarProducto", new { id = modelo.Id });
@@ -405,10 +331,8 @@ namespace ProyectoIntegrador_Web.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
-
                 modelo.Categorias = _obtenerCategorias.ObtenerTodos();
                 modelo.SubCategorias = _obtenerSubCategorias.obtenerTodas();
-
                 return View(modelo);
             }
         }

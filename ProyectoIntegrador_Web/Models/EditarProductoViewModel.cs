@@ -13,12 +13,20 @@ namespace ProyectoIntegrador_Web.Models
         public string descripcion { get; set; }
         [Required(ErrorMessage = "El precio es requerido")]
         public int precio { get; set; }
+        [Required(ErrorMessage = "Debe subir una imagen del producto")]
+        public IFormFile ArchivoImagen { get; set; }
+        public string? imagen { get; set; }
         [Required(ErrorMessage = "el stock es requerido")]
         public int stock { get; set; }
         [Required(ErrorMessage = "La categoría es requerida")]
         public int? CategoriaId { get; set; }
+
         [Required(ErrorMessage = "La subcategoría es requerida")]
-        public int? SubCategoriaId { get; set; }
+        public int SubCategoriaId { get; set; }
+        public List<ProductoFoto> FotosActuales { get; set; } = new();
+
+        public List<IFormFile> FotosNuevas { get; set; } = new();
+
         public IEnumerable<Categoria>? Categorias { get; set; }
         public IEnumerable<SubCategoria>? SubCategorias { get; set; }
     }

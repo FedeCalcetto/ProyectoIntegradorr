@@ -21,7 +21,7 @@ namespace ProyectoIntegrador_Web.Models
 
         [Required(ErrorMessage = "La subcategoría es requerida")]
         public int SubCategoriaId { get; set; }
-        public List<IFormFile> Fotos { get; set; } = new();
+        public List<IFormFile> Fotos { get; set; } = new List<IFormFile>();
 
         public IEnumerable<Categoria>? Categorias { get; set; }
         public IEnumerable<SubCategoria>? SubCategorias { get; set; }
