@@ -207,15 +207,15 @@ namespace ProyectoIntegrador.EntityFrameWork
             );
 
             modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion).HasData(
-     new
-     {
-         Clienteid = 2,
-         domicilio = "Calle 123",
-         departamento = "Montevideo",
-         barrio = "Centro"
-     }
+            new
+            {
+                Clienteid = 2,
+                domicilio = "Calle 123",
+                departamento = "Montevideo",
+                barrio = "Centro"
+            }
      
- );
+        );
         }
 
     }

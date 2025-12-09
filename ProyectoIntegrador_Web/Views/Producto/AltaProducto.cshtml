@@ -15,6 +15,9 @@
                 </div>
             }
 
+            <!-- 🔥 SOLO MUESTRA ERRORES DEL SERVIDOR (NO VALIDACIONES DE CAMPOS ANTES DE ENVIAR) -->
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
             <form asp-controller="Producto" asp-action="AltaProducto" method="post" enctype="multipart/form-data">
                 <div class="row g-3">
 
