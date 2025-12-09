@@ -18,6 +18,8 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
         {
             _productoRepo = productoRepo;
         }
+
+
         public Producto obtener(int id)
         {
             return _productoRepo.Obtener(id);

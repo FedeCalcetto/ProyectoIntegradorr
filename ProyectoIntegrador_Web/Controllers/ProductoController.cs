@@ -99,6 +99,10 @@ namespace ProyectoIntegrador_Web.Controllers
             //   MÚLTIPLES FOTOS
             // -----------------------------
             List<string> fotosExtras = new List<string>();
+            //Para que la primer foto esté en el listado y me permita intercalarla con las demás en la vista
+            if (nombreArchivo != null)
+                fotosExtras.Add(nombreArchivo);
+
 
             if (modelo.Fotos != null && modelo.Fotos.Any())
             {
@@ -121,9 +125,6 @@ namespace ProyectoIntegrador_Web.Controllers
                 }
             }
 
-            // -----------------------------
-            //       DTO FINAL
-            // -----------------------------
             try
             {
                 var dto = new AgregarProductoDto

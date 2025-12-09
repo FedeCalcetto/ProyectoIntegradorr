@@ -19,7 +19,7 @@
             <!-- Validaciones generales -->
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <form asp-action="EditarProducto" method="post">
+            <form asp-action="EditarProducto" method="post" enctype="multipart/form-data">
 
                 <input asp-for="Id" type="hidden" />
 
@@ -42,44 +42,102 @@
                         <textarea asp-for="descripcion" class="form-control" rows="3"></textarea>
                         <span asp-validation-for="descripcion" class="text-danger small"></span>
                     </div>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <label asp-for="stock" class="form-label"></label>
+                            <input asp-for="stock" class="form-control" />
+                            <span asp-validation-for="stock" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label asp-for="CategoriaId" class="form-label">Categoría</label>
+                            <select asp-for="CategoriaId" class="form-select" id="categoriaSelect">
+                                <option value="">Seleccione una categoría</option>
 
-                    <div class="col-md-4">
-                        <label asp-for="stock" class="form-label"></label>
-                        <input asp-for="stock" class="form-control" />
-                        <span asp-validation-for="stock" class="text-danger small"></span>
+                                @foreach (var c in Model.Categorias)
+                                {
+                                    <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">
+                                        @c.Nombre
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoriaId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label asp-for="SubCategoriaId" class="form-label">SubCategoría</label>
+                            <select asp-for="SubCategoriaId" class="form-select" id="subcategoriaSelect">
+                                <option value="">Seleccione una subcategoría</option>
+
+                                @foreach (var sc in Model.SubCategorias)
+                                {
+                                    <option value="@sc.Id" selected="@(Model.SubCategoriaId == sc.Id)">
+                                        @sc.Nombre
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="SubCategoriaId" class="text-danger small"></span>
+                        </div>
+
                     </div>
-
-                    <div class="col-md-6">
-                        <label asp-for="CategoriaId" class="form-label">Categoría</label>
-                        <select asp-for="CategoriaId" class="form-select" id="categoriaSelect">
-                            <option value="">Seleccione una categoría</option>
-
-                            @foreach (var c in Model.Categorias)
-                            {
-                                <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">
-                                    @c.Nombre
-                                </option>
-                            }
-                        </select>
-                        <span asp-validation-for="CategoriaId" class="text-danger small"></span>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label asp-for="SubCategoriaId" class="form-label">SubCategoría</label>
-                        <select asp-for="SubCategoriaId" class="form-select" id="subcategoriaSelect">
-                            <option value="">Seleccione una subcategoría</option>
-
-                            @foreach (var sc in Model.SubCategorias)
-                            {
-                                <option value="@sc.Id" selected="@(Model.SubCategoriaId == sc.Id)">
-                                    @sc.Nombre
-                                </option>
-                            }
-                        </select>
-                        <span asp-validation-for="SubCategoriaId" class="text-danger small"></span>
-                    </div>
+                   
                 </div>
 
+                <hr class="my-4" />
+                <div class="row">
+                    <div class="col-12 col-md-6">
+
+                        <h5 class="fw-semibold">Imagen principal</h5>
+
+                        <div class="mb-3">
+                            @if (!string.IsNullOrEmpty(Model.imagen))
+                            {
+                                <img src="~/images/productos/@Model.imagen"
+                                     class="img-thumbnail shadow-sm mb-2"
+                                     style="max-height: 180px; object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">Sin imagen</span>
+                            }
+
+                            <div class="mt-3">
+                                <label asp-for="ArchivoImagen" class="form-label d-block">Cambiar imagen principal</label>
+                                <input asp-for="ArchivoImagen" type="file" class="form-control" />
+                                <span asp-validation-for="ArchivoImagen" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <h5 class="fw-semibold">Fotos secundarias</h5>
+
+                        <div class="row g-3 mb-3">
+                            @if (Model.FotosActuales != null && Model.FotosActuales.Any())
+                            {
+                                foreach (var foto in Model.FotosActuales)
+                                {
+                                    <div class="col-6 col-md-4">
+                                        <img src="~/images/productos/@foto.UrlImagen"
+                                             class="img-thumbnail mb-2"
+                                             style="max-height: 180px; object-fit:cover;" />
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <span class="text-muted fst-italic">Este producto no tiene fotos adicionales.</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mt-3">
+                            <label asp-for="FotosNuevas" class="form-label">Agregar fotos nuevas</label>
+                            <input asp-for="FotosNuevas" type="file" multiple class="form-control" />
+                            <span asp-validation-for="FotosNuevas" class="text-danger small"></span>
+                        </div>
+
+                    </div>
+                </div>
                 <div class="text-end mt-4">
                     <button type="submit" class="btn btn-warning">
                         <i class="bi bi-save me-1"></i>Actualizar producto
@@ -97,7 +155,7 @@
             let categoriaId = $(this).val();
             $("#subcategoriaSelect").empty().append(`<option value="">Cargando...</option>`);
 
-            $.getJSON('/Artesano/GetSubcategorias?categoriaId=' + categoriaId, function (data) {
+                    $.getJSON('/Categoria/GetSubcategorias?categoriaId=' + categoriaId, function (data) {
                 $("#subcategoriaSelect").empty().append(`<option value="">Seleccione una subcategoría</option>`);
                 data.forEach(function (sub) {
                     $("#subcategoriaSelect").append(`<option value="${sub.id}">${sub.nombre}</option>`);

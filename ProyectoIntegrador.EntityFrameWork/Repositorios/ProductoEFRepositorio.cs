@@ -28,24 +28,73 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public void Editar(Producto entidad)
         {
-            entidad.Validar();
+            var existente = _contexto.Productos
+           .Include(p => p.Fotos)
+           .FirstOrDefault(p => p.id == entidad.id);
 
-            var entidadDominio = Obtener(entidad.id);
+            if (existente == null)
+                throw new Exception("Producto no encontrado");
+            existente.nombre = entidad.nombre;
+            existente.descripcion = entidad.descripcion;
+            existente.precio = entidad.precio;
+            existente.stock = entidad.stock;
+            existente.SubCategoriaId = entidad.SubCategoriaId;
+            existente.imagen = entidad.imagen;
 
-            if (entidadDominio is null)
+            // ------------------------------
+            // ACTUALIZAR LISTA DE FOTOS
+            // ------------------------------
+
+            if (existente.Fotos != null && entidad.Fotos.Count > 0)
             {
-                throw new ProductoNoEncontradoException();
+                existente.Fotos.Clear();
+                foreach (var foto in entidad.Fotos)
+                {
+                    existente.Fotos.Add(new ProductoFoto
+                    {
+                        UrlImagen = foto.UrlImagen,
+                        ProductoId = existente.id
+                    });
+                }
             }
-
-            entidadDominio.nombre = entidad.nombre;
-            entidadDominio.descripcion = entidad.descripcion;
-            entidadDominio.precio = entidad.precio;
-            entidadDominio.stock = entidad.stock;
-            _contexto.Update(entidadDominio);
             _contexto.SaveChanges();
-            
 
 
+        }
+
+        public void Editar(Producto producto, List<string> fotos)
+        {
+
+            var existente = _contexto.Productos
+           .Include(p => p.Fotos)
+           .FirstOrDefault(p => p.id == producto.id);
+            if (existente == null)
+                throw new Exception("Producto no encontrado");
+            existente.nombre = producto.nombre;
+            existente.descripcion = producto.descripcion;
+            existente.precio = producto.precio;
+            existente.stock = producto.stock;
+            existente.SubCategoriaId = producto.SubCategoriaId;
+            existente.imagen = producto.imagen;
+
+            // ------------------------------
+            // ACTUALIZAR LISTA DE FOTOS
+            // ------------------------------
+
+            if (existente.Fotos == null)
+                existente.Fotos = new List<ProductoFoto>();
+
+            existente.Fotos.Clear();
+            foreach (var url in fotos)
+            {
+                existente.Fotos.Add(new ProductoFoto
+                {
+                    UrlImagen = url,
+                    ProductoId = existente.id
+                });
+            }
+            fotos.Clear();
+            _contexto.SaveChanges();
         }
 
         public void Eliminar(int id)
@@ -67,6 +116,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             .Include(x => x.Fotos)  
             .FirstOrDefault(x => x.id == Id);
         }
+
 
         public IEnumerable<Producto> ObtenerTodos()
         {
