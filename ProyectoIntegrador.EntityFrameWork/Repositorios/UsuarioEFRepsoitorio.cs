@@ -52,7 +52,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public void Eliminar(int id)
         {
-            throw new NotImplementedException();
+            var usuario = _contexto.Usuarios.FirstOrDefault(u => u.id == id);
+
+            if (usuario == null)
+                throw new UsuarioNullException();
+
+            _contexto.Usuarios.Remove(usuario);
+            _contexto.SaveChanges();
         }
 
         public Usuario Obtener(int id)
@@ -88,7 +94,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             if (usuario == null)
                 throw new ArgumentNullException(nameof(usuario));
 
-            usuario.Validar(); // si tu entidad valida antes de guardar
+            usuario.Validar(); 
 
             _contexto.Usuarios.Update(usuario);
             _contexto.SaveChanges();

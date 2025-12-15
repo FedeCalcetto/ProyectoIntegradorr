@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
-    public interface IProductoRepositorio : IRepositorio<Producto>
+    public interface IRepositorioProducto
     {
-        void Editar(Producto producto, List<string> fotos);
         IEnumerable<Producto> ObtenerPublicados();
         IEnumerable<Producto> ObtenerPublicadosPorSubCategoria(int subCategoriaId);
-        List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax, int pagina, int totalPagina, out int totalRegistros);
-
     }
 }

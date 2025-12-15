@@ -3,6 +3,7 @@ using ProyectoIntegrador.EntityFrameWork;
 using ProyectoIntegrador.EntityFrameWork.Repositorios;
 using ProyectoIntegrador.LogicaAplication.CasosDeUso;
 using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaAplication.Servicios;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Services;
 
@@ -47,6 +48,11 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IObtenerProductoArtesano, ObtenerProductoArtesanoCasoDeUso>();
             builder.Services.AddScoped<IEliminarProducto, EliminarProductoCasoDeUso>();
             builder.Services.AddScoped<IEditarProducto, EditarProductoCasoDeUso>();
+            builder.Services.AddScoped<IEliminarUsuario, EliminarUsuarioCasoDeUso>();
+
+            builder.Services.AddScoped<ICatalogoService, CatalogoService>();
+            builder.Services.AddScoped<ISubCategoriaRepositorio, SubCategoriaEFRepositorio>();
+            builder.Services.AddScoped<IProductoRepositorio, ProductoEFRepositorio>();
             builder.Services.AddScoped<IBusquedaDeUsuarios, BusquedaDeUsuariosCasoDeUso>();
             builder.Services.AddScoped<IProductosFiltrados, ProductosFiltradosCasoDeUso>();
             builder.Services.AddScoped<IEliminarArtesano, EliminarArtesanoCasoDeUso>();
