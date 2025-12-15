@@ -19,6 +19,12 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerProducto _obtenerProducto;
 
         public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto)
+        private readonly IObtenerTodosLosProductos _obtenerTodosLosProductos;
+        private readonly IObtenerUsuario _obtenerUsuario;
+        private readonly IMostrarProductosCarrito _mostrarProductosCarrito;
+
+        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, 
+            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito)
         {
             _obtenerArtesano = obtenerArtesano;
             _agregarProducto = producto;
@@ -27,6 +33,9 @@ namespace ProyectoIntegrador_Web.Controllers
             _env = env;
             _productosFiltrados = productosFiltrados;
             _obtenerProducto = obtenerProducto;
+            _obtenerTodosLosProductos = obtenerTodosLosProductos;
+            _obtenerUsuario = obtenerUsuario;
+            _mostrarProductosCarrito = mostrarProductosCarrito;
         }
         public IActionResult AltaProducto()
         {
@@ -215,6 +224,29 @@ namespace ProyectoIntegrador_Web.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public ActionResult MostrarProdcutosProvicional()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (email != null)
+            {
+                var usuario = _obtenerUsuario.Ejecutar(email);
+                var itemsCarrito = _mostrarProductosCarrito.mostrarProductos(usuario.id);
+
+                ViewBag.CantidadProductos = itemsCarrito.Sum(i => i.cantidad);
+            }
+            else
+            {
+                ViewBag.CantidadProductos = 0;
+            }
+            IEnumerable<Producto> productos = _obtenerTodosLosProductos.obtenerTodos();
+            var modelo = new ProductosProvicionalesModel
+            {
+                Productos = productos
+            };
+            return View(modelo);
         }
 
         // GET: ProductoController/Details/5

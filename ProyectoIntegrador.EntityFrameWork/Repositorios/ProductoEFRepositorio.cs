@@ -117,6 +117,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             .FirstOrDefault(x => x.id == Id);
         }
 
+        public List<Producto> ObtenerProductosExcluyendo(List<int> idsEnCarrito, int maxItems)
+        {
+            return _contexto.Productos
+                    .Where(p => !idsEnCarrito.Contains(p.id))
+                    .Take(maxItems)
+                    .ToList();
+        }
 
         public IEnumerable<Producto> ObtenerTodos()
         {

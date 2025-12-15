@@ -16,9 +16,13 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<SubCategoria> SubCategorias { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
         public DbSet<Factura> Facturas { get; set; }
+        public DbSet<LineaFactura> LineasFactura { get; set; }
+
         public DbSet<PedidoPersonalizado> PedidosPersonalizados { get; set; }
         public DbSet<Reporte> Reportes { get; set; }
         public DbSet<ProductoFoto> ProductoFotos { get; set; }
+        public DbSet<Carrito> Carritos { get; set; }
+        public DbSet<CarritoItem> CarritoItems { get; set; }
 
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {

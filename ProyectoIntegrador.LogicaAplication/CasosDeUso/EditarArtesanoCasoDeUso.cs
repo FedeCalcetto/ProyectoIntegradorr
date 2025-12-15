@@ -1,4 +1,5 @@
-﻿using ProyectoIntegrador.LogicaAplication.Interface;
+﻿using ProyectoIntegrador.LogicaAplication.Dtos;
+using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
@@ -17,8 +18,19 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
         {
             _artesanoRepo = artesanoRepo;
         }
-        public void Actualizar(Artesano artesano)
+        public void Actualizar(EditarArtesanoDto dto)
         {
+           Artesano artesano =  _artesanoRepo.ObtenerPorEmail(dto.Email);
+
+            artesano.nombre = dto.Nombre;
+            artesano.apellido = dto.Apellido;
+            artesano.telefono = dto.Telefono;
+            artesano.descripcion = dto.Descripcion;
+            artesano.foto = dto.Foto;
+            artesano.password = dto.Password;
+
+            artesano.Validar();
+            artesano.ValidarTelefono(dto.Telefono);
             _artesanoRepo.Actualizar(artesano);
         }
     }

@@ -1,5 +1,4 @@
-﻿using ProyectoIntegrador.LogicaAplication.Dtos;
-using ProyectoIntegrador.LogicaNegocio.Entidades;
+﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IEditarArtesano
+    public interface IObtenerTodosLosProductos
     {
-        void Actualizar(EditarArtesanoDto dto);
+        IEnumerable<Producto> obtenerTodos();
     }
 }

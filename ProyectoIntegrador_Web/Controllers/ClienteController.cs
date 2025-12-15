@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
@@ -13,18 +14,20 @@ namespace ProyectoIntegrador_Web.Controllers
     public class ClienteController : Controller
     {
 
-        private readonly IClienteRepositorio _clienteRepositorio;
         private readonly IObtenerCliente _obtenerCliente;
         private readonly EmailService _email; //esto se agrega siempre que se precise enviar un email
         private readonly IWebHostEnvironment _env;
+        private readonly IEditarCliente _editarCliente;
+        private readonly IEliminarCliente _eliminarCliente;
 
         public ClienteController(IWebHostEnvironment env, IClienteRepositorio clienteRepositorio,
-                          IObtenerCliente obtenerCliente,
+                          IObtenerCliente obtenerCliente, IEditarCliente editarCliente, IEliminarCliente eliminarCliente,
                           EmailService email)
         {
-            _clienteRepositorio = clienteRepositorio;
             _obtenerCliente = obtenerCliente;
             _email = email;
+            _editarCliente = editarCliente;
+            _eliminarCliente = eliminarCliente;
             _env = env;
         }
 
@@ -110,6 +113,8 @@ namespace ProyectoIntegrador_Web.Controllers
             {
                 var email = HttpContext.Session.GetString("loginUsuario");
                 modelo.DepartamentosOpciones = ObtenerDepartamentos();
+                ModelState.Remove("archivoFotoCliente");
+
                 if (!ModelState.IsValid)
                 {
                     modelo.DepartamentosOpciones = ObtenerDepartamentos();
@@ -126,6 +131,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
                 try
                 {
+                    var nombreArchivo = "";
                     // =========================
                     //   SI SUBIÓ FOTO NUEVA
                     // =========================
@@ -147,30 +153,30 @@ namespace ProyectoIntegrador_Web.Controllers
                             return RedirectToAction("PerfilArtesano");
                         }
 
-                        var nombreArchivo = Guid.NewGuid() + extension;
+                        nombreArchivo = Guid.NewGuid() + extension;
                         var uploads = Path.Combine(_env.WebRootPath, "images/usuarios");
 
                         var filePath = Path.Combine(uploads, nombreArchivo);
                         using (var stream = new FileStream(filePath, FileMode.Create))
                             archivoFotoCliente.CopyTo(stream);
 
-                        cliente.foto = "/images/usuarios/" + nombreArchivo;
                     }
 
-                    // =============================
-                    //     ACTUALIZAR CAMPOS
-                    // =============================
-                    cliente.nombre = modelo.Nombre;
-                    cliente.apellido = modelo.Apellido;
-
-                    cliente.direccion = new Direccion
+  
+                    var dto = new EditarClienteDto
                     {
-                        domicilio = modelo.Domicilio,
-                        departamento = modelo.Departamento,
-                        barrio = modelo.Barrio
+                        Foto = string.IsNullOrEmpty(nombreArchivo)
+                       ? modelo.Foto
+                       : "/images/usuarios/" + nombreArchivo,
+                        Nombre = modelo.Nombre,
+                        Apellido = modelo.Apellido,
+                        Email = modelo.Email,
+                        Domicilio = modelo.Domicilio,
+                        Departamento = modelo.Departamento,
+                        Barrio = modelo.Barrio
                     };
 
-                    _clienteRepositorio.Actualizar(cliente);
+                    _editarCliente.Actualizar(dto);
                     modelo.DepartamentosOpciones = ObtenerDepartamentos();
                     // Mensaje temporal para la vista
                     TempData["Mensaje"] = "Perfil actualizado correctamente.";
@@ -322,7 +328,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
             // eliminar usuario
             var cliente = _obtenerCliente.Ejecutar(email);
-            _clienteRepositorio.Eliminar(cliente.id);
+            _eliminarCliente.Ejecutar(cliente.email.email);
 
             // limpiar sesión
             HttpContext.Session.Clear();
