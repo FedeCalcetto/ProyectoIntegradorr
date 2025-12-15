@@ -122,5 +122,49 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             throw new NotImplementedException();
         }
+
+        public List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax,int pagina, int tamanoPagina,out int totalRegistros)
+        {
+
+            if (pagina < 1)
+                pagina = 1;
+
+            var query = _contexto.Productos.AsQueryable();
+
+            // Filtro por texto
+            if (!string.IsNullOrWhiteSpace(filtro))
+            {
+                query = query.Where(p => p.nombre.Contains(filtro));
+            }
+
+            // Normalizar valores negativos
+            int? min = (precioMin.HasValue && precioMin >= 0) ? precioMin : null;
+            int? max = (precioMax.HasValue && precioMax >= 0) ? precioMax : null;
+
+            // Invertir si min > max
+            if (min.HasValue && max.HasValue && min > max)
+            {
+                (min, max) = (max, min);
+            }
+
+            // Filtros por precio
+            if (min.HasValue)
+                query = query.Where(p => p.precio >= min.Value);
+
+            if (max.HasValue)
+                query = query.Where(p => p.precio <= max.Value);
+
+            // Total antes de paginar
+            totalRegistros = query.Count();
+
+            // Orden fijo para paginación estable
+            query = query.OrderBy(p => p.nombre);
+
+            // Paginación
+            return query
+                .Skip((pagina - 1) * tamanoPagina)
+                .Take(tamanoPagina)
+                .ToList();
+        }
     }
 }

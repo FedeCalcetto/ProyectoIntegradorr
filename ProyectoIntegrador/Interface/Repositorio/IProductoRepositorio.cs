@@ -10,6 +10,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
     public interface IProductoRepositorio : IRepositorio<Producto>
     {
         void Editar(Producto producto, List<string> fotos);
+        List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax, int pagina, int totalPagina, out int totalRegistros);
 
     }
 }

@@ -44,6 +44,8 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IObtenerProductoArtesano, ObtenerProductoArtesanoCasoDeUso>();
             builder.Services.AddScoped<IEliminarProducto, EliminarProductoCasoDeUso>();
             builder.Services.AddScoped<IEditarProducto, EditarProductoCasoDeUso>();
+            builder.Services.AddScoped<IBusquedaDeUsuarios, BusquedaDeUsuariosCasoDeUso>();
+            builder.Services.AddScoped<IProductosFiltrados, ProductosFiltradosCasoDeUso>();
 
             //REGISTRO DEL SERVICIO DE EMAIL
             builder.Services.AddScoped<EmailService>();
