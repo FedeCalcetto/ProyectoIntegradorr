@@ -1,0 +1,264 @@
+﻿@model CarritoViewModel
+
+@{
+    ViewData["Title"] = "Mi Carrito";
+}
+
+<div class="container mt-4">
+
+    <div class="row align-items-start">
+        <h3 class="text-center text-muted mb-4">Mi carrito</h3>
+
+        <!--        COLUMNA IZQUIERDA     -->
+        <div class="col-lg-8">
+
+            @foreach (var item in Model.ItemsCarrito)
+            {
+                <div class="card mb-3 shadow-sm" style="border: 1px solid #e0e0e0;">
+                    <div class="card-body">
+
+                        <div class="d-flex align-items-center">
+
+                            <!-- Imagen Producto -->
+                            <img src="~/images/productos/@item.producto.imagen"
+                                 style="width: 90px; height: 90px; object-fit: contain;"
+                                 class="me-3" />
+
+                            <!-- Datos -->
+                            <div class="flex-grow-1">
+
+
+                                <h5 class="fw-semibold mb-1 ps-0" style="font-size: 1.15rem;">
+                                    @item.producto.nombre
+                                </h5>
+
+                                <p class="mb-0 ps-0">
+                                    <span class="fw-medium">Cantidad:</span> @item.cantidad
+                                </p>
+                                    
+
+                            </div>
+
+                            <div class="d-flex flex-column justify-content-center align-items-end">
+
+                                <p class="fw-semibold fs-5 mb-2">
+                                    Subtotal: $@(item.cantidad* item.producto.precio)
+                                </p>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminar"
+                                        data-item-id="@item.id"
+                                        data-max="@item.cantidad"
+                                        data-producto="@item.producto.nombre">
+                                    Eliminar
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            }
+            
+        </div>
+
+        <!--         COLUMNA DERECHA     -->
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm" style="border: 1px solid #e0e0e0;">
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">Detalles de la compra</h5>
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        Cantidad de productos: @Model.ItemsCarrito.Sum(i => i.cantidad)
+
+                        <span class="fw-bold">
+                            Total: $@Model.ItemsCarrito.Sum(i => i.cantidad * i.producto.precio)
+                        </span>
+                    </div>
+
+                    <button id="btnConfirmarCompra" class="btn btn-primary w-100 btn-lg mt-3">
+                        Continuar compra
+                    </button>
+
+                    <a id="btnVolverATienda" asp-controller="Producto"
+                       asp-action="MostrarProdcutosProvicional"
+                       class="btn btn-primary w-100 mt-3">
+                        Volver a la tienda
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row mt-4">
+    <hr id="hrCarrito" class="my-5">
+    <div class="col-12">
+        <h5 class="text-muted mb-3">También te puede interesar</h5>
+
+        <div class="product-slider-container">
+
+            <!-- Flecha izquierda -->
+               <button class="slider-btn prev-btn">&#10094;</button>
+
+            <div class="slider-wrapper">
+                <div id="interes-slider"
+                     class="product-slider">
+
+                    @foreach (var producto in Model.ProductosDeInteres)
+                    {
+                        <div class="product-card card shadow-sm">
+                            <img src="~/images/productos/@producto.imagen"
+                                 class="card-img-top"
+                                 style="height:160px; width:100%; object-fit:contain; border-radius:8px 8px 0 0;" />
+
+                            <div class="card-body text-center">
+                                <h6 class="mb-1">@producto.nombre</h6>
+                                <p class="fw-bold mb-2">$@producto.precio</p>
+
+                                <form asp-controller="Carrito"
+                                      asp-action="AgregarAlCarrito"
+                                      method="post">
+                                    <input type="hidden" name="productoId" value="@producto.id" />
+                                    <input type="hidden" name="cantidad" value="1" />
+                                    <button class="btn btn-sm btn-outline-primary w-100">
+                                        Agregar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <!-- Flecha derecha -->
+            <button class="slider-btn next-btn">&#10095;</button>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<!--         MODAL ELIMINAR     -->
+<div class="modal fade" id="modalEliminar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-controller="Carrito"
+                  asp-action="EliminarItemDelCarrito"
+                  method="post">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p id="nombreProducto"></p>
+
+                    <input type="hidden" name="idItemCarrito" id="idItemCarrito" />
+
+                    <label class="form-label">Cantidad a eliminar</label>
+                    <input type="number"
+                           name="cantidadABorrar"
+                           id="cantidadABorrar"
+                           class="form-control"
+                           min="1" />
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        Eliminar
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const modalEliminar = document.getElementById('modalEliminar');
+
+    modalEliminar.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        const itemId = button.getAttribute('data-item-id');
+        const max = button.getAttribute('data-max');
+        const producto = button.getAttribute('data-producto');
+
+        document.getElementById('idItemCarrito').value = itemId;
+        document.getElementById('cantidadABorrar').value = 1;
+        document.getElementById('cantidadABorrar').max = max;
+        document.getElementById('nombreProducto').innerText =
+            `Producto: ${producto} (máx: ${max})`;
+    });
+</script>
+
+
+
+<script>
+    const slider = document.getElementById("interes-slider");   // contenedor de cards
+    const prev = document.querySelector(".prev-btn"); //botones de izq y der
+     const next = document.querySelector(".next-btn");
+ 
+
+    let currentScroll = 0;
+
+     function getCardWidth() { //calcula el ancho de una card
+        const card = slider.querySelector(".product-card");
+        return card.offsetWidth + 20; // ancho + gap
+    }
+
+    function updateArrows() {
+         const cardWidth = getCardWidth();
+         const maxScroll = (slider.children.length * cardWidth) - (cardWidth * 3);
+
+         //  Ocultar flecha izquierda si está al inicio
+         prev.style.display = currentScroll <= 0 ? "none" : "flex";
+
+         //  Ocultar flecha derecha si llegó al final
+         next.style.display = currentScroll >= maxScroll ? "none" : "flex";
+     }
+
+    next.addEventListener("click", () => {
+          const cardWidth = getCardWidth(); //Calcula el ancho de una card y calcula hasta dónde puede moverse el slider:
+          const maxScroll = (slider.children.length * cardWidth) - (cardWidth * 3);
+
+          if (currentScroll < maxScroll) { //deja siempre visibles 3 cards
+              currentScroll += cardWidth;
+              slider.style.transform = `translateX(-${currentScroll}px)`; //Si no llegó al límite: mueve el slider una card hacia la izquierda (se ve como que avanza hacia la derecha).
+                 updateArrows();
+          }
+      });
+
+      prev.addEventListener("click", () => {
+          const cardWidth = getCardWidth();
+
+          if (currentScroll > 0) {
+              currentScroll -= cardWidth;
+              slider.style.transform = `translateX(-${currentScroll}px)`;
+                  updateArrows();
+          }
+      });
+
+              updateArrows();
+</script>

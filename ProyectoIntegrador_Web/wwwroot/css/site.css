@@ -245,3 +245,42 @@ body {
     display: flex;
     align-items: center;
 }
+
+/*NAVBAR*/
+
+.top-bar {
+    background: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    border-bottom: 1px solid #e3e3e3;
+}
+
+/*Carrito*/
+
+#btnVolverATienda {
+background-color:cadetblue;
+border: none;
+
+}
+
+ #btnVolverATienda:hover {
+ background-color: #4F8E90;
+ border:none
+ }
+
+#btnConfirmarCompra {
+    background-color: #3F7E80;
+    border: none
+}
+
+    #btnConfirmarCompra:hover {
+        background-color: #2F6E70;
+        border: none
+    }
+
+#hrCarrito { /*Para dividir el lsitado del resto*/
+    border: none;
+    border-top: 2px solid black;
+}
+

@@ -21,20 +21,16 @@ namespace ProyectoIntegrador_Web.Controllers
     {
         // GET: ArtesanoController
             private readonly EmailService _email;
-            private readonly IProductoFotoRepsoitorio _productoFoto;
             private readonly IEditarProducto _editarProducto;
             private readonly IWebHostEnvironment _env;
-            private readonly IArtesanoRepositorio _artesanoRepo;
-            /// <summary>
-            /// Casos de uso
-            /// </summary>
             private readonly IEditarArtesano _editarArtesano;
             private readonly IEliminarProducto _eliminarProducto;
             private readonly IObtenerArtesano _obtenerArtesano;
             private readonly IObtenerCategorias _obtenerCategorias;
             private readonly IObtenerSubcategorias _obtenerSubCategorias;
             private readonly IObtenerProductoArtesano _obtenerProductoArtesano;
-        private readonly IObtenerProducto _obtenerProducto;
+            private readonly IObtenerProducto _obtenerProducto;
+            private readonly IEliminarArtesano _eliminarArtesano;
             public ArtesanoController(
                 IArtesanoRepositorio artesanoRepo,
                 IObtenerProducto obtenerProducto,
@@ -47,10 +43,10 @@ namespace ProyectoIntegrador_Web.Controllers
                 IEliminarProducto eliminarProducto,
                 IProductoFotoRepsoitorio productoFoto,
                 IEditarProducto editarProducto,
+                IEliminarArtesano eliminarArtesano,
                 EmailService email
             )
             {
-                _artesanoRepo = artesanoRepo;
                 _obtenerProducto = obtenerProducto;
                 _editarArtesano = editarArtesano;
                 _env = env;
@@ -59,8 +55,8 @@ namespace ProyectoIntegrador_Web.Controllers
                 _obtenerSubCategorias = obtenerSubCategorias;
                 _obtenerProductoArtesano = obtenerProductoArtesano;
                 _eliminarProducto = eliminarProducto;
-                _productoFoto = productoFoto;
                 _editarProducto = editarProducto;
+                _eliminarArtesano = eliminarArtesano;
                 _email = email;
             }
         
@@ -116,6 +112,7 @@ namespace ProyectoIntegrador_Web.Controllers
             try
             {
                 var email = HttpContext.Session.GetString("loginUsuario");
+                ModelState.Remove("archivoFoto");
 
                 if (!ModelState.IsValid)
                 {
@@ -131,6 +128,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
                 try
                 {
+                    var nombreArchivo = "";
                     //   SI SUBIÓ FOTO NUEVA
                     if (archivoFoto != null && archivoFoto.Length > 0)
                     {
@@ -150,7 +148,7 @@ namespace ProyectoIntegrador_Web.Controllers
                             return RedirectToAction("PerfilArtesano");
                         }
 
-                        var nombreArchivo = Guid.NewGuid() + extension; //NewGuid crea un identificador único
+                        nombreArchivo = Guid.NewGuid() + extension; //NewGuid crea un identificador único
                         var uploads = Path.Combine(_env.WebRootPath, "images/usuarios");
                         //_env.WebRootPath: ruta física a wwwroot en el servidor (ej. C:\app\wwwroot o /home/site/wwwroot).
                         //Path combine construye la ruta donde guardar las imgs
@@ -163,20 +161,22 @@ namespace ProyectoIntegrador_Web.Controllers
                         //️ _env.WebRootPath = C:\Proyecto\wwwroot
                         //"images/usuarios" =  C:\Proyecto\wwwroot\images\usuarios (uploads)
                         //nombreArchivo=  C:\Proyecto\wwwroot\images\usuarios\foto123.jpg   (filePath)
-
-                        artesano.foto = "/images/usuarios/" + nombreArchivo;
                     }
 
-                    artesano.descripcion = modelo.Descripcion;
-                    artesano.telefono = modelo.Telefono;
-                    artesano.nombre = modelo.Nombre;
-                    artesano.apellido = modelo.Apellido;
-                    artesano.password = modelo.Password;
+                    var dto = new EditarArtesanoDto
+                    {
+                        Descripcion = modelo.Descripcion,
+                        Foto = string.IsNullOrEmpty(nombreArchivo)
+                        ? modelo.Foto
+                        : "/images/usuarios/" + nombreArchivo,
+                        Telefono = modelo.Telefono,
+                        Nombre = modelo.Nombre,
+                        Apellido = modelo.Apellido,
+                        Email = modelo.Email,
+                        Password = modelo.Password
+                    };
 
-                    artesano.Validar();
-                    artesano.ValidarTelefono(modelo.Telefono);
-
-                    _editarArtesano.Actualizar(artesano);
+                    _editarArtesano.Actualizar(dto);
 
                     TempData["Mensaje"] = "Perfil actualizado correctamente.";
                     return RedirectToAction("PerfilArtesano");
@@ -527,7 +527,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
             // eliminar usuario
             var artesano = _obtenerArtesano.Ejecutar(email);
-            _artesanoRepo.Eliminar(artesano.id);
+            _eliminarArtesano.Ejecutar(artesano.email.email);
 
             // limpiar sesión
             HttpContext.Session.Clear();

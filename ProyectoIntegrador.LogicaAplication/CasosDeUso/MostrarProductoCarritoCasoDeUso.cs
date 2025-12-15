@@ -1,0 +1,26 @@
+﻿using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
+{
+    public class MostrarProductoCarritoCasoDeUso : IMostrarProductosCarrito
+    {
+        private readonly ICarritoRepositorio _carritoRepo;
+
+        public MostrarProductoCarritoCasoDeUso(ICarritoRepositorio carritoRepo)
+        {
+            _carritoRepo = carritoRepo;
+        }
+        public List<CarritoItem> mostrarProductos(int usuarioId)
+        {
+            var carritoItems = _carritoRepo.ObtenerItemsDeUsuario(usuarioId);
+            return carritoItems;
+        }
+    }
+}

@@ -2,6 +2,7 @@
 using Moq;
 using ProyectoIntegrador.LogicaAplication.CasosDeUso;
 using ProyectoIntegrador.LogicaAplication.Dtos;
+using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
@@ -191,7 +192,7 @@ namespace PruebasUnitarias
                 nombre = "Juan",
                 apellido = "Lopez",
                 email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("cliente@mail.com"),
-                direccion = new Direccion { barrio = "", departamento = "", domicilio = "" }
+                direccion = new Direccion("", "", "") 
             };
 
             Assert.ThrowsException<DireccionException>(() => cliente.validarEditar());
