@@ -8,11 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:ProyectoIntegrador.EntityFrameWork/Migrations/20251207150703_inicial.cs
-    public partial class inicial : Migration
-========
-    public partial class _41225 : Migration
->>>>>>>> d0265be3ab61cbaeefde90d87036d46a1fc52940:ProyectoIntegrador.EntityFrameWork/Migrations/20251204145957_41225.cs
+    public partial class _10122025 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

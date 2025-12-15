@@ -29,12 +29,15 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IClienteRepositorio, ClienteEFRepositorio>();
             builder.Services.AddScoped<ICategoriaRepositorio, CategoriaEFRepsoitorio>();
             builder.Services.AddScoped<IProductoFotoRepsoitorio, ProductoFotoEFRepositorio>();
+            builder.Services.AddScoped<ICarritoRepositorio, CarritoEFRepositorio>();
+
             //Casos de uso
             builder.Services.AddScoped<IAgregarProducto, AgregarProductoCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
             builder.Services.AddScoped<ICambiarPassword, CambiarPasswordCasoDeUso>();
             builder.Services.AddScoped<ILogin, LoginCasoDeUso>();
             builder.Services.AddScoped<IEditarArtesano, EditarArtesanoCasoDeUso>();
+            builder.Services.AddScoped<IEditarCliente, EditarClienteCasoDeUso>();
             builder.Services.AddScoped<IObtenerCategorias, ObtenerCategoriasCasoDeUso>();
             builder.Services.AddScoped<IObtenerSubcategorias, ObtenerSubCategoriasCasoDeUso>();
             builder.Services.AddScoped<IObtenerCliente, ObtenerClienteCasoDeUso>();
@@ -44,6 +47,15 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IObtenerProductoArtesano, ObtenerProductoArtesanoCasoDeUso>();
             builder.Services.AddScoped<IEliminarProducto, EliminarProductoCasoDeUso>();
             builder.Services.AddScoped<IEditarProducto, EditarProductoCasoDeUso>();
+            builder.Services.AddScoped<IEliminarArtesano, EliminarArtesanoCasoDeUso>();
+            builder.Services.AddScoped<IEliminarCliente, EliminarClienteCasoDeUso>();
+            builder.Services.AddScoped<IObtenerTodosLosProductos, ObtenerTodosLosProductosCasoDeUso>();
+            builder.Services.AddScoped<IAgragarAlCarrito, AgregarAlCarritoCasoDeUso>();
+            builder.Services.AddScoped<IMostrarProductosCarrito, MostrarProductoCarritoCasoDeUso>();
+            builder.Services.AddScoped<IEliminarItemDelCarrito, EliminarItemCarritoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerProductosDeInteres, ObtenerProductosDeInteresCasoDeUso>();
+
+
 
             //REGISTRO DEL SERVICIO DE EMAIL
             builder.Services.AddScoped<EmailService>();
