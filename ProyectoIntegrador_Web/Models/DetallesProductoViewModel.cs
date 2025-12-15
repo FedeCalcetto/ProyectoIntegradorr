@@ -1,0 +1,15 @@
+﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
+
+namespace ProyectoIntegrador_Web.Models
+{
+    public class DetallesProductoViewModel
+    {
+        public int Id { get; set; }  
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public int Precio { get; set; }
+        public int Stock { get; set; }
+        public string Imagen { get; set; }
+        public List<ProductoFoto> Fotos { get; set; } = new();
+    }
+}

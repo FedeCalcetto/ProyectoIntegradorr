@@ -22,6 +22,48 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Carrito", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Carritos");
+                });
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.CarritoItem", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("carritoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("productoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("carritoId");
+
+                    b.HasIndex("productoId");
+
+                    b.ToTable("CarritoItems");
+                });
+
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>
                 {
                     b.Property<int>("Id")
@@ -153,7 +195,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("productoid");
 
-                    b.ToTable("LineaFactura");
+                    b.ToTable("LineasFactura");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.PedidoPersonalizado", b =>
@@ -521,6 +563,25 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasDiscriminator().HasValue("CLIENTE");
                 });
 
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.CarritoItem", b =>
+                {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Carrito", "carrito")
+                        .WithMany("Items")
+                        .HasForeignKey("carritoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
+                        .WithMany()
+                        .HasForeignKey("productoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("carrito");
+
+                    b.Navigation("producto");
+                });
+
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
@@ -751,6 +812,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         });
 
                     b.Navigation("direccion");
+                });
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Carrito", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Categoria", b =>

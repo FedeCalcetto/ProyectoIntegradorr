@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
@@ -28,9 +29,19 @@ namespace ProyectoIntegrador_Web.Controllers
 
         public IActionResult CambioContra(string returnUrl)
         {
+        private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
+
+        public UsuarioController(ICambiarPassword cambiarPassword,IBusquedaDeUsuarios busquedaDeUsuarios)
+        {
+            _cambiarPassword = cambiarPassword;
+            _busquedaDeUsuarios = busquedaDeUsuarios;
+        }
+        
+            public IActionResult CambioContra(string returnUrl)
+            {
             ViewBag.ReturnUrl = returnUrl ?? "/"; 
             return View();
-        }
+            }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -94,7 +105,42 @@ namespace ProyectoIntegrador_Web.Controllers
           
             
         }
-        
+
+        public IActionResult BusquedaDeUsuarios(string filtro)
+        {
+
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
+
+            if (string.IsNullOrEmpty(email) || (rol != "ARTESANO" && rol != "CLIENTE"))
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var modelo = new BusquedaDeUsuariosViewModel();
+            modelo.Filtro = filtro;
+
+            if (!string.IsNullOrEmpty(filtro))
+            {
+                modelo.Usuarios = _busquedaDeUsuarios.Ejecutar(filtro);
+            }
+
+            return View(modelo);
+        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult BusquedaDeUsuarios(BusquedaDeUsuariosViewModel modelo)
+        //{
+
+        //    modelo.Usuarios = _busquedaDeUsuarios.Ejecutar(modelo.Filtro);
+
+        //    return View(modelo);
+        //}
+
+        public IActionResult PerfilPublico()
+        {
+            return View();
+        }
         // GET: UsuarioController
         public ActionResult Index()
         {

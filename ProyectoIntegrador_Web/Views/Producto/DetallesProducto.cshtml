@@ -1,0 +1,121 @@
+﻿@model DetallesProductoViewModel
+@{
+    ViewData["Title"] = "Detalle del producto";
+}
+
+<div class="container mt-5">
+
+    <div class="row align-items-start">
+
+        <!-- GALERÍA -->
+        <div class="col-md-5">
+
+            <!-- Imagen principal -->
+            <div class="border rounded shadow-sm p-3 mb-3 text-center">
+                <img id="imagenPrincipal"
+                     src="~/images/productos/@Model.Imagen"
+                     class="img-fluid rounded"
+                     style="max-height: 350px; object-fit: contain;"
+                     alt="@Model.Nombre" />
+            </div>
+
+            <!-- Miniaturas -->
+            @if (Model.Fotos.Any())
+            {
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+
+                    @foreach (var foto in Model.Fotos)
+                    {
+                        <img src="~/images/productos/@foto.UrlImagen"
+                             class="img-thumbnail thumb-img"
+                             onclick="cambiarImagen(this)" />
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- INFO -->
+        <div class="col-md-7">
+
+            <h2 class="fw-bold mb-2">@Model.Nombre</h2>
+
+            <p class="text-muted">@Model.Descripcion</p>
+
+            <h3 class="text-success fw-semibold mb-3">
+                $@Model.Precio
+            </h3>
+
+            <span class="badge rounded-pill bg-@(Model.Stock > 0 ? "success" : "danger") mb-3">
+                Stock: @Model.Stock
+            </span>
+
+            @if (Model.Stock > 0)
+            {
+                <form asp-controller="Carrito"
+                      asp-action="Agregar"
+                      method="post"
+                      class="mt-4">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="productoId" value="@Model.Id" />
+
+                    <div class="mb-3 w-50">
+                        <label class="form-label fw-semibold">Cantidad</label>
+                        <input type="number"
+                               name="cantidad"
+                               class="form-control"
+                               value="1"
+                               min="1"
+                               max="@Model.Stock" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                        🛒 Agregar al carrito
+                    </button>
+                </form>
+            }
+            else
+            {
+                <p class="text-danger fw-semibold mt-4">
+                    Producto sin stock 😢
+                </p>
+            }
+
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script>
+    function cambiarImagen(element) {
+        const principal = document.getElementById("imagenPrincipal");
+        principal.src = element.src;
+
+        document.querySelectorAll(".thumb-img")
+            .forEach(img => img.classList.remove("active-thumb"));
+
+        element.classList.add("active-thumb");
+    }
+</script>
+
+<!-- CSS -->
+<style>
+    .thumb-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .thumb-img:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+    .active-thumb {
+        border: 2px solid #0d6efd;
+    }
+</style>

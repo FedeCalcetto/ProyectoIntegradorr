@@ -12,5 +12,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         Usuario Login(string email, string password);
         Usuario BuscarPorEmail(string email);
         void Actualizar(Usuario usuario);
+        List<Usuario> BusquedaDeUsuarios(string filtro);
     }
 }

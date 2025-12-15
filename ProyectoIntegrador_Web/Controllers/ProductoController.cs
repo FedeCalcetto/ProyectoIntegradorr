@@ -15,14 +15,27 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerCategorias _obtenerCategorias;
         private readonly IObtenerSubcategorias _subCategoria;
         private readonly IWebHostEnvironment _env;
+        private readonly IProductosFiltrados _productosFiltrados;
+        private readonly IObtenerProducto _obtenerProducto;
 
-        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias)
+        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto)
+        private readonly IObtenerTodosLosProductos _obtenerTodosLosProductos;
+        private readonly IObtenerUsuario _obtenerUsuario;
+        private readonly IMostrarProductosCarrito _mostrarProductosCarrito;
+
+        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, 
+            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito)
         {
             _obtenerArtesano = obtenerArtesano;
             _agregarProducto = producto;
             _obtenerCategorias = obtenerCategorias;
             _subCategoria = obtenerSubcategorias;
             _env = env;
+            _productosFiltrados = productosFiltrados;
+            _obtenerProducto = obtenerProducto;
+            _obtenerTodosLosProductos = obtenerTodosLosProductos;
+            _obtenerUsuario = obtenerUsuario;
+            _mostrarProductosCarrito = mostrarProductosCarrito;
         }
         public IActionResult AltaProducto()
         {
@@ -151,14 +164,89 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View(modelo);
             }
         }
-    
 
+        public IActionResult ProductosFiltrados(string filtro, int? precioMin, int? precioMax,int pagina)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
+            if (string.IsNullOrEmpty(email) || rol != "CLIENTE")
+            {
+                return RedirectToAction("Login", "Login");
+            }
 
+            const int tamanoPagina = 10;
+
+            int totalRegistros;
+
+            var productos = _productosFiltrados.Ejecutar(
+                filtro,
+                precioMin,
+                precioMax,
+                pagina,
+                tamanoPagina,
+                out totalRegistros
+            );
+
+            var modelo = new ProductosFiltradosViewModel
+            {
+                Productos = productos,
+                Filtro = filtro,
+                PrecioMin = precioMin,
+                PrecioMax = precioMax,
+                PaginaActual = pagina,
+                TotalPaginas = (int)Math.Ceiling(totalRegistros / (double)tamanoPagina)
+            };
+            return View(modelo);
+        }
+
+        public IActionResult DetallesProducto(int id)
+        {
+            var producto = _obtenerProducto.obtener(id);
+
+            if (producto == null)
+                return NotFound();
+
+            var vm = new DetallesProductoViewModel
+            {
+                Id = producto.id,
+                Nombre = producto.nombre,
+                Descripcion = producto.descripcion,
+                Precio = producto.precio,
+                Stock = producto.stock,
+                Imagen = producto.imagen,
+                Fotos = producto.Fotos
+            };
+
+            return View(vm);
+        }
         // GET: ProductoController
         public ActionResult Index()
         {
             return View();
+        }
+
+        public ActionResult MostrarProdcutosProvicional()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (email != null)
+            {
+                var usuario = _obtenerUsuario.Ejecutar(email);
+                var itemsCarrito = _mostrarProductosCarrito.mostrarProductos(usuario.id);
+
+                ViewBag.CantidadProductos = itemsCarrito.Sum(i => i.cantidad);
+            }
+            else
+            {
+                ViewBag.CantidadProductos = 0;
+            }
+            IEnumerable<Producto> productos = _obtenerTodosLosProductos.obtenerTodos();
+            var modelo = new ProductosProvicionalesModel
+            {
+                Productos = productos
+            };
+            return View(modelo);
         }
 
         // GET: ProductoController/Details/5
