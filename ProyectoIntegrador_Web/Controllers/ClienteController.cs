@@ -265,7 +265,7 @@ namespace ProyectoIntegrador_Web.Controllers
        
         }
 
-        public async Task<IActionResult> ConfirmarEliminacion()
+       /* public async Task<IActionResult> ConfirmarEliminacion()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
 
@@ -328,7 +328,7 @@ namespace ProyectoIntegrador_Web.Controllers
             HttpContext.Session.Clear();
 
             return RedirectToAction("CuentaEliminada");
-        }
+        }*/
 
 
     }

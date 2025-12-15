@@ -1,0 +1,49 @@
+﻿@model ProyectoIntegrador.LogicaAplication.Dtos.ProductoCatalogoDto
+
+<div class="card h-100 shadow-sm">
+
+    <!-- IMAGEN -->
+    <!-- <img src="@Model.Imagen"
+         class="card-img-top"
+         style="height:180px; object-fit:cover;"
+         alt="@Model.Nombre" />
+         
+         Para aque esto funque hay que actualizar la bd
+             UPDATE Productos
+            SET imagen = '/images/productos/' + imagen
+            WHERE imagen NOT LIKE '/images/%';
+         
+            porque busca esa ruta dentro de wwwroot
+         -->
+
+    <img src="@("/images/productos/" + Model.Imagen)"
+         class="card-img-top"
+         style="height:180px; object-fit:cover;"
+         alt="@Model.Nombre" />
+
+    <div class="card-body">
+
+        <!-- NOMBRE -->
+        <h6 class="card-title mb-1">@Model.Nombre</h6>
+
+        <!-- ARTESANO -->
+        <div class="text-muted small mb-2">
+            @Model.Artesano
+        </div>
+
+        <!-- PRECIO -->
+        <div class="fw-bold fs-6">
+            $ @Model.Precio
+        </div>
+
+        @* FUTURO LINK A DETALLE *@
+        @*
+        <a asp-controller="Producto"
+           asp-action="Detalle"
+           asp-route-id="@Model.Id"
+           class="stretched-link">
+        </a>
+        *@
+
+    </div>
+</div>

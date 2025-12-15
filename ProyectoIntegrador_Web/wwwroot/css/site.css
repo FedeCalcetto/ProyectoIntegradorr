@@ -245,3 +245,69 @@ body {
     display: flex;
     align-items: center;
 }
+
+
+
+/*
+ 
+    CATALOGOO
+
+*/
+
+/* ========================= */
+/* SLIDER GENERAL */
+/* ========================= */
+.slider-container {
+    position: relative;
+    width: 100%;
+}
+
+.slider {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 10px 40px;
+}
+
+    .slider::-webkit-scrollbar {
+        display: none;
+    }
+
+/* ========================= */
+/* BOTONES */
+/* ========================= */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+
+    .slider-btn.left {
+        left: 0;
+    }
+
+    .slider-btn.right {
+        right: 0;
+    }
+
+/* ========================= */
+/* CARD */
+/* ========================= */
+.slider-item {
+    min-width: 260px;
+    max-width: 260px;
+    flex-shrink: 0;
+}

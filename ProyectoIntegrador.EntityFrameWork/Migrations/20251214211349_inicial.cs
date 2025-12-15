@@ -8,11 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:ProyectoIntegrador.EntityFrameWork/Migrations/20251207150703_inicial.cs
     public partial class inicial : Migration
-========
-    public partial class _41225 : Migration
->>>>>>>> d0265be3ab61cbaeefde90d87036d46a1fc52940:ProyectoIntegrador.EntityFrameWork/Migrations/20251204145957_41225.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -336,6 +332,73 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     { 14, "Pulseras", 5 },
                     { 15, "Aros", 5 }
                 });
+
+            migrationBuilder.InsertData(
+    table: "Productos",
+    columns: new[]
+    {
+        "id", "nombre", "descripcion", "precio", "imagen",
+        "stock", "artesanoid", "SubCategoriaId", "Clienteid"
+    },
+    values: new object[,]
+    {
+        {
+            1,
+            "Mate de madera",
+            "Mate artesanal tallado en madera natural",
+            750,
+            "/images/productos/mate-madera.jpg",
+            5,
+            3,   // Artesano Maria
+            7,   // Tallados en madera
+            null
+        },
+        {
+            2,
+            "Taza de cerámica esmaltada",
+            "Taza hecha a mano con esmalte artesanal",
+            620,
+            "/images/productos/taza-ceramica.jpg",
+            10,
+            3,
+            1,   // Vasos y tazas
+            null
+        },
+        {
+            3,
+            "Alfombra tejida a mano",
+            "Alfombra textil realizada en telar",
+            3200,
+            "/images/productos/alfombra-textil.jpg",
+            2,
+            3,
+            5,   // Alfombras
+            null
+        },
+        {
+            4,
+            "Collar artesanal",
+            "Collar hecho a mano en plata",
+            1800,
+            "/images/productos/collar-plata.jpg",
+            6,
+            3,
+            13,  // Collares
+            null
+        },
+        {
+            5,
+            "Cartera de cuero",
+            "Cartera artesanal en cuero genuino",
+            4500,
+            "/images/productos/cartera-cuero.jpg",
+            3,
+            3,
+            10,  // Carteras
+            null
+        }
+    }
+);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentarios_artesanoId",

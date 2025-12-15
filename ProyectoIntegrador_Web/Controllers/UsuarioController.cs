@@ -5,6 +5,7 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Models;
+using ProyectoIntegrador_Web.Services;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -13,13 +14,19 @@ namespace ProyectoIntegrador_Web.Controllers
 
 
         private readonly ICambiarPassword _cambiarPassword;
+        private readonly IEliminarUsuario _eliminarUsuario;
+        private readonly EmailService _email;
+        private readonly ICatalogoService _catalogoService;
 
-        public UsuarioController(ICambiarPassword cambiarPassword)
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService)
         {
             _cambiarPassword = cambiarPassword;
+            _eliminarUsuario = eliminarUsuario;
+            _email = email;
+            _catalogoService = catalogoService; 
         }
-        
-            public IActionResult CambioContra(string returnUrl)
+
+        public IActionResult CambioContra(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl ?? "/"; 
             return View();
@@ -162,5 +169,85 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View();
             }
         }
+
+        // eliminacion del usuario
+
+        public IActionResult CuentaEliminada()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> ConfirmarEliminacion()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (email == null)
+                return RedirectToAction("Login", "Login");
+
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            HttpContext.Session.SetString("EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString());
+
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+
+            TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
+
+            return View(new EliminarCuentaViewModel { Email = email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
+        {
+            var email = modelo.Email;
+            var codigoIngresado = modelo.Codigo;
+
+            var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
+            var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
+
+            if (codigoGuardado == null || expiraStr == null)
+            {
+                TempData["Error"] = "El código expiró. Pedí uno nuevo.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            DateTime expira = DateTime.Parse(expiraStr);
+            if (DateTime.Now > expira)
+            {
+                TempData["Error"] = "El código expiró.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            if (codigoGuardado != codigoIngresado)
+            {
+                TempData["Error"] = "Código incorrecto.";
+                return RedirectToAction("ConfirmarEliminacion");
+            }
+
+            // aca llamo al caso de uso.
+            _eliminarUsuario.Ejecutar(email);
+
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("CuentaEliminada");
+        }
+        //////////////////////////////////////////////////////////////////
+        ////////////////////// catalogo de usuarios //////////////////////
+        //////////////////////////////////////////////////////////////////
+        
+        public IActionResult CatalogoUsuarios()
+        {
+            return View();
+
+        }
+
+        public IActionResult Catalogo()
+        {
+            var vm = _catalogoService.ObtenerCatalogoInicial();
+            return View(vm);
+        }
+
     }
 }

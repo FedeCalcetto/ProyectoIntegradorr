@@ -21,11 +21,17 @@ namespace ProyectoIntegrador_Web.Services
             var host = _config["EmailSettings:Host"] ?? "smtp.gmail.com";
             var port = int.TryParse(_config["EmailSettings:Port"], out var p) ? p : 587;
 
-            using var smtp = new SmtpClient(host, port)
+            /*using var smtp = new SmtpClient(host, port)
             {
                 Credentials = new NetworkCredential(from, password),
                 EnableSsl = true
-            };
+                smtp.UseDefaultCredentials = false;
+            };*/
+
+            using var smtp = new SmtpClient(host, port);
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false; // 🔥 NECESARIO PARA GMAIL
+            smtp.Credentials = new NetworkCredential(from, password);
 
             // ----- TEXTO SEGÚN TIPO -----
             string asunto;

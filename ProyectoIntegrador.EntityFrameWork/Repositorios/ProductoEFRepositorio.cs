@@ -117,6 +117,23 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             .FirstOrDefault(x => x.id == Id);
         }
 
+        public IEnumerable<Producto> ObtenerPublicados()
+        {
+            return _contexto.Productos
+        .Include(p => p.artesano)
+        .Include(p => p.SubCategoria)
+        .Where(p => p.stock > 0)
+        .ToList();
+        }
+
+        public IEnumerable<Producto> ObtenerPublicadosPorSubCategoria(int subCategoriaId)
+        {
+            return _contexto.Productos
+        .Include(p => p.artesano)
+        .Include(p => p.SubCategoria)
+        .Where(p => p.SubCategoriaId == subCategoriaId && p.stock > 0)
+        .ToList();
+        }
 
         public IEnumerable<Producto> ObtenerTodos()
         {

@@ -100,6 +100,7 @@
                             <span asp-validation-for="Barrio" class="text-danger small"></span>
                         </div>
 
+                       
                         <div class="d-flex justify-content-between">
                             <a asp-action="Inicio" class="btn btn-outline-secondary">Volver</a>
                             <button type="submit" class="btn btn-primary">Guardar cambios</button>
@@ -119,6 +120,14 @@
 
                         </div>
                     </form>
+
+
+    <div class="d-flex justify-content-center mt-4">
+        <a asp-controller="Usuario"asp-action="ConfirmarEliminacion"class="btn btn-danger">
+            Eliminar Cuenta
+        </a>
+    </div>
+    </div>
 
     <script>
         const input = document.getElementById("archivoFotoCliente");

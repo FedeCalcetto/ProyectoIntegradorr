@@ -2,6 +2,7 @@
 using Moq;
 using ProyectoIntegrador.LogicaAplication.CasosDeUso;
 using ProyectoIntegrador.LogicaAplication.Dtos;
+using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
