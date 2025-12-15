@@ -587,5 +587,193 @@ namespace PruebasUnitarias
             Assert.AreEqual(0, capturado.Fotos.Count);
         }
     }
+    [TestClass]
+    public class EditarProductoCasoDeUsoTests
+    {
+        [TestMethod]
+        public void Ejecutar_ProductoNoEncontrado_LanzaExcepcion()
+        {
+            var repo = new Mock<IProductoRepositorio>();
+
+            repo.Setup(r => r.Obtener(1)).Returns((Producto)null);
+
+            var caso = new EditarProductoCasoDeUso(repo.Object);
+
+            var dto = new EditarProductoDto
+            {
+                Id = 1,
+                Nombre = "Nuevo",
+                Descripcion = "Desc",
+                Precio = 10,
+                Stock = 2,
+                SubCategoriaId = 1,
+                ImagenPrincipal = "img.jpg",
+                Fotos = new List<string>()
+            };
+
+            Assert.ThrowsException<Exception>(() => caso.Ejecutar(dto));
+        }
+
+        [TestMethod]
+        public void Ejecutar_ActualizaCamposYLLamaRepositorioEditar()
+        {
+            var repo = new Mock<IProductoRepositorio>();
+            Producto productoGuardado = null;
+            List<string> fotosGuardadas = null;
+
+            var productoExistente = new Producto
+            {
+                id = 1,
+                nombre = "Viejo",
+                descripcion = "Vieja desc",
+                precio = 50,
+                stock = 3,
+                imagen = "old.jpg",
+                SubCategoriaId = 2
+            };
+
+            // Mock del Obtener
+            repo.Setup(r => r.Obtener(1)).Returns(productoExistente);
+
+            // Mock para capturar lo enviado a Editar()
+            repo.Setup(r => r.Editar(It.IsAny<Producto>(), It.IsAny<List<string>>()))
+                .Callback<Producto, List<string>>((p, f) =>
+                {
+                    productoGuardado = p;
+                    fotosGuardadas = f;
+                });
+
+            var caso = new EditarProductoCasoDeUso(repo.Object);
+
+            var dto = new EditarProductoDto
+            {
+                Id = 1,
+                Nombre = "NuevoNombre",
+                Descripcion = "NuevaDesc",
+                Precio = 200,
+                Stock = 10,
+                SubCategoriaId = 5,
+                ImagenPrincipal = "nueva.jpg",
+                Fotos = new List<string> { "foto1.jpg", "foto2.jpg" }
+            };
+
+            caso.Ejecutar(dto);
+
+            // ----------------------------------
+            // Verificamos que los campos cambien
+            // ----------------------------------
+            Assert.AreEqual("NuevoNombre", productoGuardado.nombre);
+            Assert.AreEqual("NuevaDesc", productoGuardado.descripcion);
+            Assert.AreEqual(200, productoGuardado.precio);
+            Assert.AreEqual(10, productoGuardado.stock);
+            Assert.AreEqual(5, productoGuardado.SubCategoriaId);
+            Assert.AreEqual("nueva.jpg", productoGuardado.imagen);
+
+            // ----------------------------------
+            // Verificamos que las fotos se pasen bien
+            // ----------------------------------
+            Assert.AreEqual(2, fotosGuardadas.Count);
+            Assert.AreEqual("foto1.jpg", fotosGuardadas[0]);
+            Assert.AreEqual("foto2.jpg", fotosGuardadas[1]);
+
+            // ----------------------------------
+            // Verificamos que se llamó al repositorio
+            // ----------------------------------
+            repo.Verify(r => r.Editar(It.IsAny<Producto>(), It.IsAny<List<string>>()), Times.Once);
+        }
+    }
+    [TestClass]
+    public class EliminarArtesanoCasoDeUsoTests
+    {
+        [TestMethod]
+        public void Ejecutar_ArtesanoNoExiste_LanzaExcepcion()
+        {
+            // Arrange
+            var repo = new Mock<IArtesanoRepositorio>();
+            var obtener = new Mock<IObtenerArtesano>();
+
+            obtener.Setup(o => o.Ejecutar("correo@test.com"))
+                   .Returns((Artesano)null);
+
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+
+            // Act & Assert
+            Assert.ThrowsException<Exception>(() => caso.Ejecutar("correo@test.com"));
+        }
+
+        [TestMethod]
+        public void Ejecutar_ArtesanoExiste_LlamaRepositorioEliminarConIdCorrecto()
+        {
+            // Arrange
+            var repo = new Mock<IArtesanoRepositorio>();
+            var obtener = new Mock<IObtenerArtesano>();
+
+            var artesano = new Artesano
+            {
+                id = 10,
+                nombre = "Juan",
+                apellido = "Perez",
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("correo@test.com")
+            };
+
+            obtener.Setup(o => o.Ejecutar("correo@test.com"))
+                   .Returns(artesano);
+
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+
+            // Act
+            caso.Ejecutar("correo@test.com");
+
+            // Assert
+            repo.Verify(r => r.Eliminar(10), Times.Once);
+        }
+    }
+    [TestClass]
+    public class EliminarClienteCasoDeUsoTests
+    {
+        [TestMethod]
+        public void Ejecutar_ClienteNoExiste_LanzaExcepcion()
+        {
+            // Arrange
+            var obtener = new Mock<IObtenerCliente>();
+            var repo = new Mock<IClienteRepositorio>();
+
+            obtener.Setup(o => o.Ejecutar("test@correo.com"))
+                   .Returns((Cliente)null);
+
+            var caso = new EliminarClienteCasoDeUso(obtener.Object, repo.Object);
+
+            // Act & Assert
+            Assert.ThrowsException<Exception>(() => caso.Ejecutar("test@correo.com"));
+        }
+
+
+        [TestMethod]
+        public void Ejecutar_ClienteExiste_LlamaRepositorioEliminarConIdCorrecto()
+        {
+            // Arrange
+            var obtener = new Mock<IObtenerCliente>();
+            var repo = new Mock<IClienteRepositorio>();
+
+            var cliente = new Cliente
+            {
+                id = 5,
+                nombre = "Pedro",
+                apellido = "Gomez",
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@correo.com")
+            };
+
+            obtener.Setup(o => o.Ejecutar("test@correo.com"))
+                   .Returns(cliente);
+
+            var caso = new EliminarClienteCasoDeUso(obtener.Object, repo.Object);
+
+            // Act
+            caso.Ejecutar("test@correo.com");
+
+            // Assert
+            repo.Verify(r => r.Eliminar(5), Times.Once);
+        }
+    }
 }
 

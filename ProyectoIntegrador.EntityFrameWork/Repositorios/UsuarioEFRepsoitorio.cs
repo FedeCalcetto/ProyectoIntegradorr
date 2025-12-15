@@ -93,5 +93,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             _contexto.Usuarios.Update(usuario);
             _contexto.SaveChanges();
         }
+
+        public List<Usuario> BusquedaDeUsuarios(string filtro)
+        {
+            return _contexto.Usuarios
+                .Where(u =>
+                    (u is Cliente || u is Artesano) &&
+                    (u.nombre.Contains(filtro) || u.apellido.Contains(filtro))
+                )
+                .ToList();
+        }
     }
 }
