@@ -37,7 +37,35 @@
                        placeholder="Precio máx."
                        style="width:140px" />
             </div>
+            <div class="col-md-2">
+                <select id="categoriaSelect"
+                        name="categoriaId"
+                        class="form-select">
+                    <option value="">Todas las categorías</option>
+                    @foreach (var c in Model.Categorias)
+                    {
+                        <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">
+                            @c.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
 
+            <!-- Subcategoría -->
+            <div class="col-md-2">
+                <select id="subcategoriaSelect"
+                        name="subCategoriaId"
+                        class="form-select"
+                        @(Model.CategoriaId == null ? "disabled" : "")>
+                    <option value="">Todas las subcategorías</option>
+                    @foreach (var s in Model.SubCategorias)
+                    {
+                        <option value="@s.Id" selected="@(Model.SubCategoriaId == s.Id)">
+                            @s.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
             <!-- BOTÓN -->
             <button class="btn btn-primary px-4">
                 Buscar

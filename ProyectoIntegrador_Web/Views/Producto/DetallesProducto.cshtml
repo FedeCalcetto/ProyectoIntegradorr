@@ -5,11 +5,20 @@
 }
 
 <div class="container mt-5">
-    <div class="card shadow-sm p-3">
+    <div class="card shadow-sm p-4">
 
-        <div class="row g-4">
+        <!-- Breadcrumb -->
+        <nav class="mb-3">
+            <small class="text-muted">
+                Catálogo / @Model.SubCategoria / @Model.Nombre
+            </small>
+        </nav>
 
+        <div class="row g-4 align-items-start">
+
+            <!-- ===================== -->
             <!-- MINIATURAS -->
+            <!-- ===================== -->
             <div class="col-md-1 d-flex flex-column align-items-center gap-2">
                 @foreach (var foto in Model.Fotos)
                 {
@@ -20,36 +29,25 @@
                 }
             </div>
 
-    <!-- Breadcrumb -->
-    <nav class="mb-3">
-        <small class="text-muted">
-            Catálogo / @Model.SubCategoria / @Model.Nombre
-        </small>
-    </nav>
-
-    <div class="row align-items-start">
-
-        <!-- ===================== -->
-        <!-- GALERÍA DE IMÁGENES -->
-        <!-- ===================== -->
-        <div class="col-md-5">
-
-            <!-- Imagen principal -->
-            <div class="border rounded shadow-sm p-3 mb-3 text-center bg-white">
-                <img id="imagenPrincipal"
-                     src="~/images/productos/@Model.Imagen"
-                     class="img-fluid rounded"
-                     style="max-height:420px; object-fit:contain;"
-                     alt="@Model.Nombre" />
+            <!-- ===================== -->
+            <!-- IMAGEN PRINCIPAL -->
+            <!-- ===================== -->
+            <div class="col-md-4">
+                <div class="border rounded shadow-sm p-3 text-center bg-white">
+                    <img id="imagenPrincipal"
+                         src="~/images/productos/@Model.Imagen"
+                         class="img-fluid rounded"
+                         style="max-height:420px; object-fit:contain;"
+                         alt="@Model.Nombre" />
+                </div>
             </div>
 
+            <!-- ===================== -->
             <!-- INFO / COMPRA -->
-            <div class="col-md-6">
+            <!-- ===================== -->
+            <div class="col-md-7">
 
-
-                <h4 class="fw-semibold">
-                    @Model.Nombre
-                </h4>
+                <h4 class="fw-semibold">@Model.Nombre</h4>
 
                 <p class="text-muted small mb-2">
                     @Model.Descripcion
@@ -62,24 +60,19 @@
                 </div>
 
                 <span class="badge bg-@(Model.Stock > 0 ? "success" : "danger") mb-3">
-                    Stock disponible:
-                    @Model.Stock
+                    Stock disponible: @Model.Stock
                 </span>
-                <p class="mt-3 text-muted"> Vendido por
-                <strong>
-                    <!--   <a asp-controller="Artesano"
-                       asp-action="PerfilPublico"
-                       asp-route-id="@Model.ArtesanoId"
-                       class="text-decoration-none">
-                        @Model.Artesano   cuando ya este lista la vista--> 
-                    </a>
 
-                    <a href="#"
-                       onclick="event.preventDefault(); alert('Perfil del artesano próximamente');">
-                        @Model.Artesano
-                    </a>
-                </strong>
-            </p>
+                <p class="mt-3 text-muted">
+                    Vendido por
+                    <strong>
+                        <a href="#"
+                           onclick="event.preventDefault(); alert('Perfil del artesano próximamente');">
+                            @Model.Artesano
+                        </a>
+                    </strong>
+                </p>
+
                 @if (Model.Stock > 0)
                 {
                     <form asp-controller="Carrito"
@@ -88,7 +81,6 @@
                           class="mt-3">
 
                         @Html.AntiForgeryToken()
-
                         <input type="hidden" name="productoId" value="@Model.Id" />
 
                         <div class="mb-3 w-50">
@@ -102,22 +94,18 @@
                                    min="1"
                                    max="@Model.Stock" />
                         </div>
-                        <div class="d-flex gap-2">
 
-                            <button type="submit"
-                                    class="btn btn-primary">
-                                <i class="bi bi-cart-plus"></i>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
                                 🛒 Agregar al carrito
                             </button>
 
                             <a asp-controller="Usuario"
                                asp-action="Catalogo"
-                               class="btn btn-primary">
+                               class="btn btn-outline-secondary">
                                 Volver a la tienda
                             </a>
-
                         </div>
-                        
                     </form>
                 }
                 else
@@ -126,9 +114,7 @@
                         Sin stock 😢
                     </p>
                 }
-
             </div>
-
         </div>
     </div>
 </div>
