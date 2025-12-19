@@ -20,9 +20,10 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerTodosLosProductos _obtenerTodosLosProductos;
         private readonly IObtenerUsuario _obtenerUsuario;
         private readonly IMostrarProductosCarrito _mostrarProductosCarrito;
+        private readonly IObtenerSubCategoria _obtenerSubCategoria;
 
         public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano,
-            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados? productosFiltrados, IObtenerProducto? obtenerProducto)
+            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto, IObtenerSubCategoria obtenerSubCategoria)
         {
             _obtenerArtesano = obtenerArtesano;
             _agregarProducto = producto;
@@ -34,6 +35,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerTodosLosProductos = obtenerTodosLosProductos;
             _obtenerUsuario = obtenerUsuario;
             _mostrarProductosCarrito = mostrarProductosCarrito;
+            _obtenerSubCategoria = obtenerSubCategoria;
         }
 
         
@@ -167,7 +169,13 @@ namespace ProyectoIntegrador_Web.Controllers
             }
         }
 
-        public IActionResult ProductosFiltrados(string filtro, int? precioMin, int? precioMax,int pagina)
+        public IActionResult ProductosFiltrados(
+        string? filtro,
+        int? precioMin,
+        int? precioMax,
+        int pagina = 1,
+        int? categoriaId = null,
+        int? subCategoriaId = null)
         {
             var email = HttpContext.Session.GetString("loginUsuario");
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
@@ -187,7 +195,9 @@ namespace ProyectoIntegrador_Web.Controllers
                 precioMax,
                 pagina,
                 tamanoPagina,
-                out totalRegistros
+                out totalRegistros,
+                categoriaId,
+                subCategoriaId
             );
 
             var modelo = new ProductosFiltradosViewModel
@@ -196,8 +206,18 @@ namespace ProyectoIntegrador_Web.Controllers
                 Filtro = filtro,
                 PrecioMin = precioMin,
                 PrecioMax = precioMax,
+                CategoriaId = categoriaId,
+                SubCategoriaId = subCategoriaId,
+
                 PaginaActual = pagina,
-                TotalPaginas = (int)Math.Ceiling(totalRegistros / (double)tamanoPagina)
+                TamanoPagina = tamanoPagina,
+                TotalPaginas = (int)Math.Ceiling(totalRegistros / (double)tamanoPagina),
+
+                // Estos dos normalmente vienen de repositorios
+                Categorias = _obtenerCategorias.ObtenerTodos(),
+                SubCategorias = categoriaId.HasValue
+            ? _obtenerSubCategoria.obtenerPorCtegoria(categoriaId.Value)
+            : Enumerable.Empty<SubCategoria>()
             };
             return View(modelo);
         }

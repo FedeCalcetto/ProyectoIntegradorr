@@ -146,16 +146,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public IEnumerable<Producto> ObtenerTodos()
         {
-            throw new NotImplementedException();
-        }
+            return _contexto.Productos;
+         }
 
-        public List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax,int pagina, int tamanoPagina,out int totalRegistros)
+        public List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax,int pagina, int tamanoPagina,out int totalRegistros,
+                                                  int? categoriaId, int? subCategoriaId)
         {
 
             if (pagina < 1)
                 pagina = 1;
 
-            var query = _contexto.Productos.AsQueryable();
+            var query = _contexto.Productos
+            .Include(p => p.SubCategoria)
+            .AsQueryable();
 
             // Filtro por texto
             if (!string.IsNullOrWhiteSpace(filtro))
@@ -180,6 +183,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             if (max.HasValue)
                 query = query.Where(p => p.precio <= max.Value);
 
+            if (subCategoriaId.HasValue)
+            {
+                query = query.Where(p => p.SubCategoriaId == subCategoriaId.Value);
+            }
+            else if (categoriaId.HasValue)
+            {
+                query = query.Where(p => p.SubCategoria.categoriaId == categoriaId.Value);
+            }
             // Total antes de paginar
             totalRegistros = query.Count();
 

@@ -86,8 +86,8 @@
                         Continuar compra
                     </button>
 
-                    <a id="btnVolverATienda" asp-controller="Producto"
-                       asp-action="MostrarProdcutosProvicional"
+                    <a id="btnVolverATienda" asp-controller="Usuario"
+                       asp-action="Catalogo"
                        class="btn btn-primary w-100 mt-3">
                         Volver a la tienda
                     </a>
@@ -107,7 +107,7 @@
         <h5 class="text-muted mb-3">También te puede interesar</h5>
 
         <div class="product-slider-container">
-
+            @if (Model.ProductosDeInteres.Count > 0){
             <!-- Flecha izquierda -->
                <button class="slider-btn prev-btn">&#10094;</button>
 
@@ -115,36 +115,39 @@
                 <div id="interes-slider"
                      class="product-slider">
 
-                    @foreach (var producto in Model.ProductosDeInteres)
-                    {
-                        <div class="product-card card shadow-sm">
-                            <img src="~/images/productos/@producto.imagen"
-                                 class="card-img-top"
-                                 style="height:160px; width:100%; object-fit:contain; border-radius:8px 8px 0 0;" />
+                        @foreach (var producto in Model.ProductosDeInteres)
+                        {
+                            <a asp-controller="Producto"
+                               asp-action="DetallesProducto"
+                               asp-route-id="@producto.id"
+                               class="text-decoration-none text-dark">
 
-                            <div class="card-body text-center">
-                                <h6 class="mb-1">@producto.nombre</h6>
-                                <p class="fw-bold mb-2">$@producto.precio</p>
+                                <div class="product-card card shadow-sm h-100">
 
-                                <form asp-controller="Carrito"
-                                      asp-action="AgregarAlCarrito"
-                                      method="post">
-                                    <input type="hidden" name="productoId" value="@producto.id" />
-                                    <input type="hidden" name="cantidad" value="1" />
-                                    <button class="btn btn-sm btn-outline-primary w-100">
-                                        Agregar
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    }
+                                    <img src="~/images/productos/@producto.imagen"
+                                         class="card-img-top"
+                                         style="height:160px; object-fit:contain;" />
+
+                                    <div class="card-body text-center">
+                                        <h6 class="mb-1">@producto.nombre</h6>
+                                        <p class="fw-bold mb-0">$@producto.precio</p>
+                                    </div>
+
+                                </div>
+                            </a>
+                        }
+
 
                 </div>
             </div>
 
             <!-- Flecha derecha -->
             <button class="slider-btn next-btn">&#10095;</button>
+            }else{
 
+            <h5 class="modal-title">No hay productos para mostrar</h5>
+
+            }
 
         </div>
     </div>

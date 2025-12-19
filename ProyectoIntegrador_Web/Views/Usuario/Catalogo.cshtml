@@ -5,14 +5,19 @@
 }
 
 
+<h4 class="mb-3 text-center">Catálogo de productos</h4>
 
+
+        <!-- BARRA PRINCIPAL -->
+        <div class="w-100 mb-2">
+            <partial name="_BarraBusquedaToggle" />
+        </div>
+
+
+<!-- CONTENIDO DEL CATÁLOGO -->
 <div class="container py-4">
 
-    <h2 class="mb-4 text-center">Catálogo de productos</h2>
-
-    <!-- ============================= -->
     <!-- AGREGADOS RECIENTEMENTE -->
-    <!-- ============================= -->
     <h4 class="mb-3">Agregados recientemente</h4>
 
     <div class="slider-container">
@@ -22,7 +27,13 @@
             @foreach (var producto in Model.Recientes)
             {
                 <div class="slider-item">
-                    <partial name="_ProductoCard" model="producto" />
+                    <a asp-controller="Producto"
+                       asp-action="DetallesProducto"
+                       asp-route-id="@producto.Id"
+                       class="text-decoration-none text-dark">
+
+                        <partial name="_ProductoCard" model="producto" />
+                    </a>
                 </div>
             }
         </div>
@@ -30,9 +41,7 @@
         <button class="slider-btn right" onclick="mover(this, 1)">›</button>
     </div>
 
-    <!-- ============================= -->
     <!-- POR SUBCATEGORÍA -->
-    <!-- ============================= -->
     @foreach (var categoria in Model.PorCategoria)
     {
         <div class="catalog-section">

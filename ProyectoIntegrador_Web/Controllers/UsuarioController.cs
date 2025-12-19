@@ -17,10 +17,11 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly ICambiarPassword _cambiarPassword;
         private readonly IEliminarUsuario _eliminarUsuario;
         private readonly EmailService _email;
+        private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
         private readonly ICatalogoService _catalogoService;
         private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
 
-        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService, IBusquedaDeUsuarios? busquedaDeUsuarios)
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios)
         {
             _cambiarPassword = cambiarPassword;
             _eliminarUsuario = eliminarUsuario;
@@ -29,6 +30,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _busquedaDeUsuarios = busquedaDeUsuarios;
         }
 
+        
             public IActionResult CambioContra(string returnUrl)
             {
             ViewBag.ReturnUrl = returnUrl ?? "/"; 

@@ -13,7 +13,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         List<Producto> ObtenerProductosExcluyendo(List<int> idsEnCarrito, int maxItems);
         IEnumerable<Producto> ObtenerPublicados();
         IEnumerable<Producto> ObtenerPublicadosPorSubCategoria(int subCategoriaId);
-        List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax, int pagina, int totalPagina, out int totalRegistros);
+        List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax, int pagina, int totalPagina, out int totalRegistros, int? categoriaId, int? subCategoriaId);
 
     }
 }

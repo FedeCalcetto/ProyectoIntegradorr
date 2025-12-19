@@ -14,6 +14,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Carritos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UsuarioId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carritos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categorias",
                 columns: table => new
                 {
@@ -169,6 +182,33 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CarritoItems",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    carritoId = table.Column<int>(type: "int", nullable: false),
+                    productoId = table.Column<int>(type: "int", nullable: false),
+                    cantidad = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CarritoItems", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_CarritoItems_Carritos_carritoId",
+                        column: x => x.carritoId,
+                        principalTable: "Carritos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CarritoItems_Productos_productoId",
+                        column: x => x.productoId,
+                        principalTable: "Productos",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Comentarios",
                 columns: table => new
                 {
@@ -203,7 +243,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LineaFactura",
+                name: "LineasFactura",
                 columns: table => new
                 {
                     idProducto = table.Column<int>(type: "int", nullable: false),
@@ -215,15 +255,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LineaFactura", x => new { x.idProducto, x.idFactura });
+                    table.PrimaryKey("PK_LineasFactura", x => new { x.idProducto, x.idFactura });
                     table.ForeignKey(
-                        name: "FK_LineaFactura_Facturas_facturaId",
+                        name: "FK_LineasFactura_Facturas_facturaId",
                         column: x => x.facturaId,
                         principalTable: "Facturas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LineaFactura_Productos_productoid",
+                        name: "FK_LineasFactura_Productos_productoid",
                         column: x => x.productoid,
                         principalTable: "Productos",
                         principalColumn: "id",
@@ -334,6 +374,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CarritoItems_carritoId",
+                table: "CarritoItems",
+                column: "carritoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CarritoItems_productoId",
+                table: "CarritoItems",
+                column: "productoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comentarios_artesanoId",
                 table: "Comentarios",
                 column: "artesanoId");
@@ -359,13 +409,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 column: "Clienteid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LineaFactura_facturaId",
-                table: "LineaFactura",
+                name: "IX_LineasFactura_facturaId",
+                table: "LineasFactura",
                 column: "facturaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LineaFactura_productoid",
-                table: "LineaFactura",
+                name: "IX_LineasFactura_productoid",
+                table: "LineasFactura",
                 column: "productoid");
 
             migrationBuilder.CreateIndex(
@@ -428,10 +478,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "CarritoItems");
+
+            migrationBuilder.DropTable(
                 name: "Comentarios");
 
             migrationBuilder.DropTable(
-                name: "LineaFactura");
+                name: "LineasFactura");
 
             migrationBuilder.DropTable(
                 name: "PedidosPersonalizados");
@@ -441,6 +494,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reportes");
+
+            migrationBuilder.DropTable(
+                name: "Carritos");
 
             migrationBuilder.DropTable(
                 name: "Facturas");

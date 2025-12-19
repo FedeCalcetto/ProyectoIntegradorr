@@ -1,0 +1,16 @@
+﻿@model BusquedaDeUsuariosViewModel
+
+<form method="get"
+      class="d-flex justify-content-center mb-4">
+
+    <input type="text"
+           name="filtro"
+           value="@Model?.Filtro"
+           class="form-control w-50 shadow-sm"
+           placeholder="🔍 Buscar usuarios..." />
+
+    <button type="submit"
+            class="btn btn-primary ms-3 px-4">
+        Buscar
+    </button>
+</form>
