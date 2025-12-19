@@ -62,6 +62,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IMostrarProductosCarrito, MostrarProductoCarritoCasoDeUso>();
             builder.Services.AddScoped<IEliminarItemDelCarrito, EliminarItemCarritoCasoDeUso>();
             builder.Services.AddScoped<IObtenerProductosDeInteres, ObtenerProductosDeInteresCasoDeUso>();
+            builder.Services.AddScoped<IObtenerSubCategoria, ObtenerSubCategoriaCasoDeUso>();
 
 
 

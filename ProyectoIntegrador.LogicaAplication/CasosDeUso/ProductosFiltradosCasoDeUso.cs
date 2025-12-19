@@ -19,9 +19,9 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             _productoRepositorio = productoRepositorio;
         }
         
-        public List<Producto> Ejecutar(string filtro,int? precioMin, int? precioMax, int pagina, int totalPagina, out int totalRegistros)
+        public List<Producto> Ejecutar(string filtro,int? precioMin, int? precioMax, int pagina, int totalPagina, out int totalRegistros, int? categoriaId, int? subCategoriaId)
         {
-            return _productoRepositorio.ProductosFiltrados(filtro,precioMin, precioMax,pagina,totalPagina, out totalRegistros);
+            return _productoRepositorio.ProductosFiltrados(filtro,precioMin, precioMax,pagina,totalPagina, out totalRegistros,categoriaId,subCategoriaId);
         }
     }
 }
