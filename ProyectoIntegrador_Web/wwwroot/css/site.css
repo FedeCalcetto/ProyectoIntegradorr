@@ -270,9 +270,11 @@ body {
     padding: 10px 40px;
 }
 
-    .slider::-webkit-scrollbar {
-        display: none;
-    }
+.slider::-webkit-scrollbar {
+    display: none;
+}
+
+
 
 /* ========================= */
 /* BOTONES */
@@ -311,3 +313,12 @@ body {
     max-width: 260px;
     flex-shrink: 0;
 }
+
+
+.catalog-section {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eaeaea;
+}
+
+

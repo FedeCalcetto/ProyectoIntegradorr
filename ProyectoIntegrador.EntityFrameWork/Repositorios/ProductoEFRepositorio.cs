@@ -113,7 +113,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public Producto Obtener(int Id)
         {
             return _contexto.Productos
-            .Include(x => x.Fotos)  
+            .Include(x => x.Fotos)
+            .Include(p => p.artesano)
+            .Include(p => p.SubCategoria)
             .FirstOrDefault(x => x.id == Id);
         }
 
@@ -133,6 +135,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         .Include(p => p.SubCategoria)
         .Where(p => p.SubCategoriaId == subCategoriaId && p.stock > 0)
         .ToList();
+        }
         public List<Producto> ObtenerProductosExcluyendo(List<int> idsEnCarrito, int maxItems)
         {
             return _contexto.Productos

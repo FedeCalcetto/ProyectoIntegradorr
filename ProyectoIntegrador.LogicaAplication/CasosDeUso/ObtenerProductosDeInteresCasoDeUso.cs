@@ -27,8 +27,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                 .Select(ci => ci.producto.id)
                 .ToList();
 
-            return _productoRepo
-                .ObtenerProductosExcluyendo(idsEnCarrito, maxItems);
+            return _productoRepo.ObtenerProductosExcluyendo(idsEnCarrito, maxItems);
         }
     }
 }

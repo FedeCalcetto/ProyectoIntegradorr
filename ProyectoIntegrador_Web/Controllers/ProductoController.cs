@@ -17,14 +17,12 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IProductosFiltrados _productosFiltrados;
         private readonly IObtenerProducto _obtenerProducto;
-
-        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto)
         private readonly IObtenerTodosLosProductos _obtenerTodosLosProductos;
         private readonly IObtenerUsuario _obtenerUsuario;
         private readonly IMostrarProductosCarrito _mostrarProductosCarrito;
 
-        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, 
-            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito)
+        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano,
+            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados? productosFiltrados, IObtenerProducto? obtenerProducto)
         {
             _obtenerArtesano = obtenerArtesano;
             _agregarProducto = producto;
@@ -37,6 +35,10 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerUsuario = obtenerUsuario;
             _mostrarProductosCarrito = mostrarProductosCarrito;
         }
+
+        
+
+        
         public IActionResult AltaProducto()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
@@ -215,7 +217,10 @@ namespace ProyectoIntegrador_Web.Controllers
                 Precio = producto.precio,
                 Stock = producto.stock,
                 Imagen = producto.imagen,
-                Fotos = producto.Fotos
+                Fotos = producto.Fotos,
+                Artesano = producto.artesano?.nombre,
+                SubCategoria = producto.SubCategoria?.Nombre,
+                ArtesanoId = producto.artesano.id
             };
 
             return View(vm);

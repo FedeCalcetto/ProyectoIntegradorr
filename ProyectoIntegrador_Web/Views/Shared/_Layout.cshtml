@@ -24,155 +24,88 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                    <div class="container-fluid">
 
                         @{
                             var rol = Context.Session.GetString("Rol")?.ToUpper();
                             var email = Context.Session.GetString("loginUsuario");
                         }
 
-                        <!-- Si NO está logueado -->
-                        @if (rol == null)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Login" asp-action="Login">Login</a>
-                            </li>
-                        }
+                        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                            ProyectoIntegrador_Web
+                        </a>
 
-                        <!-- Si está logueado -->
-                        @if (rol != null)
-                        {
-                            <ul class="navbar-nav w-100">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarMain">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
 
-                                <!-- Búsqueda para Cliente y Artesano -->
-                                @if (rol == "CLIENTE" || rol == "ARTESANO")
+                        <div class="collapse navbar-collapse" id="navbarMain">
+                            <ul class="navbar-nav me-auto">
+
+                                @if (rol == null)
                                 {
-                                    <li class="nav-item dropdown">
-                                        <button class="btn btn-light dropdown-toggle"
-                                                type="button"
-                                                data-bs-toggle="dropdown"
-                                                aria-expanded="false">
-                                            Barra de búsqueda
-                                        </button>
-
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="Usuario" asp-action="BusquedaDeUsuarios">
-                                                    Usuarios
-                                                </a>
-                                            </li>
-                            if (Context.Session.GetString("Rol").ToUpper().Equals("CLIENTE"))
-                            {
-                                var emailUsuario = Context.Session.GetString("loginUsuario");
-                                <li id="divCliente" class="nav-item dropdown">
-                                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        @emailUsuario
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item" asp-controller="Cliente" asp-action="Perfil">Perfil</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" asp-controller="Producto" asp-action="MostrarProdcutosProvicional">Todos los productos</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item text-danger fw-semibold" asp-controller="Cliente" asp-action="Logout">
-                                                Cerrar sesión
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-
-                                            @if (rol == "CLIENTE")
-                                            {
-                                                <li>
-                                                    <a class="dropdown-item" asp-controller="Producto" asp-action="ProductosFiltrados">
-                                                        Productos
-                                                    </a>
-                                                </li>
-                                            }
-
-                                        </ul>
-
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Login" asp-action="Login">
+                                            Login
+                                        </a>
                                     </li>
                                 }
 
-                                <!-- Perfil (alineado a la derecha con ms-auto) -->
-                                <li class="nav-item dropdown ms-auto">
-                                    <button class="btn btn-light dropdown-toggle"
-                                            type="button"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                        @email
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-menu-end">
-
-                                        <!-- Opciones del CLIENTE -->
-                                        @if (rol == "CLIENTE")
-                                        {
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="Cliente" asp-action="Perfil">
-                                                    Perfil
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item text-danger fw-semibold"
-                                                   asp-controller="Cliente"
-                                                   asp-action="Logout">
-                                                    Cerrar sesión
-                                                </a>
-                                            </li>
-                                        }
-
-                                        <!-- Opciones del ARTESANO -->
-                                        @if (rol == "ARTESANO")
-                                        {
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="Artesano" asp-action="PerfilArtesano">
-                                                    Perfil
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="Producto" asp-action="AltaProducto">
-                                                    Agregar nuevo producto
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="Artesano" asp-action="ProductosDelArtesano">
-                                                    Tus productos
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item text-danger fw-semibold"
-                                                   asp-controller="Artesano"
-                                                   asp-action="Logout">
-                                                    Cerrar sesión
-                                                </a>
-                                            </li>
-                                        }
-
-                                        <!-- Opciones del ADMIN -->
-                                        @if (rol == "ADMIN")
-                                        {
-                                            <li>
-                                                <a class="dropdown-item text-danger fw-semibold"
-                                                   asp-controller="Admin" asp-action="Logout">
-                                                    Cerrar sesión
-                                                </a>
-                                            </li>
-                                        }
-
-                                    </ul>
-                                </li>
-
+                                @if (rol == "CLIENTE" || rol == "ARTESANO")
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Producto" asp-action="Catalogo">
+                                            Catálogo
+                                        </a>
+                                    </li>
+                                }
                             </ul>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
+
+                            @if (rol != null)
+                            {
+                                <ul class="navbar-nav ms-auto">
+                                    <li class="nav-item dropdown">
+                                        <button class="btn btn-light dropdown-toggle"
+                                                data-bs-toggle="dropdown">
+                                            @email
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-end">
+
+                                            @if (rol == "CLIENTE")
+                                            {
+                                                <li><a class="dropdown-item" asp-controller="Cliente" asp-action="Perfil">Perfil</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Producto" asp-action="ProductosFiltrados">Productos</a></li>
+                                            }
+
+                                            @if (rol == "ARTESANO")
+                                            {
+                                                <li><a class="dropdown-item" asp-controller="Artesano" asp-action="PerfilArtesano">Perfil</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Producto" asp-action="AltaProducto">Nuevo producto</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Artesano" asp-action="ProductosDelArtesano">Mis productos</a></li>
+                                            }
+
+                                            @if (rol == "ADMIN")
+                                            {
+                                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Panel">Panel Admin</a></li>
+                                            }
+
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item text-danger fw-semibold"
+                                                   asp-controller="Login" asp-action="Logout">
+                                                    Cerrar sesión
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
