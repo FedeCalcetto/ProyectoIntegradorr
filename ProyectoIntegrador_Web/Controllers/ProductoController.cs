@@ -37,6 +37,10 @@ namespace ProyectoIntegrador_Web.Controllers
             _mostrarProductosCarrito = mostrarProductosCarrito;
             _obtenerSubCategoria = obtenerSubCategoria;
         }
+
+        
+
+        
         public IActionResult AltaProducto()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
@@ -233,7 +237,10 @@ namespace ProyectoIntegrador_Web.Controllers
                 Precio = producto.precio,
                 Stock = producto.stock,
                 Imagen = producto.imagen,
-                Fotos = producto.Fotos
+                Fotos = producto.Fotos,
+                Artesano = producto.artesano?.nombre,
+                SubCategoria = producto.SubCategoria?.Nombre,
+                ArtesanoId = producto.artesano.id
             };
 
             return View(vm);

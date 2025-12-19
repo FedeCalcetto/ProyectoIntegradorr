@@ -11,5 +11,8 @@ namespace ProyectoIntegrador_Web.Models
         public int Stock { get; set; }
         public string Imagen { get; set; }
         public List<ProductoFoto> Fotos { get; set; } = new();
+        public string Artesano { get; set; }
+        public int ArtesanoId { get; set; }
+        public string SubCategoria { get; set; }
     }
 }

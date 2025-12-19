@@ -44,27 +44,25 @@
     <!-- POR SUBCATEGORÍA -->
     @foreach (var categoria in Model.PorCategoria)
     {
-        <h4 class="mt-5 mb-3">@categoria.Nombre</h4>
+        <div class="catalog-section">
 
-        <div class="slider-container">
-            <button class="slider-btn left" onclick="mover(this, -1)">‹</button>
+            <h4 class="mb-3">@categoria.Nombre</h4>
 
-            <div class="slider">
-                @foreach (var producto in categoria.Productos)
-                {
-                    <div class="slider-item">
-                        <a asp-controller="Producto"
-                           asp-action="DetallesProducto"
-                           asp-route-id="@producto.Id"
-                           class="text-decoration-none text-dark">
+            <div class="slider-container">
+                <button class="slider-btn left" onclick="mover(this, -1)">‹</button>
 
+                <div class="slider">
+                    @foreach (var producto in categoria.Productos)
+                    {
+                        <div class="slider-item">
                             <partial name="_ProductoCard" model="producto" />
-                        </a>
-                    </div>
-                }
+                        </div>
+                    }
+                </div>
+
+                <button class="slider-btn right" onclick="mover(this, 1)">›</button>
             </div>
 
-            <button class="slider-btn right" onclick="mover(this, 1)">›</button>
         </div>
     }
 </div>

@@ -1,6 +1,8 @@
 ﻿@model ProyectoIntegrador.LogicaAplication.Dtos.ProductoCatalogoDto
 
-<div class="card h-100 shadow-sm">
+<div class="card h-100 shadow-sm" onclick="window.location='@Url.Action("DetallesProducto", "Producto", new { id = Model.Id })'"
+     style="cursor:pointer;">
+    
 
     <!-- IMAGEN -->
     <!-- <img src="@Model.Imagen"
@@ -36,10 +38,13 @@
             $ @Model.Precio
         </div>
 
+        <button class="btn btn-outline-primary btn-sm w-100" onclick="event.stopPropagation();alert('Carrito próximamente');"> Agregar al carrito </button>
+
+
         @* FUTURO LINK A DETALLE *@
         @*
-        <a asp-controller="Producto"
-           asp-action="Detalle"
+        <a asp-controller="Producto"   no usar esto porque hace toda la card clickeable y eso causa
+           asp-action="Detalle"        que no se pueda apretar el boton, ya que queda como "debajo" de este a.
            asp-route-id="@Model.Id"
            class="stretched-link">
         </a>

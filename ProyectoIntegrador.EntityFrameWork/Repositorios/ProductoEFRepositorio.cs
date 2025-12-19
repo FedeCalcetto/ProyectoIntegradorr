@@ -113,7 +113,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public Producto Obtener(int Id)
         {
             return _contexto.Productos
-            .Include(x => x.Fotos)  
+            .Include(x => x.Fotos)
+            .Include(p => p.artesano)
+            .Include(p => p.SubCategoria)
             .FirstOrDefault(x => x.id == Id);
         }
 
