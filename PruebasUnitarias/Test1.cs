@@ -775,5 +775,78 @@ namespace PruebasUnitarias
             repo.Verify(r => r.Eliminar(5), Times.Once);
         }
     }
+
+    [TestClass]
+    public class AgregarAlCarritoCasoDeUsoTests
+    {
+        [TestMethod]
+        public void AgregarAlCarrito_ProductoNoExiste_LlamaAgregarItem()
+        {
+            // Arrange
+            var repo = new Mock<ICarritoRepositorio>();
+
+            repo.Setup(r => r.BuscarProducto(1, 10))
+                .Returns((CarritoItem)null);
+
+            var caso = new AgregarAlCarritoCasoDeUso(repo.Object);
+
+            // Act
+            caso.agregarAlCarrito(1, 10, 3);
+
+            // Assert
+            repo.Verify(r => r.AgregarItem(10, 1, 3), Times.Once);
+            repo.Verify(r => r.Guardar(), Times.Never);
+        }
+
+        [TestMethod]
+        public void AgregarAlCarrito_ProductoExiste_SumaCantidadYGuarda()
+        {
+            // Arrange
+            var repo = new Mock<ICarritoRepositorio>();
+
+            var itemExistente = new CarritoItem
+            {
+                cantidad = 2
+            };
+
+            repo.Setup(r => r.BuscarProducto(1, 10))
+                .Returns(itemExistente);
+
+            var caso = new AgregarAlCarritoCasoDeUso(repo.Object);
+
+            // Act
+            caso.agregarAlCarrito(1, 10, 3);
+
+            // Assert
+            Assert.AreEqual(5, itemExistente.cantidad);
+
+            repo.Verify(r => r.Guardar(), Times.Once);
+            repo.Verify(r => r.AgregarItem(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
+    }
+
+    [TestClass]
+    public class EliminarItemCarritoCasoDeUsoTests
+    {
+        [TestMethod]
+        public void Eliminar_LlamaRepositorioEliminarItem()
+        {
+            // Arrange
+            var repo = new Mock<ICarritoRepositorio>();
+            var caso = new EliminarItemCarritoCasoDeUso(repo.Object);
+
+            int carritoItemId = 5;
+            int cantidadABorrar = 2;
+
+            // Act
+            caso.Eliminar(carritoItemId, cantidadABorrar);
+
+            // Assert
+            repo.Verify(
+                r => r.EliminarItem(carritoItemId, cantidadABorrar),
+                Times.Once
+            );
+        }
+    }
 }
 
