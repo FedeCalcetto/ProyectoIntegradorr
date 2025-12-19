@@ -59,7 +59,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
             ViewBag.CantidadProductos = itemsCarrito.Sum(i => i.cantidad);
 
-            return RedirectToAction("MostrarProdcutosProvicional", "Producto");
+            return RedirectToAction("Catalogo", "Usuario");
         }
 
 

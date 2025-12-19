@@ -17,23 +17,15 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly ICambiarPassword _cambiarPassword;
         private readonly IEliminarUsuario _eliminarUsuario;
         private readonly EmailService _email;
+        private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
         private readonly ICatalogoService _catalogoService;
 
-        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService)
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService, IBusquedaDeUsuarios busquedaDeUsuarios)
         {
             _cambiarPassword = cambiarPassword;
             _eliminarUsuario = eliminarUsuario;
             _email = email;
-            _catalogoService = catalogoService; 
-        }
-
-        public IActionResult CambioContra(string returnUrl)
-        {
-        private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
-
-        public UsuarioController(ICambiarPassword cambiarPassword,IBusquedaDeUsuarios busquedaDeUsuarios)
-        {
-            _cambiarPassword = cambiarPassword;
+            _catalogoService = catalogoService;
             _busquedaDeUsuarios = busquedaDeUsuarios;
         }
         

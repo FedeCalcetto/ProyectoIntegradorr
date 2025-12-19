@@ -17,14 +17,14 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IProductosFiltrados _productosFiltrados;
         private readonly IObtenerProducto _obtenerProducto;
-
-        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto)
         private readonly IObtenerTodosLosProductos _obtenerTodosLosProductos;
         private readonly IObtenerUsuario _obtenerUsuario;
         private readonly IMostrarProductosCarrito _mostrarProductosCarrito;
 
+
         public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano, 
-            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito)
+            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito,
+            IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto)
         {
             _obtenerArtesano = obtenerArtesano;
             _agregarProducto = producto;
@@ -165,7 +165,7 @@ namespace ProyectoIntegrador_Web.Controllers
             }
         }
 
-        public IActionResult ProductosFiltrados(string filtro, int? precioMin, int? precioMax,int pagina)
+        public IActionResult ProductosFiltrados(string filtro, int? precioMin, int? precioMax,int pagina = 1)
         {
             var email = HttpContext.Session.GetString("loginUsuario");
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();

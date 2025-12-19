@@ -133,6 +133,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         .Include(p => p.SubCategoria)
         .Where(p => p.SubCategoriaId == subCategoriaId && p.stock > 0)
         .ToList();
+        }
         public List<Producto> ObtenerProductosExcluyendo(List<int> idsEnCarrito, int maxItems)
         {
             return _contexto.Productos
@@ -143,8 +144,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public IEnumerable<Producto> ObtenerTodos()
         {
-            throw new NotImplementedException();
-        }
+            return _contexto.Productos;
+         }
 
         public List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax,int pagina, int tamanoPagina,out int totalRegistros)
         {
