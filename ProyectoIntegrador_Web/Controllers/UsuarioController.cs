@@ -17,7 +17,6 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly ICambiarPassword _cambiarPassword;
         private readonly IEliminarUsuario _eliminarUsuario;
         private readonly EmailService _email;
-        private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
         private readonly ICatalogoService _catalogoService;
         private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
 

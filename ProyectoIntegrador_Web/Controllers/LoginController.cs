@@ -98,7 +98,7 @@ namespace ProyectoIntegrador_Web.Controllers
             HttpContext.Session.SetString("Rol", usuario.rol);
 
             if (usuario is Cliente)
-                return RedirectToAction("Inicio", "Cliente");
+                return RedirectToAction("Catalogo", "Usuario");
             else if (usuario is Artesano)
                 return RedirectToAction("Inicio", "Artesano");
             else
