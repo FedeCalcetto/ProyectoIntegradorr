@@ -12,7 +12,7 @@
 <body>
 
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3 layout-background">
             <div class="container-fluid">
 
                 <a class="navbar-brand"
@@ -29,7 +29,7 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav w-100">
+                    <ul class="navbar-nav w-100 align-items-center">
 
                         @{
                             var rol = Context.Session.GetString("Rol")?.ToUpper();
@@ -51,11 +51,12 @@
                         <!-- LOGUEADO -->
                         @if (rol != null)
                         {
+
                             <!-- BARRA DE BÚSQUEDA -->
                             @if (rol == "CLIENTE" || rol == "ARTESANO")
                             {
                                 <li class="nav-item dropdown">
-                                    <button class="btn btn-light dropdown-toggle"
+                                    <button class="nav-link dropdown-toggle"
                                             type="button"
                                             data-bs-toggle="dropdown">
                                         Barra de búsqueda
@@ -80,14 +81,19 @@
                                                     Productos
                                                 </a>
                                             </li>
+                                           
+
                                         }
                                     </ul>
                                 </li>
                             }
+                           
+                         
+
 
                             <!-- PERFIL A LA DERECHA -->
                             <li class="nav-item dropdown ms-auto">
-                                <button class="btn btn-light dropdown-toggle"
+                                <button class="nav-link dropdown-toggle"
                                         type="button"
                                         data-bs-toggle="dropdown">
                                     @email
@@ -107,9 +113,16 @@
                                         </li>
                                         <li>
                                             <a class="dropdown-item"
-                                               asp-controller="Producto"
-                                               asp-action="MostrarProdcutosProvicional">
+                                               asp-controller="Usuario"
+                                               asp-action="Catalogo">
                                                 Todos los productos
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Carrito"
+                                               asp-action="Index">
+                                                Ver mi carrito
                                             </a>
                                         </li>
                                         <li>
@@ -119,6 +132,7 @@
                                                 Cerrar sesión
                                             </a>
                                         </li>
+                                       
                                     }
 
                                     @* ARTESANO *@
@@ -168,6 +182,15 @@
 
                                 </ul>
                             </li>
+
+                            <!--CARRITO-->
+                            <a class="nav-link d-flex align-items-center justify-content-center"
+                               asp-controller="Carrito"
+                               asp-action="Index">
+                                <img src="~/images/carrito/carrito.png"
+                                     alt="Carrito"
+                                     style="width:28px; height:28px;" />
+                            </a>
                         }
 
                     </ul>
@@ -176,11 +199,12 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+
 
     <footer class="border-top footer text-muted">
         <div class="container">
@@ -197,4 +221,3 @@
 
 </body>
 </html>
-

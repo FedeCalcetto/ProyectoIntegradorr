@@ -1,0 +1,76 @@
+﻿@{
+    var modo = ViewBag.ModoBusqueda ?? "productos";
+}
+<nav class="navbar" style="background-color:#f2f2f2;">
+    <div class="container-fluid">
+        <form method="get"
+              id="formBusqueda"
+              class="d-flex align-items-center gap-2 flex-nowrap w-100">
+
+            <!-- MODO -->
+            <select class="form-select"
+                    style="width:150px"
+                    id="modoBusqueda">
+                <option value="productos">Productos</option>
+                <option value="usuarios">Usuarios</option>
+            </select>
+
+            <!-- TEXTO -->
+            <input type="text"
+                   name="filtro"
+                   id="inputBusqueda"
+                   class="form-control"
+                   placeholder="Buscar productos..."
+                   style="min-width:260px" />
+
+            <!-- FILTROS PRODUCTOS -->
+            <div id="filtrosProductos" class="d-flex gap-2">
+                <input type="number"
+                       name="precioMin"
+                       class="form-control"
+                       placeholder="Precio mín."
+                       style="width:140px" />
+
+                <input type="number"
+                       name="precioMax"
+                       class="form-control"
+                       placeholder="Precio máx."
+                       style="width:140px" />
+            </div>
+
+            <!-- BOTÓN -->
+            <button class="btn btn-primary px-4">
+                Buscar
+            </button>
+
+        </form>
+    </div>
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const form = document.getElementById('formBusqueda');
+        const modo = document.getElementById('modoBusqueda');
+        const filtros = document.getElementById('filtrosProductos');
+        const input = document.getElementById('inputBusqueda');
+
+        function actualizarModo() {
+            if (modo.value === 'usuarios') {
+                filtros.classList.add('d-none');
+                filtros.classList.remove('d-flex');
+                form.action = '/Usuario/BusquedaDeUsuarios';
+                input.placeholder = 'Buscar usuarios...';
+            } else {
+                    filtros.classList.remove('d-none');
+    filtros.classList.add('d-flex');
+                form.action = '/Producto/ProductosFiltrados';
+                input.placeholder = 'Buscar productos...';
+            }
+        }
+
+        modo.addEventListener('change', actualizarModo);
+        actualizarModo(); // estado inicial
+    });
+</script>
+

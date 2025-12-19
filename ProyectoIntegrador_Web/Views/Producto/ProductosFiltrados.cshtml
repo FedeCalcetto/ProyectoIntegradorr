@@ -173,37 +173,14 @@ else
                 </a>
             </li>
 
-        </ul>
-    </nav>
-}
-
-@section Scripts {
-    <script>
-        $("#categoriaSelect").on("change", function () {
-            let categoriaId = $(this).val();
-            let $sub = $("#subcategoriaSelect");
-
-            $sub.empty();
-
-            if (!categoriaId) {
-                $sub.prop("disabled", true);
-                $sub.append(`<option value="">Todas las subcategorías</option>`);
-                return;
-            }
-
-            $sub.prop("disabled", false);
-            $sub.append(`<option value="">Cargando...</option>`);
-
-            $.getJSON('/Categoria/GetSubcategorias', { categoriaId: categoriaId })
-                .done(function (data) {
-                    $sub.empty().append(`<option value="">Todas las subcategorías</option>`);
-                    data.forEach(function (sub) {
-                        $sub.append(
-                            `<option value="${sub.id}">${sub.nombre}</option>`
-                        );
-                    });
-                });
-        });
-    </script>
-}
-
+            </ul>
+        </nav>
+    }
+    <div class="text-center mt-4">
+        <a asp-controller="Usuario"
+           asp-action="Catalogo"
+           class="btn btn-outline-secondary">
+            ← Volver a la tienda
+        </a>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+﻿@model ProductosFiltradosViewModel
+
+<form method="get"
+      asp-controller="Producto"
+      asp-action="ProductosFiltrados"
+      class="row g-2 justify-content-center mb-4">
+
+    <div class="col-md-4">
+        <input type="text"
+               name="filtro"
+               class="form-control"
+               value="@Model?.Filtro"
+               placeholder="🔍 Buscar producto..." />
+    </div>
+
+    <div class="col-md-2">
+        <input type="number"
+               name="precioMin"
+               class="form-control"
+               value="@Model?.PrecioMin"
+               placeholder="Precio mín." />
+    </div>
+
+    <div class="col-md-2">
+        <input type="number"
+               name="precioMax"
+               class="form-control"
+               value="@Model?.PrecioMax"
+               placeholder="Precio máx." />
+    </div>
+
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">
+            Buscar
+        </button>
+    </div>
+
+</form>

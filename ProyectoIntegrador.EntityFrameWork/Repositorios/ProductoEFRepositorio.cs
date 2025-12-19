@@ -144,8 +144,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public IEnumerable<Producto> ObtenerTodos()
         {
-            throw new NotImplementedException();
-        }
+            return _contexto.Productos;
+         }
 
         public List<Producto> ProductosFiltrados(string filtro,int? precioMin, int? precioMax,int pagina, int tamanoPagina,out int totalRegistros,
                                                   int? categoriaId, int? subCategoriaId)

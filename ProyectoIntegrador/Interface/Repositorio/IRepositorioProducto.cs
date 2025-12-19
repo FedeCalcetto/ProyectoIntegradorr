@@ -11,5 +11,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
     {
         IEnumerable<Producto> ObtenerPublicados();
         IEnumerable<Producto> ObtenerPublicadosPorSubCategoria(int subCategoriaId);
+        List<Producto> ObtenerProductosExcluyendo(int idsEnCarrito, int maxItems);
     }
 }
