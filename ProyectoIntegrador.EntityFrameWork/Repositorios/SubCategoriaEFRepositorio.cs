@@ -46,5 +46,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             return _contexto.SubCategorias.ToList();
         }
+
+        public IEnumerable<SubCategoria> ObtenerPorCategoria(int categoriaId)
+        {
+            return _contexto.SubCategorias.Where(s => s.categoriaId == categoriaId).ToList();
+        }
     }
 }

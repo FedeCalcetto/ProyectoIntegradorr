@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IProductosFiltrados
+    public interface IObtenerSubCategoria
     {
-        List<Producto> Ejecutar(string filtro, int? precioMin, int? precioMax, int pagina, int tamanoPagina, out int totalRegistros, int? categoriaId, int? subCategoriaId);
+        IEnumerable<SubCategoria> obtenerPorCtegoria(int categoriaId);
     }
 }
