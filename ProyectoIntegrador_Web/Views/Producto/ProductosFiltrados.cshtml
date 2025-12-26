@@ -184,3 +184,30 @@ else
         </a>
     </div>
 </div>
+<script>
+    const categoriaSelect = document.getElementById("categoriaSelect");
+    const subcategoriaSelect = document.getElementById("subcategoriaSelect");
+
+    categoriaSelect.addEventListener("change", function () {
+        const categoriaId = this.value;
+
+        // Reset subcategorías
+        subcategoriaSelect.innerHTML = '<option value="">Todas las subcategorías</option>';
+        subcategoriaSelect.disabled = true;
+
+        if (!categoriaId) return;
+
+        fetch(`/Producto/ObtenerSubCategorias?categoriaId=${categoriaId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(s => {
+                    const option = document.createElement("option");
+                    option.value = s.id;
+                    option.textContent = s.nombre;
+                    subcategoriaSelect.appendChild(option);
+                });
+
+                subcategoriaSelect.disabled = false;
+            });
+    });
+</script>

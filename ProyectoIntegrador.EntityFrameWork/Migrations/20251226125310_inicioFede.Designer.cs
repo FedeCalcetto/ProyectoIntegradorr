@@ -12,7 +12,7 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20251217094939_inicioFede")]
+    [Migration("20251226125310_inicioFede")]
     partial class inicioFede
     {
         /// <inheritdoc />
@@ -309,6 +309,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<int?>("clienteId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("productoId")
                         .HasColumnType("int");

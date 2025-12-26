@@ -10,5 +10,9 @@ namespace ProyectoIntegrador.LogicaAplication.Dtos
     {
         public List<ProductoCatalogoDto> Recientes { get; set; } = new();
         public List<CategoriaCatalogoDto> PorCategoria { get; set; } = new();
+
+
+
+
     }
 }
