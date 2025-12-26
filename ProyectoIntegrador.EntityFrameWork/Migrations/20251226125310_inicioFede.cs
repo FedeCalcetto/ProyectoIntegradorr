@@ -299,7 +299,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     razon = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     clienteId = table.Column<int>(type: "int", nullable: true),
                     artesanoId = table.Column<int>(type: "int", nullable: true),
-                    productoId = table.Column<int>(type: "int", nullable: true)
+                    productoId = table.Column<int>(type: "int", nullable: true),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

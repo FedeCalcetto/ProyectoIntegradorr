@@ -21,9 +21,11 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerUsuario _obtenerUsuario;
         private readonly IMostrarProductosCarrito _mostrarProductosCarrito;
         private readonly IObtenerSubCategoria _obtenerSubCategoria;
+        private readonly IObtenerCliente _obtenerCliente;
+        private readonly IAgregarReporte _agregarReporte;
 
         public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano,
-            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto, IObtenerSubCategoria obtenerSubCategoria)
+            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto, IObtenerSubCategoria obtenerSubCategoria, IAgregarReporte agregarReporte, IObtenerCliente obtenerCliente)
         {
             _obtenerArtesano = obtenerArtesano;
             _agregarProducto = producto;
@@ -36,11 +38,13 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerUsuario = obtenerUsuario;
             _mostrarProductosCarrito = mostrarProductosCarrito;
             _obtenerSubCategoria = obtenerSubCategoria;
+            _agregarReporte = agregarReporte;
+            _obtenerCliente = obtenerCliente;
         }
 
-        
 
-        
+
+
         public IActionResult AltaProducto()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
@@ -224,6 +228,12 @@ namespace ProyectoIntegrador_Web.Controllers
 
         public IActionResult DetallesProducto(int id)
         {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
+
+            if (string.IsNullOrEmpty(email) || rol != "CLIENTE")
+                return RedirectToAction("Login", "Login");
+
             var producto = _obtenerProducto.obtener(id);
 
             if (producto == null)
@@ -240,10 +250,71 @@ namespace ProyectoIntegrador_Web.Controllers
                 Fotos = producto.Fotos,
                 Artesano = producto.artesano?.nombre,
                 SubCategoria = producto.SubCategoria?.Nombre,
-                ArtesanoId = producto.artesano.id
+                ArtesanoId = producto.artesano.id,
+                Reporte = new AgregarReporteDto()
             };
 
             return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ReportarProducto(DetallesProductoViewModel modelo)
+        {
+            if (modelo.Reporte == null)
+            {
+                throw new Exception("Reporte viene null");
+            }
+            if (!ModelState.IsValid)
+            {
+                var vm = CrearDetalleVM(modelo.Id);
+                vm.Reporte = modelo.Reporte;
+                return View("DetallesProducto", vm);
+
+            }
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var cliente = _obtenerCliente.Ejecutar(email);
+            var producto = _obtenerProducto.obtener(modelo.Id);
+            try
+            {
+                _agregarReporte.Ejecutar(
+                    modelo.Reporte,
+                    artesano: null,
+                    cliente: cliente,
+                    producto: producto
+                );
+
+                TempData["Success"] = "Reporte enviado correctamente";
+                return RedirectToAction("DetallesProducto", new { id = modelo.Id });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
+                var vm = CrearDetalleVM(modelo.Id);
+                vm.Reporte = modelo.Reporte;
+                return View("DetallesProducto", vm);
+            }
+
+        }
+
+        private DetallesProductoViewModel CrearDetalleVM(int id)
+        {
+            var producto = _obtenerProducto.obtener(id);
+
+            return new DetallesProductoViewModel
+            {
+                Id = producto.id,
+                Nombre = producto.nombre,
+                Descripcion = producto.descripcion,
+                Precio = producto.precio,
+                Stock = producto.stock,
+                Imagen = producto.imagen,
+                Fotos = producto.Fotos,
+                Artesano = producto.artesano?.nombre,
+                SubCategoria = producto.SubCategoria?.Nombre,
+                ArtesanoId = producto.artesano?.id ?? 0,
+                Reporte = new AgregarReporteDto()
+            };
         }
         // GET: ProductoController
         public ActionResult Index()
@@ -341,6 +412,16 @@ namespace ProyectoIntegrador_Web.Controllers
             {
                 return View();
             }
+        }
+        [HttpGet]
+        public IActionResult ObtenerSubCategorias(int categoriaId)
+        {
+            var subcategorias = _obtenerSubCategoria.obtenerPorCtegoria(categoriaId);
+
+            return Json(subcategorias.Select(s => new {
+                id = s.Id,
+                nombre = s.Nombre
+            }));
         }
     }
 }

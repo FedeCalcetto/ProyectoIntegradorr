@@ -307,6 +307,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("clienteId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("productoId")
                         .HasColumnType("int");
 
