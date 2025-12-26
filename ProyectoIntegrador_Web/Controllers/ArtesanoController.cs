@@ -96,7 +96,9 @@ namespace ProyectoIntegrador_Web.Controllers
                 Apellido = artesano.apellido,
                 Email = artesano.email.email,
                 Password = artesano.password,
-                Foto = artesano.foto
+                Foto = artesano.foto,
+
+               
             };
 
             return View(modelo);

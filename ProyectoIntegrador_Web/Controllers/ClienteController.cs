@@ -73,7 +73,7 @@ namespace ProyectoIntegrador_Web.Controllers
         }
 
 
-        public IActionResult Perfil()
+        public async Task<IActionResult> PerfilAsync()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
 
@@ -89,6 +89,17 @@ namespace ProyectoIntegrador_Web.Controllers
                 return NotFound();
             }
 
+            // 🔴 GENERAR CÓDIGO DE ELIMINACIÓN
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            HttpContext.Session.SetString(
+                "EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString()
+            );
+
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+
             var modelo = new EditarClienteViewModel
             {
                 Nombre = cliente.nombre,
@@ -99,7 +110,12 @@ namespace ProyectoIntegrador_Web.Controllers
                 Barrio = cliente.direccion?.barrio,
                 Foto = cliente.foto,
 
-                DepartamentosOpciones = ObtenerDepartamentos()
+                DepartamentosOpciones = ObtenerDepartamentos(),
+
+                EliminarCuenta = new EliminarCuentaViewModel
+                {
+                    Email = cliente.email.email
+                }
             };
 
             return View(modelo);

@@ -25,5 +25,7 @@ namespace ProyectoIntegrador_Web.Models
 
 
         public string? Foto { get; set; }
+        public EliminarCuentaViewModel EliminarCuenta { get; set; }
+
     }
 }

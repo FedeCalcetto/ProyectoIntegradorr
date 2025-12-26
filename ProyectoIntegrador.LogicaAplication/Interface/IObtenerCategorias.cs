@@ -9,6 +9,7 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
 {
     public interface IObtenerCategorias
     {
+        //IEnumerable<Categoria> Ejecutar();
         IEnumerable<Categoria> ObtenerTodos();
     }
 }

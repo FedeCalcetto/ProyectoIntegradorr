@@ -180,10 +180,10 @@ namespace ProyectoIntegrador_Web.Controllers
             var email = HttpContext.Session.GetString("loginUsuario");
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
-            if (string.IsNullOrEmpty(email) || rol != "CLIENTE")
-            {
-                return RedirectToAction("Login", "Login");
-            }
+            //if (string.IsNullOrEmpty(email) || rol != "CLIENTE")
+            //{
+            //    return RedirectToAction("Login", "Login");
+            //}
 
             const int tamanoPagina = 10;
 

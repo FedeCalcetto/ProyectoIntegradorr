@@ -1,88 +1,20 @@
-﻿@model ProductosFiltradosViewModel
+﻿@model ProyectoIntegrador_Web.Models.ProductosFiltradosViewModel
+
 @{
     ViewData["Title"] = "Buscar Productos";
 }
 
 <h2 class="mb-4 text-center">Buscar Productos</h2>
 
-<!-- ===================== -->
-<!-- FILTROS -->
-<!-- ===================== -->
-<form method="get" class="row g-2 justify-content-center mb-4">
-
-    <!-- Texto -->
-    <div class="col-md-3">
-        <input type="text"
-               name="filtro"
-               class="form-control"
-               value="@Model.Filtro"
-               placeholder="🔍 Buscar producto..." />
-    </div>
-
-    <!-- Precio mínimo -->
-    <div class="col-md-2">
-        <input type="number"
-               name="precioMin"
-               class="form-control"
-               value="@Model.PrecioMin"
-               placeholder="Precio mín." />
-    </div>
-
-    <!-- Precio máximo -->
-    <div class="col-md-2">
-        <input type="number"
-               name="precioMax"
-               class="form-control"
-               value="@Model.PrecioMax"
-               placeholder="Precio máx." />
-    </div>
-
-    <!-- Categoría -->
-    <div class="col-md-2">
-        <select id="categoriaSelect"
-                name="categoriaId"
-                class="form-select">
-            <option value="">Todas las categorías</option>
-            @foreach (var c in Model.Categorias)
-            {
-                <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">
-                    @c.Nombre
-                </option>
-            }
-        </select>
-    </div>
-
-    <!-- Subcategoría -->
-    <div class="col-md-2">
-        <select id="subcategoriaSelect"
-                name="subCategoriaId"
-                class="form-select"
-                @(Model.CategoriaId == null ? "disabled" : "")>
-            <option value="">Todas las subcategorías</option>
-            @foreach (var s in Model.SubCategorias)
-            {
-                <option value="@s.Id" selected="@(Model.SubCategoriaId == s.Id)">
-                    @s.Nombre
-                </option>
-            }
-        </select>
-    </div>
-
-    <!-- Botón -->
-    <div class="col-md-1 d-grid">
-        <button type="submit" class="btn btn-primary">
-            Buscar
-        </button>
-    </div>
-
-</form>
+<!-- 🔍 BARRA DE BÚSQUEDA REUTILIZABLE -->
+<partial name="_Buscador" model="Model" />
 
 <!-- ===================== -->
 <!-- RESULTADOS -->
 <!-- ===================== -->
-@if (Model.Productos.Any())
+@if (Model.Productos != null && Model.Productos.Any())
 {
-    <table class="table table-striped table-hover align-middle">
+    <table class="table table-striped table-hover align-middle mt-4">
         <thead class="table-dark">
             <tr>
                 <th>Foto</th>
@@ -173,14 +105,45 @@ else
                 </a>
             </li>
 
-            </ul>
-        </nav>
-    }
-    <div class="text-center mt-4">
-        <a asp-controller="Usuario"
-           asp-action="Catalogo"
-           class="btn btn-outline-secondary">
-            ← Volver a la tienda
-        </a>
-    </div>
+        </ul>
+    </nav>
+}
+
+<div class="text-center mt-4">
+    <a asp-controller="Usuario"
+       asp-action="Catalogo"
+       class="btn btn-outline-secondary">
+        ← Volver a la tienda
+    </a>
 </div>
+
+
+<!-- recarga el select de sub categorias al seleccionar una categoria -->
+<!--<script>
+    const categoriaSelect = document.getElementById("categoriaSelect");
+    const subcategoriaSelect = document.getElementById("subcategoriaSelect");
+
+    categoriaSelect.addEventListener("change", function () {
+        const categoriaId = this.value;
+
+        // Limpiar subcategorías
+        subcategoriaSelect.innerHTML = '<option value="">Todas las subcategorías</option>';
+        subcategoriaSelect.disabled = true;
+
+        if (!categoriaId) return;
+
+        fetch(`/Producto/GetSubcategorias?categoriaId=${categoriaId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(s => {
+                    const option = document.createElement("option");
+                    option.value = s.id;
+                    option.textContent = s.nombre;
+                    subcategoriaSelect.appendChild(option);
+                });
+
+                subcategoriaSelect.disabled = false;
+            })
+            .catch(error => console.error("Error cargando subcategorías:", error));
+    });
+</script>-->

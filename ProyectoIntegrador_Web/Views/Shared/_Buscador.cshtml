@@ -1,0 +1,138 @@
+﻿@model ProyectoIntegrador_Web.Models.ProductosFiltradosViewModel
+
+<nav class="navbar mb-4" style="background-color:#f2f2f2;">
+    <div class="container-fluid">
+
+        <form method="get"
+              id="formBusqueda"
+              class="d-flex align-items-center gap-2 flex-nowrap w-100">
+
+            <!-- MODO -->
+            <select class="form-select"
+                    style="width:150px"
+                    id="modoBusqueda"
+                    name="ModoBusqueda">
+                <option value="productos" selected="@(Model.ModoBusqueda == "productos")">
+                    Productos
+                </option>
+                <option value="usuarios" selected="@(Model.ModoBusqueda == "usuarios")">
+                    Usuarios
+                </option>
+            </select>
+
+            <!-- TEXTO -->
+            <input type="text"
+                   name="Filtro"
+                   id="inputBusqueda"
+                   class="form-control"
+                   value="@Model.Filtro"
+                   placeholder="Buscar..."
+                   style="min-width:260px" />
+
+            <!-- FILTROS PRODUCTOS -->
+            <div id="filtrosProductos" class="d-flex gap-2">
+
+                <input type="number"
+                       name="PrecioMin"
+                       class="form-control"
+                       value="@Model.PrecioMin"
+                       placeholder="Precio mín."
+                       style="width:140px" />
+
+                <input type="number"
+                       name="PrecioMax"
+                       class="form-control"
+                       value="@Model.PrecioMax"
+                       placeholder="Precio máx."
+                       style="width:140px" />
+
+                <select id="categoriaSelect"
+                        name="CategoriaId"
+                        class="form-select"
+                        style="width:180px">
+                    <option value="">Categorías</option>
+                    @foreach (var c in Model.Categorias ?? Enumerable.Empty<ProyectoIntegrador.LogicaNegocio.Entidades.Categoria>())
+                    {
+                        <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">
+                            @c.Nombre
+                        </option>
+                    }
+                </select>
+
+                <select id="subcategoriaSelect"
+                        name="SubCategoriaId"
+                        class="form-select"
+                        style="width:200px"
+                        @(Model.CategoriaId == null ? "disabled" : "")>
+                    <option value="">Subcategorías</option>
+                    @foreach (var s in Model.SubCategorias ?? Enumerable.Empty<ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria>())
+                    {
+                        <option value="@s.Id" selected="@(Model.SubCategoriaId == s.Id)">
+                            @s.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <!-- BOTÓN -->
+            <button class="btn btn-primary px-4">
+                Buscar
+            </button>
+
+        </form>
+    </div>
+</nav>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const form = document.getElementById('formBusqueda');
+        const modo = document.getElementById('modoBusqueda');
+        const filtros = document.getElementById('filtrosProductos');
+        const input = document.getElementById('inputBusqueda');
+
+        function actualizarModo() {
+            if (modo.value === 'usuarios') {
+                filtros.classList.add('d-none');
+                filtros.classList.remove('d-flex');
+                form.action = '/Usuario/BusquedaDeUsuarios';
+                input.placeholder = 'Buscar usuarios...';
+            } else {
+                filtros.classList.remove('d-none');
+                filtros.classList.add('d-flex');
+                form.action = '/Producto/ProductosFiltrados';
+                input.placeholder = 'Buscar productos...';
+            }
+        }
+
+        modo.addEventListener('change', actualizarModo);
+        actualizarModo();
+
+        const categoriaSelect = document.getElementById("categoriaSelect");
+        const subcategoriaSelect = document.getElementById("subcategoriaSelect");
+
+        if (categoriaSelect) {
+            categoriaSelect.addEventListener("change", function () {
+                const categoriaId = this.value;
+
+                subcategoriaSelect.innerHTML = '<option value="">Subcategorías</option>';
+                subcategoriaSelect.disabled = true;
+
+                if (!categoriaId) return;
+
+                fetch(`/Producto/GetSubcategorias?categoriaId=${categoriaId}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        data.forEach(s => {
+                            const option = document.createElement("option");
+                            option.value = s.id;
+                            option.textContent = s.nombre;
+                            subcategoriaSelect.appendChild(option);
+                        });
+                        subcategoriaSelect.disabled = false;
+                    });
+            });
+        }
+    });
+</script>

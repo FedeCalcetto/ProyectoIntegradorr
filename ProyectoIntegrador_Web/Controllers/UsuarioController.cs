@@ -19,14 +19,16 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly EmailService _email;
         private readonly ICatalogoService _catalogoService;
         private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
+        private readonly IObtenerCategorias _obtenerCategorias;
 
-        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios)
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias)
         {
             _cambiarPassword = cambiarPassword;
             _eliminarUsuario = eliminarUsuario;
             _email = email;
             _catalogoService = catalogoService;
             _busquedaDeUsuarios = busquedaDeUsuarios;
+            _obtenerCategorias = obtenerCategorias;
         }
 
         
@@ -105,10 +107,10 @@ namespace ProyectoIntegrador_Web.Controllers
             var email = HttpContext.Session.GetString("loginUsuario");
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
-            if (string.IsNullOrEmpty(email) || (rol != "ARTESANO" && rol != "CLIENTE"))
+           /* if (string.IsNullOrEmpty(email) || (rol != "ARTESANO" && rol != "CLIENTE"))
             {
                 return RedirectToAction("Login", "Login");
-            }
+            }*/
 
             var modelo = new BusquedaDeUsuariosViewModel();
             modelo.Filtro = filtro;
@@ -216,7 +218,7 @@ namespace ProyectoIntegrador_Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> ConfirmarEliminacion()
+      /*  public async Task<IActionResult> ConfirmarEliminacion()  esto se muda al get, para que trabaje con el MODAL
         {
             var email = HttpContext.Session.GetString("loginUsuario");
 
@@ -234,7 +236,7 @@ namespace ProyectoIntegrador_Web.Controllers
             TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
 
             return View(new EliminarCuentaViewModel { Email = email });
-        }
+        }*/
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -243,39 +245,46 @@ namespace ProyectoIntegrador_Web.Controllers
             var email = modelo.Email;
             var codigoIngresado = modelo.Codigo;
 
+            // Código guardado en sesión
             var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
             var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
 
+            // No hay código o expiró la sesión
             if (codigoGuardado == null || expiraStr == null)
             {
-                TempData["Error"] = "El código expiró. Pedí uno nuevo.";
-                return RedirectToAction("ConfirmarEliminacion");
+                TempData["ErrorEliminar"] = "El código expiró. Pedí uno nuevo.";
+                return VolverAlPerfilSegunRol();
             }
 
             DateTime expira = DateTime.Parse(expiraStr);
+
+            //  Código vencido
             if (DateTime.Now > expira)
             {
-                TempData["Error"] = "El código expiró.";
-                return RedirectToAction("ConfirmarEliminacion");
+                TempData["ErrorEliminar"] = "El código expiró.";
+                return VolverAlPerfilSegunRol();
             }
 
+            //  Código incorrecto
             if (codigoGuardado != codigoIngresado)
             {
-                TempData["Error"] = "Código incorrecto.";
-                return RedirectToAction("ConfirmarEliminacion");
+                TempData["ErrorEliminar"] = "Código incorrecto.";
+                return VolverAlPerfilSegunRol();
             }
 
-            // aca llamo al caso de uso.
+            //  Código correcto → eliminar usuario
             _eliminarUsuario.Ejecutar(email);
 
+            // Limpiar sesión
             HttpContext.Session.Clear();
 
+            // Vista final de confirmación
             return RedirectToAction("CuentaEliminada");
         }
         //////////////////////////////////////////////////////////////////
         ////////////////////// catalogo de usuarios //////////////////////
         //////////////////////////////////////////////////////////////////
-        
+
         public IActionResult CatalogoUsuarios()
         {
             return View();
@@ -284,8 +293,35 @@ namespace ProyectoIntegrador_Web.Controllers
 
         public IActionResult Catalogo()
         {
-            var vm = _catalogoService.ObtenerCatalogoInicial();
+            // DTO de la capa aplicación
+            var catalogoDto = _catalogoService.ObtenerCatalogoInicial();
+
+            // ViewModel de la capa Web
+            var vm = new CatalogoViewModel
+            {
+                Catalogo = catalogoDto,
+                Buscador = new ProductosFiltradosViewModel
+                {
+                    Categorias = _obtenerCategorias.ObtenerTodos(),
+                    ModoBusqueda = "productos"
+                }
+            };
+
             return View(vm);
+        }
+
+
+        private IActionResult VolverAlPerfilSegunRol()
+        {
+            var rol = HttpContext.Session.GetString("Rol");
+
+            if (rol == "CLIENTE")
+                return RedirectToAction("Perfil", "Cliente");
+
+            if (rol == "ARTESANO")
+                return RedirectToAction("PerfilArtesano", "Artesano");
+
+            return RedirectToAction("Login", "Login");
         }
 
     }
