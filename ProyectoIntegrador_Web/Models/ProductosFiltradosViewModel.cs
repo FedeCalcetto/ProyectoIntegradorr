@@ -21,5 +21,7 @@ namespace ProyectoIntegrador_Web.Models
 
         public bool TienePaginaAnterior => PaginaActual > 1;
         public bool TienePaginaSiguiente => PaginaActual < TotalPaginas;
+
+        public string ModoBusqueda { get; set; } = "productos";
     }
 }

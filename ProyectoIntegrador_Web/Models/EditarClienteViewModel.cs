@@ -23,5 +23,7 @@ namespace ProyectoIntegrador_Web.Models
         public string Barrio { get; set; }
         public List<string>? DepartamentosOpciones { get; set; }
         public string? Foto { get; set; }
+
+        public EliminarCuentaViewModel EliminarCuenta { get; set; } //para que funcione el modal
     }
 }

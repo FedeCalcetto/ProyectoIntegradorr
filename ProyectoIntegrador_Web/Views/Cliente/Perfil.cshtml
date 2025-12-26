@@ -122,12 +122,23 @@
                     </form>
 
 
-    <div class="d-flex justify-content-center mt-4">
+    <!--  <div class="d-flex justify-content-center mt-4">
         <a asp-controller="Usuario"asp-action="ConfirmarEliminacion"class="btn btn-danger">
             Eliminar Cuenta
         </a>
+    </div>-->
+
+    <div class="d-flex justify-content-center mt-4">
+        <button type="button"
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#modalEliminarCuenta">
+            Eliminar Cuenta
+        </button>
     </div>
-    </div>
+
+    @await Html.PartialAsync("_ModalEliminarCuenta",Model.EliminarCuenta )
+    
 
     <script>
         const input = document.getElementById("archivoFotoCliente");
@@ -145,6 +156,20 @@
             }
         });
     </script>
-           </div>
+         
+
+
+<!-- SI HUBO ERROR EN EL MODAL, SE REABRE -->
+@if (TempData["ErrorEliminar"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = new bootstrap.Modal(
+                document.getElementById("modalEliminarCuenta")
+            );
+            modal.show();
+        });
+    </script>
+}
 
 

@@ -1,19 +1,17 @@
-﻿@model ProyectoIntegrador.LogicaAplication.Dtos.CatalogoDto
+﻿@model ProyectoIntegrador_Web.Models.CatalogoViewModel
 
 
 @{
     ViewData["Title"] = "Catálogo";
 }
 
-
 <h4 class="mb-3 text-center">Catálogo de productos</h4>
 
-
-        <!-- BARRA PRINCIPAL -->
-        <div class="w-100 mb-2">
-            <partial name="_BarraBusquedaToggle" />
-        </div>
-
+<!-- 🔍 BARRA DE BÚSQUEDA REUTILIZABLE -->
+<div class="w-100 mb-2">
+    <partial name="_Buscador"
+             model="Model.Buscador" />
+</div>
 
 <!-- CONTENIDO DEL CATÁLOGO -->
 <div class="container py-4">
@@ -25,7 +23,7 @@
         <button class="slider-btn left" onclick="mover(this, -1)">‹</button>
 
         <div class="slider">
-            @foreach (var producto in Model.Recientes)
+            @foreach (var producto in Model.Catalogo.Recientes)
             {
                 <div class="slider-item">
                     <a asp-controller="Producto"
@@ -42,8 +40,11 @@
         <button class="slider-btn right" onclick="mover(this, 1)">›</button>
     </div>
 
-    <!-- POR SUBCATEGORÍA -->
-    @foreach (var categoria in Model.PorCategoria)
+
+   
+
+    <!-- POR CATEGORÍA -->
+    @foreach (var categoria in Model.Catalogo.PorCategoria)
     {
         <div class="catalog-section">
 
@@ -68,10 +69,30 @@
     }
 </div>
 
+<button id="btnSubir" class="btn btn-outline-dark btn-subir">
+    ⬆
+</button>
+
 <script>
     function mover(boton, direccion) {
         const slider = boton.parentElement.querySelector('.slider');
         const anchoCard = slider.querySelector('.slider-item').offsetWidth + 16;
         slider.scrollLeft += direccion * anchoCard * 2;
     }
+</script>
+
+
+
+<!-- esto se encarga que al darle click suba -->
+<script>
+    const botonSubir = document.getElementById("btnSubir");
+
+    botonSubir.onclick = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // esto detecta cuando se escrolleo mas de 200 en valor y muestra el boton
+    window.addEventListener("scroll", () => {
+        botonSubir.style.display = window.scrollY > 200 ? "block" : "none";
+    });
 </script>

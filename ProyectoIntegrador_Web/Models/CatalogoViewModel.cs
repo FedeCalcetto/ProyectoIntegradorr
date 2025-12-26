@@ -1,8 +1,12 @@
-﻿namespace ProyectoIntegrador_Web.Models
+﻿using ProyectoIntegrador.LogicaAplication.Dtos;
+
+namespace ProyectoIntegrador_Web.Models
 {
     public class CatalogoViewModel
     {
-       // public List<ProductoCard> Recientes { get; set; }
-       // public List<CategoriaSeccion> PorCategoria { get; set; }
+        public CatalogoDto Catalogo { get; set; }
+
+        // Buscador reutilizable (capa web)
+        public ProductosFiltradosViewModel Buscador { get; set; }
     }
 }
