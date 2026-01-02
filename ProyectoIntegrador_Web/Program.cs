@@ -65,6 +65,10 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IObtenerProductosDeInteres, ObtenerProductosDeInteresCasoDeUso>();
             builder.Services.AddScoped<IObtenerSubCategoria, ObtenerSubCategoriaCasoDeUso>();
             builder.Services.AddScoped<IAgregarReporte, AgregarReporteCasoDeUso>();
+            builder.Services.AddScoped<IListadoDeReportes, ListadoDeReportesCasoDeUso>();
+            builder.Services.AddScoped<IEliminarReporte, EliminarReporteCasoDeUso>();
+            builder.Services.AddScoped<IObtenerReporte, ObtenerReporteCasoeUso>();
+            builder.Services.AddScoped<IObtenerArtesanoId, ObtenerArtesanoIdCasoDeUso>();
 
 
             //REGISTRO DEL SERVICIO DE EMAIL
