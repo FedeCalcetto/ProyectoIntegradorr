@@ -231,7 +231,7 @@ namespace ProyectoIntegrador_Web.Controllers
             var email = HttpContext.Session.GetString("loginUsuario");
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
-            if (string.IsNullOrEmpty(email) || rol != "CLIENTE")
+            if (string.IsNullOrEmpty(email) || rol != "CLIENTE" || rol != "ADMIN")
                 return RedirectToAction("Login", "Login");
 
             var producto = _obtenerProducto.obtener(id);
@@ -261,10 +261,7 @@ namespace ProyectoIntegrador_Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ReportarProducto(DetallesProductoViewModel modelo)
         {
-            if (modelo.Reporte == null)
-            {
-                throw new Exception("Reporte viene null");
-            }
+            
             if (!ModelState.IsValid)
             {
                 var vm = CrearDetalleVM(modelo.Id);

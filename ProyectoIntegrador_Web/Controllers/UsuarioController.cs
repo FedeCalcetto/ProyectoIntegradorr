@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Models;
@@ -20,8 +21,11 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly ICatalogoService _catalogoService;
         private readonly IBusquedaDeUsuarios _busquedaDeUsuarios;
         private readonly IObtenerCategorias _obtenerCategorias;
+        private readonly IObtenerArtesanoId _obtenerArtesano;
+        private readonly IObtenerCliente _obtenerCliente;
+        private readonly IAgregarReporte _agregarReporte;
 
-        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias)
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte)
         {
             _cambiarPassword = cambiarPassword;
             _eliminarUsuario = eliminarUsuario;
@@ -29,6 +33,9 @@ namespace ProyectoIntegrador_Web.Controllers
             _catalogoService = catalogoService;
             _busquedaDeUsuarios = busquedaDeUsuarios;
             _obtenerCategorias = obtenerCategorias;
+            _obtenerArtesano = obtenerArtesanoId;
+            _obtenerCliente = obtenerCliente;
+            _agregarReporte = agregarReporte;
         }
 
         
@@ -122,6 +129,84 @@ namespace ProyectoIntegrador_Web.Controllers
 
             return View(modelo);
         }
+
+        public IActionResult PerfilPublico(int id)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
+
+             if (string.IsNullOrEmpty(email) || (rol != "ARTESANO" && rol != "CLIENTE" && rol != "ADMIN"))
+             {
+                 return RedirectToAction("Login", "Login");
+             }
+
+            var artesano = _obtenerArtesano.Ejecutar(id);
+
+            if (artesano == null)
+                return NotFound();
+
+            var vm = new PerfilPublicoViewModel
+            {
+                Artesano = artesano,
+                Productos = artesano.productos
+            };
+
+            return View(vm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ReportarArtesano(int artesanoId, AgregarReporteDto reporte)
+        {
+            if (!ModelState.IsValid)
+            {
+                var vm = CrearDetalleVM(artesanoId);
+                vm.Reporte = reporte;
+                return View("PerfilPublico", vm);
+            }
+
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var cliente = _obtenerCliente.Ejecutar(email);
+            var artesano = _obtenerArtesano.Ejecutar(artesanoId);
+
+            if (cliente == null || artesano == null)
+                return NotFound();
+
+            try
+            {
+                _agregarReporte.Ejecutar(
+                    reporte,
+                    artesano: artesano,
+                    cliente: cliente,
+                    producto: null
+                );
+
+                TempData["Mensaje"] = "Reporte enviado correctamente";
+                return RedirectToAction("PerfilPublico", new { id = artesanoId });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
+
+                var vm = CrearDetalleVM(artesanoId);
+                vm.Reporte = reporte;
+                return View("PerfilPublico", vm);
+            }
+        }
+
+
+        private PerfilPublicoViewModel CrearDetalleVM(int id)
+        {
+            var artesano = _obtenerArtesano.Ejecutar(id);
+
+            return new PerfilPublicoViewModel
+            {
+                Artesano = artesano,
+                Productos = artesano.productos,
+                Reporte = new AgregarReporteDto()
+            };
+        }
+
+
         //[HttpPost]
         //[ValidateAntiForgeryToken]
         //public IActionResult BusquedaDeUsuarios(BusquedaDeUsuariosViewModel modelo)
@@ -132,10 +217,7 @@ namespace ProyectoIntegrador_Web.Controllers
         //    return View(modelo);
         //}
 
-        public IActionResult PerfilPublico()
-        {
-            return View();
-        }
+        
         // GET: UsuarioController
         public ActionResult Index()
         {

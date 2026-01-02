@@ -14,10 +14,10 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IAgragarAlCarrito _agragarAlCarrito;
         private readonly IEliminarItemDelCarrito _eliminarItem;
         private readonly IObtenerProductosDeInteres _productosInteres;
+        private readonly IAgregarOrden _agregarOrden;
 
-
-        public CarritoController(IObtenerProducto obtenerProducto, IMostrarProductosCarrito mostrarProductosCarrito, IObtenerUsuario obtenerUsuario, 
-            IAgragarAlCarrito agragarAlCarrito, IEliminarItemDelCarrito eliminarItem, IObtenerProductosDeInteres productosInteres)
+               public CarritoController(IObtenerProducto obtenerProducto, IMostrarProductosCarrito mostrarProductosCarrito, IObtenerUsuario obtenerUsuario, 
+            IAgragarAlCarrito agragarAlCarrito, IEliminarItemDelCarrito eliminarItem, IObtenerProductosDeInteres productosInteres, IAgregarOrden agregarOrden)
         {
             _obtenerProducto = obtenerProducto;
             _mostrarProductosCarrito = mostrarProductosCarrito;
@@ -25,6 +25,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _agragarAlCarrito = agragarAlCarrito;
             _eliminarItem = eliminarItem;
             _productosInteres = productosInteres;
+            _agregarOrden = agregarOrden;
         }
 
         public IActionResult Index()
@@ -69,10 +70,15 @@ namespace ProyectoIntegrador_Web.Controllers
         {
             _eliminarItem.Eliminar(idItemCarrito, cantidadABorrar);
             return RedirectToAction("Index", "Carrito");
-           
-
         }
 
-
+        [HttpPost]
+        public async Task<IActionResult> ContinuarCompra()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var usuario = _obtenerUsuario.Ejecutar(email);
+            var ordenId = await _agregarOrden.AgregarOrdenAsync(usuario.id);
+            return RedirectToAction("CrearPago", "Pago", new { ordenId });
+        }
     }
 }

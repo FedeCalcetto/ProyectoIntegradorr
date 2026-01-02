@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
+namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IFacturaRepositorio : IRepositorio<FacturaNoFiscal>
+    public interface IListadoDeReportes
     {
+        IEnumerable<Reporte> Ejecutar();
     }
 }

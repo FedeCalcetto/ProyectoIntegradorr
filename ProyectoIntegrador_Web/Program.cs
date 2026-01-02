@@ -32,6 +32,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IProductoFotoRepsoitorio, ProductoFotoEFRepositorio>();
             builder.Services.AddScoped<ICarritoRepositorio, CarritoEFRepositorio>();
             builder.Services.AddScoped<IReporteRepositorio, ReporteEFRepositorio>();
+            builder.Services.AddScoped<IOrdenRepositorio, OrdenEFRepositorio>();
 
             //Casos de uso
             builder.Services.AddScoped<IAgregarProducto, AgregarProductoCasoDeUso>();
@@ -65,6 +66,11 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IObtenerProductosDeInteres, ObtenerProductosDeInteresCasoDeUso>();
             builder.Services.AddScoped<IObtenerSubCategoria, ObtenerSubCategoriaCasoDeUso>();
             builder.Services.AddScoped<IAgregarReporte, AgregarReporteCasoDeUso>();
+            builder.Services.AddScoped<IAgregarOrden, AgregarOrdenCasoDeUso>();
+            builder.Services.AddScoped<IListadoDeReportes, ListadoDeReportesCasoDeUso>();
+            builder.Services.AddScoped<IEliminarReporte, EliminarReporteCasoDeUso>();
+            builder.Services.AddScoped<IObtenerReporte, ObtenerReporteCasoeUso>();
+            builder.Services.AddScoped<IObtenerArtesanoId, ObtenerArtesanoIdCasoDeUso>();
 
 
             //REGISTRO DEL SERVICIO DE EMAIL
