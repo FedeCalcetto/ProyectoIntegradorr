@@ -17,12 +17,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             _contexto = contexto;
         }
-        public void Agregar(Factura entidad)
+        public void Agregar(FacturaNoFiscal entidad)
         {
             throw new NotImplementedException();
         }
 
-        public void Editar(Factura entidad)
+        public void Editar(FacturaNoFiscal entidad)
         {
             throw new NotImplementedException();
         }
@@ -32,12 +32,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             throw new NotImplementedException();
         }
 
-        public Factura Obtener(int id)
+        public FacturaNoFiscal Obtener(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Factura> ObtenerTodos()
+        public IEnumerable<FacturaNoFiscal> ObtenerTodos()
         {
             throw new NotImplementedException();
         }

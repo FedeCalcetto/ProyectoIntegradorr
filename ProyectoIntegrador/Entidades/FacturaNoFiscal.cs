@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Entidades
 {
-    public class Factura
+    public class FacturaNoFiscal
     {
         public int Id { get; set; }
         public List<LineaFactura> itemsFactura { get; set; }

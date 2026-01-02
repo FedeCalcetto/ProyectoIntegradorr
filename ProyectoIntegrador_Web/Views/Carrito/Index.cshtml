@@ -82,9 +82,17 @@
                         </span>
                     </div>
 
-                    <button id="btnConfirmarCompra" class="btn btn-primary w-100 btn-lg mt-3">
-                        Continuar compra
-                    </button>
+                    <form asp-controller="Carrito"
+                          asp-action="ContinuarCompra"
+                          method="post">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100 btn-lg mt-3">
+                            Continuar compra
+                        </button>
+
+                    </form>
+                   
 
                     <a id="btnVolverATienda" asp-controller="Usuario"
                        asp-action="Catalogo"

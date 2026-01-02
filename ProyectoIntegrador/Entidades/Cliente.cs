@@ -14,7 +14,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
     {
 
         public List<Artesano> artesanosSeguidos { get; set; }
-        public List<Factura> compras { get; set; } = new List<Factura>();
+        public List<FacturaNoFiscal> compras { get; set; } = new List<FacturaNoFiscal>();
         public List<Producto> productosFavoritos { get; set; }
         //public List<PedidoPersonalizado> pedidosCliente { get; set; }
         public Direccion? direccion { get; set; }
