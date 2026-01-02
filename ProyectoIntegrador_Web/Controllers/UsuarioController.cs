@@ -242,7 +242,12 @@ namespace ProyectoIntegrador_Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
         {
-            var email = modelo.Email;
+            var email = HttpContext.Session.GetString("loginUsuario"); // ✅ seguro
+            if (string.IsNullOrEmpty(email))
+            {
+                 return RedirectToAction("Login", "Login");
+            }
+
             var codigoIngresado = modelo.Codigo;
 
             // Código guardado en sesión
@@ -311,9 +316,9 @@ namespace ProyectoIntegrador_Web.Controllers
         }
 
 
-        private IActionResult VolverAlPerfilSegunRol()
+        private IActionResult VolverAlPerfilSegunRol() //redirige al perfil segun el rol
         {
-            var rol = HttpContext.Session.GetString("Rol");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpperInvariant();
 
             if (rol == "CLIENTE")
                 return RedirectToAction("Perfil", "Cliente");
@@ -322,6 +327,34 @@ namespace ProyectoIntegrador_Web.Controllers
                 return RedirectToAction("PerfilArtesano", "Artesano");
 
             return RedirectToAction("Login", "Login");
+        }
+
+
+        [HttpPost] //genera codigo eliminacion para que no se genere cada vez q se entra al perfil
+        public async Task<IActionResult> GenerarCodigoEliminacion()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized();
+
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            HttpContext.Session.SetString(
+                "EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString()
+            );
+
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");  //llama emailService
+
+            return Ok();
+        }
+
+        public IActionResult LimpiarErrorEliminar() //esto es para que se limpien errores del modal de eliminar cuenta 
+        {                                           
+            TempData.Remove("ErrorEliminar");
+            return Ok();
         }
 
     }

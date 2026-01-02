@@ -52,6 +52,11 @@ namespace ProyectoIntegrador_Web.Controllers
             return json.success;
         }
 
+        public IActionResult Factura() //test para cargar vista
+        {
+            return View();
+        }
+
         public class ReCaptchaResponse
         {
             public bool success { get; set; }
