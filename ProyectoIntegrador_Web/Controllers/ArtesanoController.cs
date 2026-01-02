@@ -72,6 +72,7 @@ namespace ProyectoIntegrador_Web.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult PerfilArtesano()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
@@ -88,6 +89,17 @@ namespace ProyectoIntegrador_Web.Controllers
                 return NotFound();
             }
 
+            //// GENERAR CÓDIGO DE ELIMINACIÓN
+            //string codigo = new Random().Next(100000, 999999).ToString();
+
+            //HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            //HttpContext.Session.SetString(
+            //    "EliminarExpira_" + email,
+            //    DateTime.Now.AddMinutes(10).ToString()
+            //);
+
+            //await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+
             var modelo = new EditarArtesanoViewModel
             {
                 Descripcion = artesano.descripcion,
@@ -98,7 +110,11 @@ namespace ProyectoIntegrador_Web.Controllers
                 Password = artesano.password,
                 Foto = artesano.foto,
 
-               
+                // NECESARIO PARA EL MODAL
+                EliminarCuenta = new EliminarCuentaViewModel
+                {
+                    Email = artesano.email.email
+                }
             };
 
             return View(modelo);
@@ -478,7 +494,7 @@ namespace ProyectoIntegrador_Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> ConfirmarEliminacion()
+       /* public async Task<IActionResult> ConfirmarEliminacion()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
 
@@ -535,7 +551,7 @@ namespace ProyectoIntegrador_Web.Controllers
             HttpContext.Session.Clear();
 
             return RedirectToAction("CuentaEliminada");
-        }
+        }*/
 
     }
 }

@@ -73,32 +73,16 @@ namespace ProyectoIntegrador_Web.Controllers
         }
 
 
-        public async Task<IActionResult> PerfilAsync()
+        public IActionResult Perfil()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
 
             if (string.IsNullOrEmpty(email))
-            {
                 return RedirectToAction("Login", "Login");
-            }
 
             var cliente = _obtenerCliente.Ejecutar(email);
-
             if (cliente == null)
-            {
                 return NotFound();
-            }
-
-            // 🔴 GENERAR CÓDIGO DE ELIMINACIÓN
-            string codigo = new Random().Next(100000, 999999).ToString();
-
-            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
-            HttpContext.Session.SetString(
-                "EliminarExpira_" + email,
-                DateTime.Now.AddMinutes(10).ToString()
-            );
-
-            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
 
             var modelo = new EditarClienteViewModel
             {
@@ -112,6 +96,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
                 DepartamentosOpciones = ObtenerDepartamentos(),
 
+                // NECESARIO PARA EL MODAL
                 EliminarCuenta = new EliminarCuentaViewModel
                 {
                     Email = cliente.email.email

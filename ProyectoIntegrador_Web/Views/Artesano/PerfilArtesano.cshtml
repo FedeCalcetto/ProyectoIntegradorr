@@ -107,11 +107,22 @@
             </div>
         </form>
 
+
         <div class="d-flex justify-content-center mt-4">
+            <button type="button"
+                    id="btnEliminarCuenta"
+                    class="btn btn-danger">
+                Eliminar Cuenta
+            </button>
+        </div>
+
+        @await Html.PartialAsync("_ModalEliminarCuenta", Model.EliminarCuenta)
+
+        <!-- <div class="d-flex justify-content-center mt-4">
             <a asp-action="ConfirmarEliminacion" class="btn btn-danger">
                 Eliminar Cuenta
             </a>
-        </div>
+        </div>-->
 
         <!-- PREVISUALIZACIÓN -->
         <script>
@@ -134,3 +145,92 @@
     </div>
 </div>
 
+
+
+
+<!-- SI HUBO ERROR EN EL MODAL, SE REABRE -->
+@if (TempData["ErrorEliminar"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = new bootstrap.Modal(
+                document.getElementById("modalEliminarCuenta")
+            );
+            modal.show();
+        });
+    </script>
+}
+
+<!-- Recien al apretar el boton eliminarcuenta, llama en usuarioController a GenerarCodigoEliminacion -->
+<script>
+    document.getElementById("btnEliminarCuenta")
+        .addEventListener("click", async function () {
+
+            // token antiforgery del formulario
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            try {
+                // llamar al controller para generar y enviar el código
+                const response = await fetch('/Usuario/GenerarCodigoEliminacion', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    }
+                });
+
+                if (!response.ok) {
+                    alert("Error al enviar el código. Intentá nuevamente.");
+                    return;
+                }
+
+                // abrir el modal SOLO si el mail se envió
+                const modal = new bootstrap.Modal(
+                    document.getElementById("modalEliminarCuenta")
+                );
+                modal.show();
+
+            } catch (e) {
+                alert("Error inesperado al enviar el código.");
+            }
+        });
+</script>
+
+
+<!-- reenviar codigo -->
+<script>
+    document.getElementById("btnReenviarCodigo")
+        ?.addEventListener("click", async function () {
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            try {
+                const response = await fetch('/Usuario/GenerarCodigoEliminacion', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    }
+                });
+
+                if (!response.ok) {
+                    alert("No se pudo reenviar el código.");
+                    return;
+                }
+
+                alert("Te reenviamos un nuevo código a tu correo.");
+
+            } catch {
+                alert("Error al reenviar el código.");
+            }
+        });
+</script>
+
+<script>
+    document.getElementById("modalEliminarCuenta")
+        ?.addEventListener('hidden.bs.modal', function () {
+
+            // avisamos al servidor que ya no debe mostrar el error
+            fetch('/Usuario/LimpiarErrorEliminar', { //esto en usuarioController
+                method: 'POST'
+            });
+        });
+</script>
