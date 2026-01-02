@@ -14,7 +14,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int idProducto { get; set; }
         public int idFactura { get; set; }
         public Producto producto { get; set; }
-        public Factura factura { get; set; }
+        public FacturaNoFiscal factura { get; set; }
         public int precioUnitario { get; set; }
         public int cantidad { get; set; }
 

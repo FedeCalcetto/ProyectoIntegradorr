@@ -15,14 +15,14 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<SubCategoria> SubCategorias { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
-        public DbSet<Factura> Facturas { get; set; }
+        public DbSet<FacturaNoFiscal> Facturas { get; set; }
         public DbSet<LineaFactura> LineasFactura { get; set; }
-
         public DbSet<PedidoPersonalizado> PedidosPersonalizados { get; set; }
         public DbSet<Reporte> Reportes { get; set; }
         public DbSet<ProductoFoto> ProductoFotos { get; set; }
         public DbSet<Carrito> Carritos { get; set; }
         public DbSet<CarritoItem> CarritoItems { get; set; }
+        public DbSet<Orden> Ordenes { get; set; }
 
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {
@@ -78,7 +78,7 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .WithOne(f => f.Cliente) 
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Factura>()
+            modelBuilder.Entity<FacturaNoFiscal>()
                 .HasMany(f => f.itemsFactura)
                 .WithOne(lf => lf.factura)
                 .OnDelete(DeleteBehavior.Cascade);
