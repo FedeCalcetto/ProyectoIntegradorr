@@ -1,4 +1,6 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
+﻿using Microsoft.EntityFrameworkCore;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
 using System.Collections.Generic;
@@ -31,17 +33,34 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public void Eliminar(int id)
         {
-            throw new NotImplementedException();
+            var productoDominio = ObtenerReporte(id);
+
+            if (productoDominio is null)
+            {
+                throw new ProductoNoEncontradoException();
+            }
+
+            _contexto.Reportes.Remove(productoDominio);
+            _contexto.SaveChanges();
         }
 
         public Reporte Obtener(int id)
         {
-            throw new NotImplementedException();
+            return _contexto.Reportes
+            .Include(r => r.producto)
+            .Include(r => r.artesano)
+            .Include(r => r.cliente)
+            .FirstOrDefault(r => r.id == id);
         }
 
         public IEnumerable<Reporte> ObtenerTodos()
         {
-            throw new NotImplementedException();
+            return _contexto.Reportes.Include(r => r.artesano).Include(r => r.producto).Include(r => r.cliente).ToList();
+        }
+        public Reporte ObtenerReporte(int id)
+        {
+            return _contexto.Reportes
+            .FirstOrDefault(r => r.id == id);
         }
     }
 }

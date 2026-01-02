@@ -2,6 +2,7 @@
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
+using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +74,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public Artesano Obtener(int id)
         {
-            throw new NotImplementedException();
+            return _contexto.Usuarios
+                       .OfType<Artesano>()
+                       .Include(a => a.productos)
+                       .FirstOrDefault(a => a.id == id);
         }
 
         public Artesano ObtenerPorEmail(string email) {

@@ -848,5 +848,144 @@ namespace PruebasUnitarias
             );
         }
     }
+    [TestClass]
+    public class AgregarReporteCasoDeUsoTests
+    {
+        [TestMethod]
+        public void Ejecutar_SinArtesanoYSinProducto_LanzaExcepcion()
+        {
+            // Arrange
+            var repo = new Mock<IReporteRepositorio>();
+            var caso = new AgregarReporteCasoDeUso(repo.Object);
+
+            var dto = new AgregarReporteDto { razon = "Motivo" };
+            var cliente = new Cliente { id = 1 };
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                caso.Ejecutar(dto, null, cliente, null));
+        }
+
+        [TestMethod]
+        public void Ejecutar_ConArtesanoYProducto_LanzaExcepcion()
+        {
+            // Arrange
+            var repo = new Mock<IReporteRepositorio>();
+            var caso = new AgregarReporteCasoDeUso(repo.Object);
+
+            var dto = new AgregarReporteDto { razon = "Motivo" };
+            var cliente = new Cliente { id = 1 };
+            var artesano = new Artesano { id = 2 };
+            var producto = new Producto { id = 3 };
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                caso.Ejecutar(dto, artesano, cliente, producto));
+        }
+
+        [TestMethod]
+        public void Ejecutar_ReporteAProducto_LlamaRepositorioAgregar()
+        {
+            // Arrange
+            var repo = new Mock<IReporteRepositorio>();
+            Reporte reporteCapturado = null;
+
+            repo.Setup(r => r.Agregar(It.IsAny<Reporte>()))
+                .Callback<Reporte>(r => reporteCapturado = r);
+
+            var caso = new AgregarReporteCasoDeUso(repo.Object);
+
+            var dto = new AgregarReporteDto { razon = "Producto defectuoso" };
+            var cliente = new Cliente { id = 1 };
+            var producto = new Producto { id = 10 };
+
+            // Act
+            caso.Ejecutar(dto, null, cliente, producto);
+
+            // Assert
+            Assert.IsNotNull(reporteCapturado);
+            Assert.AreEqual("Producto defectuoso", reporteCapturado.razon);
+            Assert.AreEqual(cliente.id, reporteCapturado.clienteId);
+            Assert.AreEqual(producto.id, reporteCapturado.productoId);
+            Assert.IsNull(reporteCapturado.artesano);
+
+            repo.Verify(r => r.Agregar(It.IsAny<Reporte>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void Ejecutar_ReporteAArtesano_LlamaRepositorioAgregar()
+        {
+            // Arrange
+            var repo = new Mock<IReporteRepositorio>();
+            Reporte reporteCapturado = null;
+
+            repo.Setup(r => r.Agregar(It.IsAny<Reporte>()))
+                .Callback<Reporte>(r => reporteCapturado = r);
+
+            var caso = new AgregarReporteCasoDeUso(repo.Object);
+
+            var dto = new AgregarReporteDto { razon = "Mal servicio" };
+            var cliente = new Cliente { id = 1 };
+            var artesano = new Artesano { id = 20 };
+
+            // Act
+            caso.Ejecutar(dto, artesano, cliente, null);
+
+            // Assert
+            Assert.IsNotNull(reporteCapturado);
+            Assert.AreEqual("Mal servicio", reporteCapturado.razon);
+            Assert.AreEqual(cliente.id, reporteCapturado.clienteId);
+            Assert.AreEqual(artesano.id, reporteCapturado.artesanoId);
+            Assert.IsNull(reporteCapturado.producto);
+
+            repo.Verify(r => r.Agregar(It.IsAny<Reporte>()), Times.Once);
+        }
+    }
+    [TestClass]
+    public class ReporteTests
+    {
+        [TestMethod]
+        public void Validar_RazonVacia_LanzaExcepcion()
+        {
+            var reporte = new Reporte
+            {
+                razon = ""
+            };
+
+            Assert.ThrowsException<LongitudRazonException>(() => reporte.Validar());
+        }
+
+        [TestMethod]
+        public void Validar_RazonCorrecta_NoLanza()
+        {
+            var reporte = new Reporte
+            {
+                razon = "Motivo válido"
+            };
+
+            reporte.Validar();
+
+            Assert.IsTrue(true);
+        }
+    }
+    [TestClass]
+    public class EliminarReporteCasoDeUsoTests
+    {
+        [TestMethod]
+        public void Ejecutar_LlamaRepositorioEliminarConIdCorrecto()
+        {
+            // Arrange
+            var repo = new Mock<IReporteRepositorio>();
+            var caso = new EliminarReporteCasoDeUso(repo.Object);
+
+            int reporteId = 1;
+
+            // Act
+            caso.Ejecutar(reporteId);
+
+            // Assert
+            repo.Verify(r => r.Eliminar(reporteId), Times.Once);
+        }
+    }
 }
 

@@ -1,5 +1,91 @@
-﻿@{
-    ViewData["Title"] = "futuro listado de reportes";
+﻿@model ListadoDeReportesViewModel
+
+@{
+    ViewData["Title"] = "Reportes";
 }
 
-<h1>reportes</h1>
+<h1 class="mb-4">Reportes</h1>
+
+@if (Model.Reportes != null && Model.Reportes.Any())
+{
+    <div class="row g-3">
+        @foreach (var reporte in Model.Reportes)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+
+                        <small class="text-muted">
+                            @reporte.fecha.ToString("dd/MM/yyyy")
+                        </small>
+
+                        <h5 class="mt-2">
+                            @reporte.razon
+                        </h5>
+
+                        <p class="mb-2">
+                            <strong>Cliente:</strong>
+                            @(reporte.cliente != null ? reporte.cliente.nombre : "Sin cliente")
+                        </p>
+
+                        <div class="mb-3">
+                            @* Reporte a producto *@
+                            @if (reporte.artesano == null && reporte.producto != null)
+                            {
+                                <img src="~/images/productos/@reporte.producto.imagen"
+                                     class="img-fluid rounded"
+                                     alt="Producto" />
+                            }
+
+                            @* Reporte a artesano *@
+                            else if (reporte.producto == null && reporte.artesano != null)
+                            {
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="~/images/usuarios/@(string.IsNullOrEmpty(reporte.artesano.foto)
+                                                             ? "default-user.png"
+                                                             : reporte.artesano.foto)"
+                                    class="rounded-circle"
+                                    style="width:50px;height:50px;object-fit:cover;"
+                                    alt="Artesano" />
+
+                                    <span class="badge bg-secondary p-2">
+                                        Artesano reportado: @reporte.artesano.nombre
+                                    </span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mt-auto d-flex justify-content-end gap-2">
+                            <form asp-action="EliminarReporte" method="post">
+                                <input type="hidden" name="id" value="@reporte.id" />
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger btn-sm">
+                                    Eliminar
+                                </button>
+                            </form>
+
+                            <form asp-action="AceptarReporte" method="post">
+                                <input type="hidden" name="id" value="@reporte.id" />
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="btn btn-primary btn-sm">
+                                    Aceptar
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-secondary text-center">
+        No hay reportes pendientes.
+    </div>
+}
