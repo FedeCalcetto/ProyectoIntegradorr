@@ -122,7 +122,7 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .HasOne(r => r.producto)
                 .WithMany()
                 .HasForeignKey(r => r.productoId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Producto>()
             .HasMany(p => p.Fotos)
