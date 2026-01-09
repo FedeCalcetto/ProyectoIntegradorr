@@ -12,5 +12,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         Task CrearOrdenAsync(Orden orden);
         Task<Orden?> ObtenerOrdenPorIdAsync(Guid ordenId);
         Task ActualizarOrdenAsync(Orden orden);
+        Task<List<Orden>> ObtenerPorIdsAsync(List<Guid> ids);
+
     }
 }

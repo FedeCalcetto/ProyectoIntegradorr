@@ -17,7 +17,44 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<Producto> productos { get; set; } = new List<Producto>();
         public string? foto { get; set; }
         //public List<PedidoPersonalizado> pedidosArtesano { get; set; }
+        // ============================
+        // MERCADO PAGO - MARKETPLACE
+        // ============================
 
+        public long? MercadoPagoUserId { get;  set; }
+
+        public string? MercadoPagoAccessToken { get;  set; }
+
+        public string? MercadoPagoRefreshToken { get;  set; }
+
+        public DateTime? MercadoPagoTokenExpira { get;  set; }
+
+        public bool TieneMercadoPagoConectado =>
+            !string.IsNullOrEmpty(MercadoPagoAccessToken);
+
+        // ============================
+        // MÉTODOS DE DOMINIO
+        // ============================
+
+        public void ConectarMercadoPago(
+            long userId,
+            string accessToken,
+            string refreshToken,
+            int expiresInSeconds)
+        {
+            MercadoPagoUserId = userId;
+            MercadoPagoAccessToken = accessToken;
+            MercadoPagoRefreshToken = refreshToken;
+            MercadoPagoTokenExpira = DateTime.UtcNow.AddSeconds(expiresInSeconds);
+        }
+
+        public void DesconectarMercadoPago()
+        {
+            MercadoPagoUserId = null;
+            MercadoPagoAccessToken = null;
+            MercadoPagoRefreshToken = null;
+            MercadoPagoTokenExpira = null;
+        }
         public void ValidarTelefono(string telefono)
         {
             if(telefono != null) {

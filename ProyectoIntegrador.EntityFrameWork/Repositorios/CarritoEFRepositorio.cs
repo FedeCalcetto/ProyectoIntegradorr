@@ -104,5 +104,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         );
 
         }
+
+        public async Task EliminarItemsCarrito(int usuarioId)
+        {
+            await _contexto.CarritoItems
+                .Where(ci => ci.carrito.UsuarioId == usuarioId)
+                .ExecuteDeleteAsync();
+                _contexto.SaveChanges();
+        }
+
+       
     }
 }

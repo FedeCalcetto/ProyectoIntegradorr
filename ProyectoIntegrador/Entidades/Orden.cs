@@ -9,26 +9,30 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
     public class Orden
     {
         public Guid Id { get; set; }
+        public int ClienteId { get; private set; }
+        public Cliente Cliente { get; private set; }
+        public int ArtesanoId { get; private set; }
+        public Artesano Artesano { get; private set; }
 
-        public int UsuarioId { get; set; }
 
-        public DateTime FechaCreacion { get; set; } 
-
+        //Sirve para validar el pago correspondiente al artesano
+        public string? MercadoPagoSellerUserId { get; private set; }
+        public DateTime FechaCreacion { get; set; }
+        public DateTime? FechaPago { get; private set; }
         public EstadoOrden Estado { get; set; } 
-
         public decimal Total { get; set; }
-
         // Mercado Pago
         public string? PreferenceId { get; set; }
-
+        public long? MercadoPagoPaymentId { get; private set; }
         // Navegación
         public ICollection<OrdenItem> Items { get; set; } = new List<OrdenItem>();
 
         private Orden() { }
-        public Orden(int usuarioId)
+        public Orden(int usuarioId, int artesanoId)
         {
             Id = Guid.NewGuid();
-            UsuarioId = usuarioId;
+            ClienteId = usuarioId;
+            ArtesanoId = artesanoId;
             FechaCreacion = DateTime.UtcNow;
             Estado = EstadoOrden.PendientePago;
         }
@@ -53,12 +57,18 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         {
             PreferenceId = preferenceId;
         }
-        public void MarcarComoPagada()
+        public void MarcarComoPagada(long paymentId)
         {
+            if (Estado == EstadoOrden.Pagada)
+                return; // idempotencia
+
             if (Estado != EstadoOrden.PendientePago)
-                throw new InvalidOperationException("Solo se puede pagar una orden pendiente");
+                throw new InvalidOperationException(
+                    "Solo se puede pagar una orden pendiente");
 
             Estado = EstadoOrden.Pagada;
+            FechaPago = DateTime.UtcNow;
+            MercadoPagoPaymentId = paymentId;
         }
 
         public void MarcarComoCancelada()
@@ -67,6 +77,30 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
                 throw new InvalidOperationException("Solo se puede cancelar una orden pendiente");
 
             Estado = EstadoOrden.Cancelada;
+        }
+
+        public void MarcarComoRechazada()
+        {
+            if (Estado != EstadoOrden.PendientePago)
+                throw new InvalidOperationException("Solo se puede rechazar una orden pendiente");
+
+            Estado = EstadoOrden.Rechazada;
+        }
+
+        public void MarcarComoPendiente()
+        {
+            Estado = EstadoOrden.PendientePago;
+        }
+
+        public void AsignarMercadoPagoSeller(string mpUserId)
+        {
+            MercadoPagoSellerUserId = mpUserId;
+        }
+
+        public void AsignarPaymentId(long paymentId)
+        {
+            MercadoPagoPaymentId = paymentId;
+            FechaPago = DateTime.UtcNow;
         }
     }
 
