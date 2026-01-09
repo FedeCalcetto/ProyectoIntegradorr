@@ -14,7 +14,7 @@ namespace ProyectoIntegrador_Web.Services
             _config = config;
         }
 
-        public async Task EnviarCodigoAsync(string destino, string codigo, string tipo)
+        public async Task EnviarCodigoAsync(string destino, string codigo, string tipo, string token)
         {
             var from = _config["EmailSettings:From"];
             var password = _config["EmailSettings:Password"];
@@ -36,10 +36,12 @@ namespace ProyectoIntegrador_Web.Services
             // ----- TEXTO SEGÚN TIPO -----
             string asunto;
             string cuerpo;
-
             if (tipo == "verificacion")
             {
-                string link = $"https://localhost:7131/Login/VerificarEmail?email={destino}";
+                // Incluyo token en el link solo si no es null
+                string link = token != null
+                    ? $"https://localhost:7131/Login/VerificarEmail?email={destino}&token={token}"
+                    : $"https://localhost:7131/Login/VerificarEmail?email={destino}";
 
                 asunto = "Código de verificación";
                 cuerpo = $@"

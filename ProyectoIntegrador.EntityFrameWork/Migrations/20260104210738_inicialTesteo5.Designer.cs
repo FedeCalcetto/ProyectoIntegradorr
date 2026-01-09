@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260104210738_inicialTesteo5")]
+    partial class inicialTesteo5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -515,12 +518,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
 
-                    b.Property<string>("TokenVerificacionEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TokenVerificacionEmailExpira")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("Verificado")
                         .HasColumnType("bit");
 
@@ -534,8 +531,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<string>("password")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("rol")
                         .IsRequired()

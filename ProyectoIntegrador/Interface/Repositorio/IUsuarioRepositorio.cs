@@ -9,9 +9,10 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface IUsuarioRepositorio : IRepositorio<Usuario>
     {
-        Usuario Login(string email, string password);
+       // Usuario Login(string email, string password);
         Usuario BuscarPorEmail(string email);
         void Actualizar(Usuario usuario);
         List<Usuario> BusquedaDeUsuarios(string filtro);
+        Usuario BuscarPorToken(string token);
     }
 }

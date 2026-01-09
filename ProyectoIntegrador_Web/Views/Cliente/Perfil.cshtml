@@ -132,13 +132,27 @@
         <button type="button"
                 class="btn btn-danger"
                 data-bs-toggle="modal"
-                data-bs-target="#modalEliminarCuenta">
+                data-bs-target="#modalEliminarCuenta"
+                onclick="pedirCodigoEliminar()">
             Eliminar Cuenta
         </button>
     </div>
 
     @await Html.PartialAsync("_ModalEliminarCuenta",Model.EliminarCuenta )
     
+
+    <script>
+        // esto llama al post en ClientController --> PedirCodigoEliminar
+        function pedirCodigoEliminar() {
+            fetch('/Cliente/PedirCodigoEliminar', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken':
+                        document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            });
+        }
+    </script>
 
     <script>
         const input = document.getElementById("archivoFotoCliente");

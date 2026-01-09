@@ -108,10 +108,33 @@
         </form>
 
         <div class="d-flex justify-content-center mt-4">
-            <a asp-action="ConfirmarEliminacion" class="btn btn-danger">
+            <button type="button"
+                    class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalEliminarCuenta"
+                    onclick="pedirCodigoEliminarArtesano()">
                 Eliminar Cuenta
-            </a>
+            </button>
         </div>
+
+        @if (Model.EliminarCuenta != null)
+        {
+            @await Html.PartialAsync("_ModalEliminarCuenta", Model.EliminarCuenta)
+        }
+
+
+        <script>
+            //llama al controller del artesano a PedirCodigoEliminar
+            function pedirCodigoEliminarArtesano() {
+                fetch('/Artesano/PedirCodigoEliminar', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken':
+                            document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+            }
+        </script>
 
         <!-- PREVISUALIZACIÓN -->
         <script>
@@ -130,6 +153,20 @@
                 }
             });
         </script>
+
+
+        @if (TempData["ErrorEliminar"] != null)
+        {
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const modal = new bootstrap.Modal(
+                        document.getElementById("modalEliminarCuenta")
+                    );
+                    modal.show();
+                });
+            </script>
+        }
+
 
     </div>
 </div>

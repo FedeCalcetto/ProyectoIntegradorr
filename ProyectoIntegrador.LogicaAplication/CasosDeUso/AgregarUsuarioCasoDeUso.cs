@@ -31,7 +31,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                     nombre = dto.Nombre,
                     apellido = dto.Apellido,
                     email = email,
-                    password = dto.Password,
+                   // password = dto.Password,
                     rol = "Artesano",
                     CodigoVerificacion = codigoVerificacion,
                     Verificado = false
@@ -44,13 +44,14 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                     nombre = dto.Nombre,
                     apellido = dto.Apellido,
                     email = email,
-                    password = dto.Password,
+                   // password = dto.Password,
                     rol = "Cliente",
                     CodigoVerificacion = codigoVerificacion,
                     Verificado = false
                 };
             }
 
+            entidad.SetPasswordInicial(dto.Password); //hash del password, sea cliente o artesano se setea el password hasheado en la entidad usuario.
             _usuarioRepositorio.Agregar(entidad);
             return entidad;
         }

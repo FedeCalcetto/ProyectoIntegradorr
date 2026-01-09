@@ -24,7 +24,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             Usuario u = _repo.BuscarPorEmail(email);
             u.validarContra(password, passwordRepetida, passwordActual);
 
-            u.password = password;
+            u.SetPasswordInicial(password);
 
             _repo.Actualizar(u);
         }

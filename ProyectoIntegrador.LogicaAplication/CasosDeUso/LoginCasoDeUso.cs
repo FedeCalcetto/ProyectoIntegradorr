@@ -20,8 +20,17 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 
         public Usuario Ejecutar(string email, string password)
         {
-            return _usuarioRepositorio.Login(email,password);
+            Usuario usuario = _usuarioRepositorio.BuscarPorEmail(email);
+
+            if (usuario == null)
+                return null;
+
+            if (!usuario.VerificarPassword(password)) // esto antes lo hacia el repositorio ahora se verifica aca con el metodo de la entidad usuario.
+                return null;
+
+            return usuario;
         }
+
 
     }
 }

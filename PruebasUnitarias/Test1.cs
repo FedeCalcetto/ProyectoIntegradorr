@@ -20,13 +20,16 @@ namespace PruebasUnitarias
         public void Ejecutar_LoginCorrecto_RetornaUsuario()
         {
             var repo = new Mock<IUsuarioRepositorio>();
+
             var esperado = new Cliente
             {
-                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
-                password = "Password123"
-            };
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com")
 
-            repo.Setup(r => r.Login("test@mail.com", "Password123")).Returns(esperado);
+            };
+            esperado.SetPasswordInicial("Password123");
+
+            repo.Setup(r => r.BuscarPorEmail("test@mail.com"))
+                .Returns(esperado);
 
             var caso = new LoginCasoDeUso(repo.Object);
 
@@ -36,18 +39,29 @@ namespace PruebasUnitarias
             Assert.AreEqual("test@mail.com", resultado.email.email);
         }
 
+
+
         [TestMethod]
         public void Ejecutar_LoginIncorrecto_RetornaNull()
         {
             var repo = new Mock<IUsuarioRepositorio>();
-            repo.Setup(r => r.Login("wrong@mail.com", "123")).Returns((Usuario)null);
+
+            var usuario = new Cliente
+            {
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("EmailIncorrecto@mail.com")
+            };
+            usuario.SetPasswordInicial("Password123");
+
+            repo.Setup(r => r.BuscarPorEmail("test@mail.com"))
+                .Returns(usuario);
 
             var caso = new LoginCasoDeUso(repo.Object);
 
-            var resultado = caso.Ejecutar("wrong@mail.com", "123");
+            var resultado = caso.Ejecutar("test@mail.com", "PasswordIncorrecta");
 
             Assert.IsNull(resultado);
         }
+
     }
 
     // -------------------------------------------------------------------

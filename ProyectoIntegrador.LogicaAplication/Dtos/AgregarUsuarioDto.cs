@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Dtos
 {
-    public class AgregarUsuarioDto
+    public class    AgregarUsuarioDto
     {
         public string Nombre { get; set; }
         public string Apellido { get; set; }

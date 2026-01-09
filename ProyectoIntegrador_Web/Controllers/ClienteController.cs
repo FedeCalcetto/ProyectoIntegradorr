@@ -73,32 +73,16 @@ namespace ProyectoIntegrador_Web.Controllers
         }
 
 
-        public async Task<IActionResult> PerfilAsync()
+        public IActionResult Perfil()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
 
             if (string.IsNullOrEmpty(email))
-            {
                 return RedirectToAction("Login", "Login");
-            }
 
             var cliente = _obtenerCliente.Ejecutar(email);
-
             if (cliente == null)
-            {
                 return NotFound();
-            }
-
-            // 🔴 GENERAR CÓDIGO DE ELIMINACIÓN
-            string codigo = new Random().Next(100000, 999999).ToString();
-
-            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
-            HttpContext.Session.SetString(
-                "EliminarExpira_" + email,
-                DateTime.Now.AddMinutes(10).ToString()
-            );
-
-            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
 
             var modelo = new EditarClienteViewModel
             {
@@ -109,9 +93,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 Departamento = cliente.direccion?.departamento,
                 Barrio = cliente.direccion?.barrio,
                 Foto = cliente.foto,
-
                 DepartamentosOpciones = ObtenerDepartamentos(),
-
                 EliminarCuenta = new EliminarCuentaViewModel
                 {
                     Email = cliente.email.email
@@ -121,6 +103,29 @@ namespace ProyectoIntegrador_Web.Controllers
             return View(modelo);
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PedirCodigoEliminar() //al abrir el modal
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized();
+
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+            HttpContext.Session.SetString(
+                "EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString()
+            );
+
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion", null);
+
+            return Ok();
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Perfil(EditarClienteViewModel modelo, IFormFile archivoFotoCliente)
@@ -128,8 +133,29 @@ namespace ProyectoIntegrador_Web.Controllers
             try
             {
                 var email = HttpContext.Session.GetString("loginUsuario");
+
+                modelo.EliminarCuenta ??= new EliminarCuentaViewModel //supuestramente para que no se rompa boton de guardar cambios
+                {
+                    Email = email
+                };
+
+
                 modelo.DepartamentosOpciones = ObtenerDepartamentos();
                 ModelState.Remove("archivoFotoCliente");
+
+               /* if (!ModelState.IsValid)  //tira los errores por consola para ver que es lo que afecta
+                {
+                    foreach (var error in ModelState)
+                    {
+                        foreach (var subError in error.Value.Errors)
+                        {
+                            Console.WriteLine($"ERROR {error.Key}: {subError.ErrorMessage}");
+                        }
+                    }
+
+                    TempData["Error"] = "ModelState inválido (ver consola)";
+                    return View(modelo);
+                }*/
 
                 if (!ModelState.IsValid)
                 {

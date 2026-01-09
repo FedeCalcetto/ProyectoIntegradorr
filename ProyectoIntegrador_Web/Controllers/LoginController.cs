@@ -132,6 +132,7 @@ namespace ProyectoIntegrador_Web.Controllers
             /////////////////////////////////////////////
 
             string codigo = new Random().Next(100000, 999999).ToString();
+            string token = Guid.NewGuid().ToString("N");
 
             var dto = new AgregarUsuarioDto
             {
@@ -146,7 +147,13 @@ namespace ProyectoIntegrador_Web.Controllers
             {
                 var entidad = _agregarUsuario.Ejecutar(dto, codigo);
 
-                await _email.EnviarCodigoAsync(entidad.email.email, codigo, "verificacion");
+                entidad.CodigoVerificacion = codigo;
+                entidad.TokenVerificacionEmail = token;
+                entidad.TokenVerificacionEmailExpira = DateTime.UtcNow.AddMinutes(30);
+
+                _usuarioRepositorio.Actualizar(entidad);
+
+                await _email.EnviarCodigoAsync(entidad.email.email, codigo, "verificacion", token);
 
                 // Guardar expiración del código
                 HttpContext.Session.SetString("Codigo_" + entidad.email.email, codigo);
@@ -167,8 +174,37 @@ namespace ProyectoIntegrador_Web.Controllers
         // ===========================================================
         // VERIFICAR EMAIL GET
         // ===========================================================
-        public IActionResult VerificarEmail(string email)
+        public IActionResult VerificarEmail(string email, string token = null)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("Login");
+            }
+
+            var usuario = _usuarioRepositorio.BuscarPorEmail(email);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(token)
+                && usuario.TokenVerificacionEmail == token
+                && usuario.TokenVerificacionEmailExpira > DateTime.UtcNow)
+            {
+                // Validación automática exitosa
+                usuario.Verificado = true;
+                _usuarioRepositorio.Actualizar(usuario);
+
+                // Podrías usar TempData para mostrar mensaje en login
+                TempData["MensajeVerificacionEmail"] = "Correo verificado correctamente."; //uso otro tempdata porque 
+                //al entrar al perfil aparecia ese mensaje ya que tambien usa tempdata al actualizar el perfil.
+
+                // Redirigir al login u otra vista de éxito
+                return View("VerificadoCorrectamente");
+            }
+
+            // Si no viene token o no es válido, mostrar la vista para ingresar código manual
             ViewBag.Email = email;
             return View();
         }
@@ -176,8 +212,8 @@ namespace ProyectoIntegrador_Web.Controllers
         // ===========================================================
         // VERIFICAR EMAIL POST
         // ===========================================================
-        [HttpPost]
-        public IActionResult VerificarEmail(string email, string codigo)
+        [HttpPost, ActionName("VerificarEmail")]
+        public IActionResult VerificarEmailPost(string email, string codigo)
         {
             var usuario = _usuarioRepositorio.BuscarPorEmail(email);
             if (usuario == null)
@@ -230,17 +266,20 @@ namespace ProyectoIntegrador_Web.Controllers
             if (usuario == null)
                 return NotFound();
 
-            var nuevoCodigo = new Random().Next(100000, 999999).ToString();
+            string nuevoCodigo = new Random().Next(100000, 999999).ToString();
+            string nuevoToken = Guid.NewGuid().ToString("N");
 
             usuario.CodigoVerificacion = nuevoCodigo;
+            usuario.TokenVerificacionEmail = nuevoToken;
+            usuario.TokenVerificacionEmailExpira = DateTime.UtcNow.AddMinutes(30);
+
             _usuarioRepositorio.Actualizar(usuario);
 
-            await _email.EnviarCodigoAsync(email, nuevoCodigo, "verificacion");
-
-            HttpContext.Session.SetString("Codigo_" + email, nuevoCodigo);
-            HttpContext.Session.SetString(
-                "CodigoExpira_" + email,
-                DateTime.Now.AddMinutes(10).ToString()
+            await _email.EnviarCodigoAsync(
+                email,
+                nuevoCodigo,
+                "verificacion",
+                nuevoToken
             );
 
             ViewBag.Email = email;
@@ -248,5 +287,6 @@ namespace ProyectoIntegrador_Web.Controllers
 
             return View("VerificarEmail");
         }
+
     }
 }
