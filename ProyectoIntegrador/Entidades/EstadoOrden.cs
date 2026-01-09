@@ -4,6 +4,7 @@
     {
         PendientePago = 1,
         Pagada = 2,
-        Cancelada = 3
+        Cancelada = 3,
+        Rechazada = 4
     }
 }

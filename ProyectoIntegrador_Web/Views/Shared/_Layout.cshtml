@@ -141,6 +141,13 @@
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="Artesano"
+                                               asp-action="Inicio">
+                                                Mis facturas
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Artesano"
                                                asp-action="PerfilArtesano">
                                                 Perfil
                                             </a>
@@ -184,12 +191,16 @@
                             </li>
 
                             <!--CARRITO-->
-                            <a class="nav-link d-flex align-items-center justify-content-center"
+                            <a class="nav-link position-relative d-flex align-items-center justify-content-center"
                                asp-controller="Carrito"
                                asp-action="Index">
+
                                 <img src="~/images/carrito/carrito.png"
                                      alt="Carrito"
                                      style="width:28px; height:28px;" />
+
+                                @await Component.InvokeAsync("CarritoCantidad")
+
                             </a>
                         }
 

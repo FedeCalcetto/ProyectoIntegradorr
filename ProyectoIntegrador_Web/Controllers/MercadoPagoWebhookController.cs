@@ -17,14 +17,15 @@ namespace ProyectoIntegrador_Web.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IOrdenRepositorio _ordenRepo;
-
+        private readonly IProductoRepositorio _productoRepo;
         public MercadoPagoWebhookController(
             IConfiguration config,
-            IOrdenRepositorio ordenRepo)
+            IOrdenRepositorio ordenRepo,
+            IProductoRepositorio productoRepo)
         {
             _config = config;
             _ordenRepo = ordenRepo;
-
+            _productoRepo = productoRepo;
             MercadoPagoConfig.AccessToken =
                 _config["MercadoPago:AccessToken"];
         }
@@ -59,16 +60,54 @@ namespace ProyectoIntegrador_Web.Controllers
             var status = payment.Status;
             var ordenId = payment.ExternalReference;
 
-            if (status == "approved" &&
-                Guid.TryParse(ordenId, out var ordenGuid))
+            if (Guid.TryParse(ordenId, out var ordenGuid))
             {
                 var orden = await _ordenRepo.ObtenerOrdenPorIdAsync(ordenGuid);
-
-                if (orden == null || orden.Estado == EstadoOrden.Pagada)
+                if (orden == null)
                     return;
+                switch (status)
+                {
+                    case "approved":
+                        if (orden.Estado != EstadoOrden.Pagada)
+                        {
+                            orden.MarcarComoPagada(payment.Id.Value);
 
-                orden.MarcarComoPagada();
-                await _ordenRepo.ActualizarOrdenAsync(orden);
+                            var ordenItems = orden.Items;
+
+                            foreach (var item in ordenItems)
+                            {
+                                var producto = _productoRepo
+                                    .Obtener(item.ProductoId);
+
+                                producto.DescontarStock(item.Cantidad);
+
+                                _productoRepo.Editar(producto);
+                            }
+
+                            await _ordenRepo.ActualizarOrdenAsync(orden);
+                        }
+                        break;
+
+                        case "rejected":
+                            orden.MarcarComoRechazada();
+                            await _ordenRepo.ActualizarOrdenAsync(orden);
+                            break;
+
+                        case "cancelled":
+                            orden.MarcarComoCancelada();
+                            await _ordenRepo.ActualizarOrdenAsync(orden);
+                            break;
+
+                        case "pending":
+                        case "in_process":
+                        default:
+                            orden.MarcarComoPendiente();
+                            await _ordenRepo.ActualizarOrdenAsync(orden);
+                            break;
+                    }
+
+                
+
             }
         }
     }

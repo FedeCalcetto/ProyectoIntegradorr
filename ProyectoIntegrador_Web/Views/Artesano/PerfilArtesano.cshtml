@@ -61,6 +61,14 @@
             <input type="hidden" asp-for="Foto" />
 
             <div class="mb-3">
+            <a asp-controller="MercadoPagoOAuth"
+               asp-action="Conectar"
+               class="btn btn-primary">
+                Conectar con Mercado Pago
+            </a>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="Nombre" class="form-label fw-semibold"></label>
                 <input asp-for="Nombre" class="form-control" />
                 <span asp-validation-for="Nombre" class="text-danger small"></span>
@@ -105,6 +113,7 @@
                 <a asp-action="Inicio" class="btn btn-outline-secondary">Volver</a>
                 <button type="submit" class="btn btn-primary">Guardar cambios</button>
             </div>
+
         </form>
 
         <div class="d-flex justify-content-center mt-4">

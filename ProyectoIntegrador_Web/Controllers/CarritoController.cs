@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador_Web.Models;
+using ProyectoIntegrador_Web.Services;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -15,9 +16,10 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IEliminarItemDelCarrito _eliminarItem;
         private readonly IObtenerProductosDeInteres _productosInteres;
         private readonly IAgregarOrden _agregarOrden;
+        private readonly ICarritoService _carritoService;
 
-               public CarritoController(IObtenerProducto obtenerProducto, IMostrarProductosCarrito mostrarProductosCarrito, IObtenerUsuario obtenerUsuario, 
-            IAgragarAlCarrito agragarAlCarrito, IEliminarItemDelCarrito eliminarItem, IObtenerProductosDeInteres productosInteres, IAgregarOrden agregarOrden)
+        public CarritoController(IObtenerProducto obtenerProducto, IMostrarProductosCarrito mostrarProductosCarrito, IObtenerUsuario obtenerUsuario, 
+            IAgragarAlCarrito agragarAlCarrito, IEliminarItemDelCarrito eliminarItem, IObtenerProductosDeInteres productosInteres, IAgregarOrden agregarOrden, ICarritoService carritoService)
         {
             _obtenerProducto = obtenerProducto;
             _mostrarProductosCarrito = mostrarProductosCarrito;
@@ -26,6 +28,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _eliminarItem = eliminarItem;
             _productosInteres = productosInteres;
             _agregarOrden = agregarOrden;
+            _carritoService = carritoService;
         }
 
         public IActionResult Index()
@@ -77,8 +80,14 @@ namespace ProyectoIntegrador_Web.Controllers
         {
             var email = HttpContext.Session.GetString("loginUsuario");
             var usuario = _obtenerUsuario.Ejecutar(email);
-            var ordenId = await _agregarOrden.AgregarOrdenAsync(usuario.id);
-            return RedirectToAction("CrearPago", "Pago", new { ordenId });
+            var ordenesIds = await _agregarOrden.AgregarOrdenesAsync(usuario.id);
+            return RedirectToAction(
+           "OrdenesPendientes",
+           "Orden",
+           new { ids = string.Join(",", ordenesIds) }
+   );
         }
+
+
     }
 }

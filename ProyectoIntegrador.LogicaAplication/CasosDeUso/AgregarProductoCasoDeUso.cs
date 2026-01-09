@@ -32,7 +32,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                 stock = dto.Stock,
                 imagen = dto.Imagen,
                 SubCategoriaId = dto.SubCategoriaId,
-                artesano = a,
+                ArtesanoId = a.id,
                 Fotos = new List<ProductoFoto>()
             };
 

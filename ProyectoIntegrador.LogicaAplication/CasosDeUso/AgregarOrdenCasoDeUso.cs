@@ -22,27 +22,40 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             _carritoRepo = carritoRepo;
         }
 
-        public async Task<Guid> AgregarOrdenAsync(int usuarioId)
+        public async Task<List<Guid>> AgregarOrdenesAsync(int usuarioId)
         {
             var itemsCarrito = _carritoRepo.ObtenerItemsDeUsuario(usuarioId);
 
-            var orden = new Orden(usuarioId);
+            // Agrupar por artesano
+            var itemsPorArtesano = itemsCarrito
+                .GroupBy(i => i.producto.ArtesanoId);
 
-            foreach (var item in itemsCarrito)
+            var ordenesIds = new List<Guid>();
+
+            foreach (var grupo in itemsPorArtesano)
             {
-                orden.AgregarItem(
-                    item.productoId,
-                    item.producto.nombre,
-                    item.cantidad,
-                    item.producto.precio
-                );
+                var artesanoId = grupo.Key;
+
+                var orden = new Orden(usuarioId, artesanoId);
+
+                foreach (var item in grupo)
+                {
+                    orden.AgregarItem(
+                        item.productoId,
+                        item.producto.nombre,
+                        item.cantidad,
+                        item.producto.precio
+                    );
+                }
+
+                orden.CalcularTotal();
+
+                await _ordenRepo.CrearOrdenAsync(orden);
+
+                ordenesIds.Add(orden.Id);
             }
 
-            orden.CalcularTotal();
-
-            await _ordenRepo.CrearOrdenAsync(orden);
-
-            return orden.Id;
+            return ordenesIds;
         }
     }
 

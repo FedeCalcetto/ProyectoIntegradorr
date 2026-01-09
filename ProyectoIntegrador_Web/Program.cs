@@ -76,6 +76,7 @@ namespace ProyectoIntegrador_Web
             //REGISTRO DEL SERVICIO DE EMAIL
             builder.Services.AddScoped<EmailService>();
             builder.Services.AddTransient<EmailService>();
+            builder.Services.AddScoped<ICarritoService, CarritoService>();
 
 
 

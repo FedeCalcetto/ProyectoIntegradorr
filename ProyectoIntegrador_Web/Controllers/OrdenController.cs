@@ -1,83 +1,29 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
     public class OrdenController : Controller
     {
-        // GET: OrdenController
-        public ActionResult Index()
+        private readonly IOrdenRepositorio _ordenRepo;
+
+        public OrdenController(IOrdenRepositorio ordenRepo)
         {
-            return View();
+            _ordenRepo = ordenRepo;
         }
 
-        // GET: OrdenController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public async Task<IActionResult> OrdenesPendientes(string ids)
         {
-            return View();
-        }
+            var guids = ids.Split(',')
+                           .Select(Guid.Parse)
+                           .ToList();
 
-        // GET: OrdenController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+            var ordenes = await _ordenRepo.ObtenerPorIdsAsync(guids);
 
-        // POST: OrdenController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: OrdenController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: OrdenController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: OrdenController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: OrdenController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return View(ordenes);
         }
     }
+
 }

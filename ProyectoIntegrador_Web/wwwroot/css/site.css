@@ -383,3 +383,20 @@ layout-background {
     width: 50px;
     height: 50px;
 }
+
+
+/*CARRITO*/
+
+.carrito-badge {
+    position: absolute;
+    top: -3px;
+    right: -6px;
+    background-color: #dc3545; /* rojo */
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 70%;
+    min-width: 22px;
+    text-align: center;
+}
