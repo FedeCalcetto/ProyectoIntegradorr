@@ -62,5 +62,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             return _contexto.Reportes
             .FirstOrDefault(r => r.id == id);
         }
+
+        public Boolean ArtesanoConReportes(int artesanoId)
+        {
+
+            return _contexto.Reportes.Any(r => r.artesanoId == artesanoId);
+        }
     }
 }

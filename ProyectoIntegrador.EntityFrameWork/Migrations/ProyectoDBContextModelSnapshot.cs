@@ -765,7 +765,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
                         .WithMany()
                         .HasForeignKey("artesanoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
                         .WithMany()
