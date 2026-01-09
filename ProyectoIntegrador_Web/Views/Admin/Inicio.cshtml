@@ -41,9 +41,7 @@
                             else if (reporte.producto == null && reporte.artesano != null)
                             {
                                 <div class="d-flex align-items-center gap-2">
-                                    <img src="~/images/usuarios/@(string.IsNullOrEmpty(reporte.artesano.foto)
-                                                             ? "default-user.png"
-                                                             : reporte.artesano.foto)"
+                                    <img src="@reporte.artesano.foto"
                                     class="rounded-circle"
                                     style="width:50px;height:50px;object-fit:cover;"
                                     alt="Artesano" />
