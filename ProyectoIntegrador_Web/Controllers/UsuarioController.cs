@@ -300,69 +300,70 @@ namespace ProyectoIntegrador_Web.Controllers
             return View();
         }
 
-      /*  public async Task<IActionResult> ConfirmarEliminacion()  esto se muda al get, para que trabaje con el MODAL
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
+        /*  public async Task<IActionResult> ConfirmarEliminacion()  esto se muda al get, para que trabaje con el MODAL
+          {
+              var email = HttpContext.Session.GetString("loginUsuario");
 
-            if (email == null)
-                return RedirectToAction("Login", "Login");
+              if (email == null)
+                  return RedirectToAction("Login", "Login");
 
-            string codigo = new Random().Next(100000, 999999).ToString();
+              string codigo = new Random().Next(100000, 999999).ToString();
 
-            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
-            HttpContext.Session.SetString("EliminarExpira_" + email,
-                DateTime.Now.AddMinutes(10).ToString());
+              HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+              HttpContext.Session.SetString("EliminarExpira_" + email,
+                  DateTime.Now.AddMinutes(10).ToString());
 
-            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+              await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
 
-            TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
+              TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
 
-            return View(new EliminarCuentaViewModel { Email = email });
-        }*/
+              return View(new EliminarCuentaViewModel { Email = email });
+          }*/
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
         {
-            var email = modelo.Email;
+            var emailSesion = HttpContext.Session.GetString("loginUsuario");// por seguridad se toa el mail de session no del model(puede ser usado por erramientas externas DevTools y cambiarlo)
+
+            if (string.IsNullOrEmpty(emailSesion))
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
             var codigoIngresado = modelo.Codigo;
 
-            // Código guardado en sesión
-            var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
-            var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
+            var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + emailSesion);
+            var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + emailSesion);
 
-            // No hay código o expiró la sesión
+            // ❌ No hay código o expiró
             if (codigoGuardado == null || expiraStr == null)
             {
                 TempData["ErrorEliminar"] = "El código expiró. Pedí uno nuevo.";
                 return VolverAlPerfilSegunRol();
             }
 
-            DateTime expira = DateTime.Parse(expiraStr);
-
-            //  Código vencido
-            if (DateTime.Now > expira)
+            if (!DateTime.TryParse(expiraStr, out var expira) || DateTime.Now > expira)
             {
                 TempData["ErrorEliminar"] = "El código expiró.";
                 return VolverAlPerfilSegunRol();
             }
 
-            //  Código incorrecto
+            // ❌ Código incorrecto
             if (codigoGuardado != codigoIngresado)
             {
                 TempData["ErrorEliminar"] = "Código incorrecto.";
                 return VolverAlPerfilSegunRol();
             }
 
-            //  Código correcto → eliminar usuario
-            _eliminarUsuario.Ejecutar(email);
+            // ✅ Código correcto
+            _eliminarUsuario.Ejecutar(emailSesion);
 
-            // Limpiar sesión
             HttpContext.Session.Clear();
 
-            // Vista final de confirmación
             return RedirectToAction("CuentaEliminada");
         }
+
         //////////////////////////////////////////////////////////////////
         ////////////////////// catalogo de usuarios //////////////////////
         //////////////////////////////////////////////////////////////////
@@ -400,7 +401,7 @@ namespace ProyectoIntegrador_Web.Controllers
             if (rol == "CLIENTE")
                 return RedirectToAction("Perfil", "Cliente");
 
-            if (rol == "ARTESANO")
+            if (rol == "Artesano")
                 return RedirectToAction("PerfilArtesano", "Artesano");
 
             return RedirectToAction("Login", "Login");

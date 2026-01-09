@@ -40,6 +40,11 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .HasValue<Artesano>("ARTESANO")
                 .HasValue<Admin>("ADMIN");
 
+            modelBuilder.Entity<Usuario>()
+                 .Property(u => u.password)
+                 .HasMaxLength(255)
+                 .IsRequired();
+                
             // 🧱 Crea tabla ClienteProductoFavorito 
             //modelBuilder.Entity<Cliente>()
             //.HasMany(c => c.productosFavoritos)

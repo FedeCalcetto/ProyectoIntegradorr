@@ -1,4 +1,5 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Entidades;
+﻿using Microsoft.EntityFrameworkCore;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
@@ -71,14 +72,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             throw new NotImplementedException();
         }
 
-        public Usuario Login(string email, string password)
-        {
+        /* public Usuario Login(string email, string password)
+         {
 
-            Usuario usuario = _contexto.Usuarios.FirstOrDefault(u => u.email.email.ToLower().Trim() == email.ToLower().Trim()
-                                && u.password == password);
+             Usuario usuario = _contexto.Usuarios.FirstOrDefault(u => u.email.email.ToLower().Trim() == email.ToLower().Trim()
+                                 && u.password == password);
 
-            return usuario;
-        }
+             return usuario;
+         }*/   // se eñimina ya que compara el password en texto plano. esto ahora lo hace el caso de uso de login.
 
         public Usuario BuscarPorEmail(string email)
         {
@@ -108,6 +109,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                     (u.nombre.Contains(filtro) || u.apellido.Contains(filtro))
                 )
                 .ToList();
+        }
+
+        public Usuario BuscarPorToken(string token)
+        {
+            return _contexto.Usuarios
+       .FirstOrDefault(u =>
+           u.TokenVerificacionEmail == token);
         }
     }
 }

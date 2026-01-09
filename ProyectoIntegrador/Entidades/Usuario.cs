@@ -1,4 +1,5 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Excepciones;
+﻿using ProyectoIntegrador.LogicaAplication.Servicios;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Validacion;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using System.ComponentModel.DataAnnotations;
@@ -12,20 +13,25 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public string nombre { get; set; }
         [Required(ErrorMessage = "El apellido es requerido")]
         public string apellido { get; set; }
-        [Required(ErrorMessage = "El email es requerido")]
+        [Required(ErrorMessage = "El email es requerido")] 
         public Email email { get; set; }
         [Required(ErrorMessage = "la contraseña es requerida")]
-        [StringLength(30, MinimumLength = 10, ErrorMessage = "La contraseña debe tener entre 10 y 30 caracteres")]
-        public string password { get; set; }
-        public string rol { get; set; }
+       // [StringLength(30, MinimumLength = 10, ErrorMessage = "La contraseña debe tener entre 10 y 30 caracteres")] esto solo en ViewModel
+        public string password { get; /*private*/ set; } 
+        public string rol { get; set; } 
 
 
         public string? CodigoVerificacion { get; set; }
         public bool Verificado { get; set; }
 
-        
 
-     
+        // Propiedades para la verificación de email via Token (clickear el link para validar automaticamente) //
+        public string? TokenVerificacionEmail { get; set; }
+        public DateTime? TokenVerificacionEmailExpira { get; set; }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
         public void Validar()
         {
             validarNombres();
@@ -78,21 +84,34 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
         private void SonIguales(string contraNueva, string contraRepetida, string contraActual)
         {
-            if (!contraActual.Equals(password))
+            if (!VerificarPassword(contraActual))
             {
                 throw new ContraActualException();
             }
 
 
-            if (contraNueva.Equals(password))
+            if (VerificarPassword(contraNueva))
             {
                 throw new SonIgualesException();
             }
+
 
             if (!contraNueva.Equals(contraRepetida))
             {
                 throw new NoCoincideException();
             }
         }
+
+
+        public void SetPasswordInicial(string passwordPlano)
+        {
+            password = PasswordHasher.Hash(passwordPlano);
+        }
+
+        public bool VerificarPassword(string passwordPlano)
+        {
+            return PasswordHasher.Verify(passwordPlano, password);
+        }
+
     }
 }

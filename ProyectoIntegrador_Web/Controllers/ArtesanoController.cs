@@ -98,7 +98,11 @@ namespace ProyectoIntegrador_Web.Controllers
                 Password = artesano.password,
                 Foto = artesano.foto,
 
-               
+                EliminarCuenta = new EliminarCuentaViewModel
+                {
+                    Email = artesano.email.email
+                }
+
             };
 
             return View(modelo);
@@ -114,6 +118,13 @@ namespace ProyectoIntegrador_Web.Controllers
             try
             {
                 var email = HttpContext.Session.GetString("loginUsuario");
+
+                modelo.EliminarCuenta ??= new EliminarCuentaViewModel //para que el modal no se pierda si surge error
+                {
+                    Email = email
+                };
+
+
                 ModelState.Remove("archivoFoto");
 
                 if (!ModelState.IsValid)
@@ -478,24 +489,40 @@ namespace ProyectoIntegrador_Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> ConfirmarEliminacion()
+        // GET: solo muestra la vista
+        public IActionResult ConfirmarEliminacion()
         {
             var email = HttpContext.Session.GetString("loginUsuario");
 
-            if (email == null)
+            if (string.IsNullOrEmpty(email))
                 return RedirectToAction("Login", "Login");
+
+            return View(new EliminarCuentaViewModel
+            {
+                Email = email
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PedirCodigoEliminar()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized();
 
             string codigo = new Random().Next(100000, 999999).ToString();
 
             HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
-            HttpContext.Session.SetString("EliminarExpira_" + email,
-                DateTime.Now.AddMinutes(10).ToString());
+            HttpContext.Session.SetString(
+                "EliminarExpira_" + email,
+                DateTime.Now.AddMinutes(10).ToString()
+            );
 
-            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+            await _email.EnviarCodigoAsync(email, codigo, "eliminacion", null);
 
-            TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
-
-            return View(new EliminarCuentaViewModel { Email = email });
+            return Ok();
         }
 
 

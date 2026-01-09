@@ -25,7 +25,8 @@ namespace ProyectoIntegrador_Web.Models
 
 
         public string? Foto { get; set; }
-        public EliminarCuentaViewModel? EliminarCuenta { get; set; }
+        [ValidateNever]// el model no valida esto, por ende no valida codigo de seguridad, etc.
+        public EliminarCuentaViewModel? EliminarCuenta { get; set; }//para que funcione el modal
 
     }
 }
