@@ -5,6 +5,41 @@
 
 <h1>facturas</h1>
 
+@if (User.IsInRole("ARTESANO"))
+{
+    <div class="modal fade" id="avisoMercadoPago" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Información importante</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Esta aplicación funciona por el momento con <b>Mercado Pago</b>.
+                        Para vender es necesario ingresar con su <b>cuenta de vendedor</b>.
+                    </p>
+                    <p>
+                        Diríjase arriba a la derecha → <b>Perfil</b>.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-dismiss="modal">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
+<!-- Para mostrarlo una única vez -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modalElement = document.getElementById('avisoMercadoPago');
 
-
+        if (modalElement && !sessionStorage.getItem("avisoMP")) {
+            var modal = new bootstrap.Modal(modalElement);
+            modal.show();
+            sessionStorage.setItem("avisoMP", "true");
+        }
+    });
+</script>

@@ -203,5 +203,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                 .Take(tamanoPagina)
                 .ToList();
         }
+
     }
 }

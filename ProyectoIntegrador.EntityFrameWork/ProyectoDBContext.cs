@@ -220,6 +220,18 @@ namespace ProyectoIntegrador.EntityFrameWork
             }
      
         );
+            //Orden
+            modelBuilder.Entity<Orden>()
+              .HasOne(o => o.Cliente)
+              .WithMany()
+              .HasForeignKey(o => o.ClienteId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Orden>()
+                .HasOne(o => o.Artesano)
+                .WithMany()
+                .HasForeignKey(o => o.ArtesanoId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

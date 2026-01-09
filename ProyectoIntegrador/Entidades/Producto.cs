@@ -24,6 +24,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<ProductoFoto> Fotos { get; set; } = new();
         [Required(ErrorMessage = "el stock es requerido")]
         public int stock { get; set; }
+        public int ArtesanoId { get; set; }
         public Artesano artesano { get; set; }
         public List<Comentario> comentarios { get; set; } = new List<Comentario>();
         public int SubCategoriaId { get; set; }
@@ -40,6 +41,14 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
             {
                 throw new PrecioStockException();
             }
+        }
+
+        public void DescontarStock(int cantidad)
+        {
+            if (stock < cantidad)
+                throw new Exception("Stock insuficiente");
+
+            stock -= cantidad;
         }
     }
 }
