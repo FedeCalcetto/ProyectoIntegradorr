@@ -9,5 +9,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface IReporteRepositorio: IRepositorio<Reporte>
     {
+        Boolean ArtesanoConReportes(int artesanoId);
     }
 }

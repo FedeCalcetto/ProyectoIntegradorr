@@ -19,13 +19,15 @@
             {
                 <img src="@Model.Artesano.foto"
                      class="img-fluid rounded-circle mb-3"
-                     style="width:150px;height:150px;object-fit:cover;" />
+                     style="width:150px;height:150px;object-fit:cover;"
+                     alt="Foto de @Model.Artesano.nombre" />
             }
             else
             {
                 <img src="/img/default-user.png"
                      class="img-fluid rounded-circle mb-3"
-                     style="width:150px;height:150px;object-fit:cover;" />
+                     style="width:150px;height:150px;object-fit:cover;"
+                     alt="Foto por defecto" />
             }
 
             <h2>@Model.Artesano.nombre</h2>
@@ -42,29 +44,37 @@
         {
             foreach (var producto in Model.Productos)
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
 
-                        <img src="/images/productos/@producto.imagen"
-                             class="card-img-top"
-                             alt="@producto.nombre"
-                             style="height:200px;object-fit:cover;" />
+                    <a asp-controller="Producto"
+                       asp-action="DetallesProducto"
+                       asp-route-id="@producto.id"
+                       class="text-decoration-none text-dark">
 
-                        <div class="card-body">
-                            <h5 class="card-title">@producto.nombre</h5>
-                            <p class="card-text">@producto.descripcion</p>
-                            <p class="mb-1"><strong>Precio:</strong> $@producto.precio</p>
-                            <p class="mb-1"><strong>Stock:</strong> @producto.stock</p>
+                        <div class="product-card card shadow-sm h-100">
+
+                            <img src="~/images/productos/@producto.imagen"
+                                 class="card-img-top"
+                                 style="height:160px; object-fit:contain;"
+                                 alt="Producto @producto.nombre" />
+
+                            <div class="card-body text-center">
+                                <h6 class="mb-1">@producto.nombre</h6>
+                                <p class="fw-bold mb-0">$@producto.precio</p>
+                            </div>
+
                         </div>
+                    </a>
 
-                    </div>
                 </div>
             }
         }
         else
         {
             <div class="col-12">
-                <p class="text-muted">Este artesano aún no tiene productos publicados.</p>
+                <p class="text-muted">
+                    Este artesano aún no tiene productos publicados.
+                </p>
             </div>
         }
     </div>

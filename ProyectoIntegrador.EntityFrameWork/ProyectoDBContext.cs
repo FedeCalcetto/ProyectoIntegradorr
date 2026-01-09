@@ -116,7 +116,7 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .HasOne(r => r.artesano)
                 .WithMany()
                 .HasForeignKey(r => r.artesanoId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Reporte>()
                 .HasOne(r => r.producto)

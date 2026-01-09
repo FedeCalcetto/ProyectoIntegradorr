@@ -57,12 +57,20 @@
                                 <td>@u.apellido</td>
 
                                 <td>
-                                    <a asp-controller="Usuario"
-                                       asp-action="PerfilPublico"
-                                       asp-route-id="@u.id"
-                                       class="btn btn-outline-primary btn-sm">
-                                        Ver Perfil
-                                    </a>
+                                    @if (u is Artesano artesano)
+                                    {
+                                        <a asp-controller="Usuario"
+                                           asp-action="PerfilPublico"
+                                           asp-route-id="@u.id"
+                                           class="btn btn-outline-primary btn-sm">
+                                            Ver Perfil
+                                        </a>
+                                    }
+                                    else if (u is Cliente cliente)
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+
                                 </td>
                             </tr>
                         }

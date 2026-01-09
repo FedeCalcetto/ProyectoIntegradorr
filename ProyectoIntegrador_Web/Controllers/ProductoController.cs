@@ -233,7 +233,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
             if (string.IsNullOrEmpty(email))
                 return RedirectToAction("Login", "Login");
-
+            }
             var producto = _obtenerProducto.obtener(id);
 
             if (producto == null)

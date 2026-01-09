@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Models;
 
 namespace ProyectoIntegrador_Web.Controllers
@@ -11,12 +12,14 @@ namespace ProyectoIntegrador_Web.Controllers
         public readonly IEliminarReporte _eliminarReporte;
         public readonly IEliminarProducto _eliminarProducto;
         public readonly IObtenerReporte _obtenerReporte;
-        public AdminController(IListadoDeReportes listadoDeReportes, IEliminarReporte eliminarReporte, IEliminarProducto eliminarProducto, IObtenerReporte obtenerReporte)
+        public readonly IArtesanoRepositorio _artesanoRepositorio;
+        public AdminController(IListadoDeReportes listadoDeReportes, IEliminarReporte eliminarReporte, IEliminarProducto eliminarProducto, IObtenerReporte obtenerReporte, IArtesanoRepositorio eliminarArtesano)
         {
             _listadoDeReportes = listadoDeReportes;
             _eliminarReporte = eliminarReporte;
             _eliminarProducto = eliminarProducto;
             _obtenerReporte = obtenerReporte;
+            _artesanoRepositorio = eliminarArtesano;
         }
 
 
@@ -53,9 +56,22 @@ namespace ProyectoIntegrador_Web.Controllers
 
             var reporte = _obtenerReporte.Ejecutar(id);
 
-            _eliminarProducto.Ejecutar(reporte.producto.id);
-            //_eliminarReporte.Ejecutar(id);
+            var artesanoId = reporte.artesano?.id;
+            var productoId = reporte.producto?.id;
+
+            if (artesanoId == null && productoId != null)
+            {
+                _eliminarProducto.Ejecutar(productoId.Value);
+                //_eliminarReporte.Ejecutar(id);
+            }
+            else if (artesanoId != null && productoId == null)
+            {
+                _eliminarReporte.Ejecutar(id);
+                _artesanoRepositorio.Eliminar(artesanoId.Value);
+            }
+
             return RedirectToAction("Inicio");
+
         }
         // GET: AdminController/Details/5
         public ActionResult Details(int id)
