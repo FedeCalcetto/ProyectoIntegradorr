@@ -26,5 +26,6 @@ namespace ProyectoIntegrador_Web.Models
 
         [ValidateNever]// el model no valida esto, por ende no valida codigo de seguridad, etc.
         public EliminarCuentaViewModel EliminarCuenta { get; set; } //para que funcione el modal
+        public SeguidoresClienteViewModel ListaSeguidores { get; set; } = new();
     }
 }

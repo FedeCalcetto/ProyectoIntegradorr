@@ -86,8 +86,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             if (string.IsNullOrWhiteSpace(email))
                 return null;
 
-            return _contexto.Usuarios
+
+            var usuario = _contexto.Usuarios
                 .FirstOrDefault(u => u.email.email.ToLower().Trim() == email.ToLower().Trim());
+
+            if(usuario is Artesano artesano)
+            {
+                artesano.estaBloquado();
+            }
+
+            return usuario;
         }
 
         public void Actualizar(Usuario usuario)
@@ -117,5 +125,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
        .FirstOrDefault(u =>
            u.TokenVerificacionEmail == token);
         }
+
+        
     }
 }

@@ -30,7 +30,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public DateTime? TokenVerificacionEmailExpira { get; set; }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        
 
         public void Validar()
         {

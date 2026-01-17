@@ -13,12 +13,13 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
     public class Cliente : Usuario
     {
 
-        public List<Artesano> artesanosSeguidos { get; set; }
+        public List<Artesano> artesanosSeguidos { get; set; } = new List<Artesano>();
         public List<FacturaNoFiscal> compras { get; set; } = new List<FacturaNoFiscal>();
         public List<Producto> productosFavoritos { get; set; }
         //public List<PedidoPersonalizado> pedidosCliente { get; set; }
         public Direccion? direccion { get; set; }
         public string? foto { get; set; }
+        public bool bloqueado { get; set; }
         public void validarEditar()
         {
             valdiarDireccion();
@@ -36,7 +37,13 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
         }
 
-        
-        
+        public void agregarArtesano(Artesano a)
+        {
+            artesanosSeguidos.Add(a);
+        }
+        public void eliminarArtesano(Artesano a)
+        {
+            artesanosSeguidos.Remove(a);
+        }
     }
 }

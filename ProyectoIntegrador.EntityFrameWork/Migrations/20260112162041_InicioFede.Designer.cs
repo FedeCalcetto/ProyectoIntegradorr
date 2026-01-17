@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260112162041_InicioFede")]
+    partial class InicioFede
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,40 +276,27 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.PedidoPersonalizado", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int?>("ArtesanoId")
+                    b.Property<int?>("artesanoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ClienteId")
+                    b.Property<int?>("clienteId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Descripcion")
+                    b.Property<string>("descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
+                    b.HasKey("id");
 
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
+                    b.HasIndex("artesanoId");
 
-                    b.Property<DateTime?>("FechaFinalizacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArtesanoId");
-
-                    b.HasIndex("ClienteId");
+                    b.HasIndex("clienteId");
 
                     b.ToTable("PedidosPersonalizados");
                 });
@@ -355,126 +345,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("SubCategoriaId");
 
                     b.ToTable("Productos");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1,
-                            ArtesanoId = 3,
-                            SubCategoriaId = 5,
-                            descripcion = "Alfombra tejida a mano con lana natural",
-                            imagen = "/img/alfombra-textil.jpg",
-                            nombre = "Alfombra Andina",
-                            precio = 3200,
-                            stock = 5
-                        },
-                        new
-                        {
-                            id = 2,
-                            ArtesanoId = 3,
-                            SubCategoriaId = 5,
-                            descripcion = "Manta de algodón tejida a mano",
-                            imagen = "/img/alfombra-textil.jpg",
-                            nombre = "Manta Textil Artesanal",
-                            precio = 2800,
-                            stock = 4
-                        },
-                        new
-                        {
-                            id = 3,
-                            ArtesanoId = 3,
-                            SubCategoriaId = 8,
-                            descripcion = "Mate artesanal de madera pulida",
-                            imagen = "/img/mate-madera.jpg",
-                            nombre = "Mate de Madera Tallado",
-                            precio = 1200,
-                            stock = 10
-                        },
-                        new
-                        {
-                            id = 4,
-                            ArtesanoId = 3,
-                            SubCategoriaId = 9,
-                            descripcion = "Caja artesanal de madera natural",
-                            imagen = "/img/mate-madera.jpg",
-                            nombre = "Caja Decorativa de Madera",
-                            precio = 1500,
-                            stock = 6
-                        },
-                        new
-                        {
-                            id = 5,
-                            ArtesanoId = 4,
-                            SubCategoriaId = 10,
-                            descripcion = "Cartera hecha en cuero natural",
-                            imagen = "/img/cartera-cuero.jpg",
-                            nombre = "Cartera de Cuero Premium",
-                            precio = 5200,
-                            stock = 3
-                        },
-                        new
-                        {
-                            id = 6,
-                            ArtesanoId = 4,
-                            SubCategoriaId = 11,
-                            descripcion = "Cinturón de cuero genuino",
-                            imagen = "/img/cartera-cuero.jpg",
-                            nombre = "Cinturón de Cuero Artesanal",
-                            precio = 1800,
-                            stock = 8
-                        },
-                        new
-                        {
-                            id = 7,
-                            ArtesanoId = 4,
-                            SubCategoriaId = 13,
-                            descripcion = "Collar artesanal de plata 925",
-                            imagen = "/img/collar-plata.jpg",
-                            nombre = "Collar de Plata",
-                            precio = 3900,
-                            stock = 4
-                        },
-                        new
-                        {
-                            id = 8,
-                            ArtesanoId = 4,
-                            SubCategoriaId = 14,
-                            descripcion = "Pulsera de plata hecha a mano",
-                            imagen = "/img/collar-plata.jpg",
-                            nombre = "Pulsera Artesanal",
-                            precio = 2100,
-                            stock = 7
-                        },
-                        new
-                        {
-                            id = 9,
-                            ArtesanoId = 3,
-                            SubCategoriaId = 1,
-                            descripcion = "Taza de cerámica esmaltada",
-                            imagen = "/img/taza-ceramica.jpg",
-                            nombre = "Taza de Cerámica",
-                            precio = 900,
-                            stock = 12
-                        },
-                        new
-                        {
-                            id = 10,
-                            ArtesanoId = 3,
-                            SubCategoriaId = 2,
-                            descripcion = "Bowl artesanal de cerámica",
-                            imagen = "/img/taza-ceramica.jpg",
-                            nombre = "Bowl de Cerámica",
-                            precio = 1300,
-                            stock = 6
-                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.ProductoFoto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("Id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -490,68 +367,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("ProductoId");
 
                     b.ToTable("ProductoFotos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ProductoId = 1,
-                            UrlImagen = "/img/alfombra-textil.jpg"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ProductoId = 2,
-                            UrlImagen = "/img/alfombra-textil.jpg"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ProductoId = 3,
-                            UrlImagen = "/img/mate-madera.jpg"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ProductoId = 4,
-                            UrlImagen = "/img/mate-madera.jpg"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ProductoId = 5,
-                            UrlImagen = "/img/cartera-cuero.jpg"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            ProductoId = 6,
-                            UrlImagen = "/img/cartera-cuero.jpg"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            ProductoId = 7,
-                            UrlImagen = "/img/collar-plata.jpg"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            ProductoId = 8,
-                            UrlImagen = "/img/collar-plata.jpg"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            ProductoId = 9,
-                            UrlImagen = "/img/taza-ceramica.jpg"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            ProductoId = 10,
-                            UrlImagen = "/img/taza-ceramica.jpg"
-                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Reporte", b =>
@@ -812,9 +627,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<long?>("MercadoPagoUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("bloqueado")
-                        .HasColumnType("bit");
-
                     b.Property<string>("descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -831,9 +643,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.ToTable("Usuarios", t =>
                         {
-                            t.Property("bloqueado")
-                                .HasColumnName("Artesano_bloqueado");
-
                             t.Property("foto")
                                 .HasColumnName("Artesano_foto");
                         });
@@ -844,9 +653,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
-
-                    b.Property<bool>("bloqueado")
-                        .HasColumnType("bit");
 
                     b.Property<string>("foto")
                         .HasColumnType("nvarchar(max)");
@@ -963,19 +769,17 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.PedidoPersonalizado", b =>
                 {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "Artesano")
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
                         .WithMany()
-                        .HasForeignKey("ArtesanoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("artesanoId");
 
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
                         .WithMany()
-                        .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("clienteId");
 
-                    b.Navigation("Artesano");
+                    b.Navigation("artesano");
 
-                    b.Navigation("Cliente");
+                    b.Navigation("cliente");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>

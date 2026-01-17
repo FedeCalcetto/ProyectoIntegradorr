@@ -24,8 +24,10 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerArtesanoId _obtenerArtesano;
         private readonly IObtenerCliente _obtenerCliente;
         private readonly IAgregarReporte _agregarReporte;
+        private readonly IUsuarioRepositorio _usuarioRepo;
+        private readonly IClienteRepositorio _clienteRepo;
 
-        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte)
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo)
         {
             _cambiarPassword = cambiarPassword;
             _eliminarUsuario = eliminarUsuario;
@@ -36,10 +38,12 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerArtesano = obtenerArtesanoId;
             _obtenerCliente = obtenerCliente;
             _agregarReporte = agregarReporte;
+            _usuarioRepo = usuarioRepo;
+            _clienteRepo = clienteRepo;
         }
 
-        
-            public IActionResult CambioContra(string returnUrl)
+
+        public IActionResult CambioContra(string returnUrl)
             {
             ViewBag.ReturnUrl = returnUrl ?? "/"; 
             return View();
@@ -114,20 +118,66 @@ namespace ProyectoIntegrador_Web.Controllers
             var email = HttpContext.Session.GetString("loginUsuario");
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
-           /* if (string.IsNullOrEmpty(email) || (rol != "ARTESANO" && rol != "CLIENTE"))
-            {
+           if (string.IsNullOrEmpty(email))
+           {
                 return RedirectToAction("Login", "Login");
-            }*/
+           }
+           var usuario = _usuarioRepo.BuscarPorEmail(email);
+            var modelo = new BusquedaDeUsuariosViewModel
+            {
+                Filtro = filtro,
+                usuarioLogueado = usuario
+            };
 
-            var modelo = new BusquedaDeUsuariosViewModel();
-            modelo.Filtro = filtro;
-
-            if (!string.IsNullOrEmpty(filtro))
+            // Ejecutar búsqueda solo si hay filtro
+            if (!string.IsNullOrWhiteSpace(filtro))
             {
                 modelo.Usuarios = _busquedaDeUsuarios.Ejecutar(filtro);
             }
 
             return View(modelo);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Seguir(int artesanoId)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            if (string.IsNullOrEmpty(email))
+                return RedirectToAction("Login", "Login");
+
+            var cliente = _usuarioRepo.BuscarPorEmail(email) as Cliente;
+            if (cliente == null)
+                return Unauthorized();
+
+            var artesano = _obtenerArtesano.Ejecutar(artesanoId);
+            if (artesano == null)
+                return NotFound();
+
+            _clienteRepo.agregarArtesano(cliente, artesano);
+
+            return RedirectToAction("BusquedaDeUsuarios", "Usuario");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DejarDeSeguir(int artesanoId)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            if (string.IsNullOrEmpty(email))
+                return RedirectToAction("Login", "Login");
+
+            var cliente = _usuarioRepo.BuscarPorEmail(email) as Cliente;
+            if (cliente == null)
+                return Unauthorized();
+
+            var artesano = _obtenerArtesano.Ejecutar(artesanoId);
+            if (artesano == null)
+                return NotFound();
+
+            _clienteRepo.eliminarArtesano(cliente, artesano);
+
+            return RedirectToAction("BusquedaDeUsuarios", "Usuario");
         }
 
         public IActionResult PerfilPublico(int id)

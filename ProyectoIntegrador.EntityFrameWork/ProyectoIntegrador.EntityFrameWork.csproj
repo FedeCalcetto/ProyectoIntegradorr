@@ -19,8 +19,4 @@
     <ProjectReference Include="..\ProyectoIntegrador\ProyectoIntegrador.LogicaNegocio.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>
