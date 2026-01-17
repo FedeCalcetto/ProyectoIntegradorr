@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260115000304_SeedProductos2")]
+    partial class SeedProductos2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,29 +151,25 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("Artesanoid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Clienteid")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("OrdenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TipoFactura")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Total")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrdenId");
+                    b.HasIndex("Artesanoid");
 
-                    b.ToTable("Facturas", (string)null);
+                    b.HasIndex("Clienteid");
 
-                    b.HasDiscriminator<string>("TipoFactura").HasValue("FacturaNoFiscal");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("Facturas");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.LineaFactura", b =>
@@ -184,12 +183,20 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("cantidad")
                         .HasColumnType("int");
 
+                    b.Property<int>("facturaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("precioUnitario")
+                        .HasColumnType("int");
+
+                    b.Property<int>("productoid")
                         .HasColumnType("int");
 
                     b.HasKey("idProducto", "idFactura");
 
-                    b.HasIndex("idFactura");
+                    b.HasIndex("facturaId");
+
+                    b.HasIndex("productoid");
 
                     b.ToTable("LineasFactura");
                 });
@@ -199,6 +206,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ArtesanoId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
@@ -212,6 +222,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
 
+                    b.Property<long?>("MercadoPagoPaymentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("MercadoPagoSellerUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PreferenceId")
                         .HasColumnType("nvarchar(max)");
 
@@ -219,6 +235,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArtesanoId");
 
                     b.HasIndex("ClienteId");
 
@@ -232,9 +250,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ArtesanoId")
-                        .HasColumnType("int");
 
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
@@ -253,8 +268,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArtesanoId");
 
                     b.HasIndex("OrdenId");
 
@@ -776,30 +789,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscalArtesano", b =>
-                {
-                    b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal");
-
-                    b.Property<int>("ArtesanoId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("ArtesanoId");
-
-                    b.HasDiscriminator().HasValue("ARTESANO");
-                });
-
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscalCliente", b =>
-                {
-                    b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal");
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("ClienteId");
-
-                    b.HasDiscriminator().HasValue("CLIENTE");
-                });
-
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Admin", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
@@ -826,9 +815,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<long?>("MercadoPagoUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("bloqueado")
-                        .HasColumnType("bit");
-
                     b.Property<string>("descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -845,9 +831,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.ToTable("Usuarios", t =>
                         {
-                            t.Property("bloqueado")
-                                .HasColumnName("Artesano_bloqueado");
-
                             t.Property("foto")
                                 .HasColumnName("Artesano_foto");
                         });
@@ -858,9 +841,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
-
-                    b.Property<bool>("bloqueado")
-                        .HasColumnType("bit");
 
                     b.Property<string>("foto")
                         .HasColumnType("nvarchar(max)");
@@ -913,27 +893,31 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", b =>
                 {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Orden", "Orden")
-                        .WithMany()
-                        .HasForeignKey("OrdenId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", null)
+                        .WithMany("ventas")
+                        .HasForeignKey("Artesanoid");
+
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
+                        .WithMany("compras")
+                        .HasForeignKey("Clienteid")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Orden");
+                    b.Navigation("Cliente");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.LineaFactura", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", "factura")
                         .WithMany("itemsFactura")
-                        .HasForeignKey("idFactura")
+                        .HasForeignKey("facturaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
                         .WithMany()
-                        .HasForeignKey("idProducto")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("productoid")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("factura");
@@ -943,30 +927,30 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Orden", b =>
                 {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "Artesano")
+                        .WithMany()
+                        .HasForeignKey("ArtesanoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
                         .WithMany()
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Artesano");
+
                     b.Navigation("Cliente");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.OrdenItem", b =>
                 {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "Artesano")
-                        .WithMany()
-                        .HasForeignKey("ArtesanoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Orden", "Orden")
                         .WithMany("Items")
                         .HasForeignKey("OrdenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Artesano");
 
                     b.Navigation("Orden");
                 });
@@ -1096,28 +1080,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Navigation("email")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscalArtesano", b =>
-                {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "Artesano")
-                        .WithMany("ventas")
-                        .HasForeignKey("ArtesanoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Artesano");
-                });
-
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscalCliente", b =>
-                {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
-                        .WithMany("compras")
-                        .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>

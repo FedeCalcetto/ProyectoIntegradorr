@@ -40,6 +40,29 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             _contexto.SaveChanges();
 
         }
+
+        public void agregarArtesano(Cliente c, Artesano a)
+        {
+            if (!c.artesanosSeguidos.Any(x => x.id == a.id))
+            {
+                c.artesanosSeguidos.Add(a);
+            }
+            _contexto.SaveChanges();
+        }
+
+        public void eliminarArtesano(Cliente c, Artesano a)
+        {
+            c.eliminarArtesano(a);
+            _contexto.SaveChanges();
+        }
+
+        public Cliente BuscarClientePorEmailConArtesanos(string email)
+        {
+            return _contexto.Clientes
+                .Include(c => c.artesanosSeguidos)
+                .FirstOrDefault(c => c.email.email == email);
+        }
+
         public void cambioContra(Cliente cliente,string contraNueva,string contraRepetida,string contraActual)
         {
             cliente.validarContra(contraNueva,contraRepetida,contraActual);
@@ -87,7 +110,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public Cliente obtenerCliente(string email)
         {
             return _contexto.Usuarios
-                       .OfType<Cliente>() 
+                       .OfType<Cliente>()
                        .FirstOrDefault(c => c.email.email == email);
         }
 

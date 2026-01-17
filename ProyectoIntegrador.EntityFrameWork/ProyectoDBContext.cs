@@ -23,6 +23,8 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<Carrito> Carritos { get; set; }
         public DbSet<CarritoItem> CarritoItems { get; set; }
         public DbSet<Orden> Ordenes { get; set; }
+         
+
 
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {
@@ -166,6 +168,25 @@ namespace ProyectoIntegrador.EntityFrameWork
             .HasForeignKey(f => f.ProductoId)
             .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<ProductoFoto>()
+            .Property(p => p.Id)
+             .HasColumnName("Id");
+
+            modelBuilder.Entity<PedidoPersonalizado>()
+    .HasOne(p => p.Cliente)
+    .WithMany()
+    .HasForeignKey(p => p.ClienteId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PedidoPersonalizado>()
+                .HasOne(p => p.Artesano)
+                .WithMany()
+                .HasForeignKey(p => p.ArtesanoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
+
             // 🧪 Seed principal (TPH + owned types)
             modelBuilder.Entity<Usuario>().HasData(
                 new
@@ -239,6 +260,45 @@ namespace ProyectoIntegrador.EntityFrameWork
             new { Id = 15, Nombre = "Aros", categoriaId = 5 }
             );
 
+
+            modelBuilder.Entity<Producto>().HasData(
+
+          new { id = 1, nombre = "Alfombra Andina", precio = 3200, stock = 5, descripcion = "Alfombra tejida a mano con lana natural", SubCategoriaId = 5, ArtesanoId = 3, imagen = "/img/alfombra-textil.jpg" },
+          new { id = 2, nombre = "Manta Textil Artesanal", precio = 2800, stock = 4, descripcion = "Manta de algodón tejida a mano", SubCategoriaId = 5, ArtesanoId = 3, imagen = "/img/alfombra-textil.jpg" },
+
+          new { id = 3, nombre = "Mate de Madera Tallado", precio = 1200, stock = 10, descripcion = "Mate artesanal de madera pulida", SubCategoriaId = 8, ArtesanoId = 3, imagen = "/img/mate-madera.jpg" },
+          new { id = 4, nombre = "Caja Decorativa de Madera", precio = 1500, stock = 6, descripcion = "Caja artesanal de madera natural", SubCategoriaId = 9, ArtesanoId = 3, imagen = "/img/mate-madera.jpg" },
+
+          new { id = 5, nombre = "Cartera de Cuero Premium", precio = 5200, stock = 3, descripcion = "Cartera hecha en cuero natural", SubCategoriaId = 10, ArtesanoId = 4, imagen = "/img/cartera-cuero.jpg" },
+          new { id = 6, nombre = "Cinturón de Cuero Artesanal", precio = 1800, stock = 8, descripcion = "Cinturón de cuero genuino", SubCategoriaId = 11, ArtesanoId = 4, imagen = "/img/cartera-cuero.jpg" },
+
+          new { id = 7, nombre = "Collar de Plata", precio = 3900, stock = 4, descripcion = "Collar artesanal de plata 925", SubCategoriaId = 13, ArtesanoId = 4, imagen = "/img/collar-plata.jpg" },
+          new { id = 8, nombre = "Pulsera Artesanal", precio = 2100, stock = 7, descripcion = "Pulsera de plata hecha a mano", SubCategoriaId = 14, ArtesanoId = 4, imagen = "/img/collar-plata.jpg" },
+
+          new { id = 9, nombre = "Taza de Cerámica", precio = 900, stock = 12, descripcion = "Taza de cerámica esmaltada", SubCategoriaId = 1, ArtesanoId = 3, imagen = "/img/taza-ceramica.jpg" },
+          new { id = 10, nombre = "Bowl de Cerámica", precio = 1300, stock = 6, descripcion = "Bowl artesanal de cerámica", SubCategoriaId = 2, ArtesanoId = 3, imagen = "/img/taza-ceramica.jpg" }
+      );
+
+
+
+            modelBuilder.Entity<ProductoFoto>().HasData(
+    new { Id = 1, ProductoId = 1, UrlImagen = "/img/alfombra-textil.jpg" },
+    new { Id = 2, ProductoId = 2, UrlImagen = "/img/alfombra-textil.jpg" },
+    new { Id = 3, ProductoId = 3, UrlImagen = "/img/mate-madera.jpg" },
+    new { Id = 4, ProductoId = 4, UrlImagen = "/img/mate-madera.jpg" },
+    new { Id = 5, ProductoId = 5, UrlImagen = "/img/cartera-cuero.jpg" },
+    new { Id = 6, ProductoId = 6, UrlImagen = "/img/cartera-cuero.jpg" },
+    new { Id = 7, ProductoId = 7, UrlImagen = "/img/collar-plata.jpg" },
+    new { Id = 8, ProductoId = 8, UrlImagen = "/img/collar-plata.jpg" },
+    new { Id = 9, ProductoId = 9, UrlImagen = "/img/taza-ceramica.jpg" },
+    new { Id = 10, ProductoId = 10, UrlImagen = "/img/taza-ceramica.jpg" }
+);
+
+
+
+
+
+
             // ✅ Seeding de propiedades owned (desde EF Core 8+)
             modelBuilder.Entity<Usuario>().OwnsOne(u => u.email).HasData(
                 new { Usuarioid = 1, email = "admin@proyecto.com" },
@@ -264,6 +324,9 @@ namespace ProyectoIntegrador.EntityFrameWork
               .OnDelete(DeleteBehavior.Restrict);
 
         }
+
+
+
 
     }
 }
