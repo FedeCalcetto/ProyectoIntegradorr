@@ -8,19 +8,23 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Entidades
 {
-    public class PedidoPersonalizado : IValidable
+    public class PedidoPersonalizado
     {
-        public int id { get; set; }
-        [Required(ErrorMessage = "la descripción es requerida es requerida")]
-        public string descripcion { get; set; }
-        public int? clienteId { get; set; }
-        public Cliente? cliente { get; set; }
-        public int? artesanoId { get; set; }
-        public Artesano? artesano { get; set; }
+        public int Id { get; set; }
 
-        public void Validar()
-        {
-            throw new NotImplementedException();
-        }
+        public string Titulo { get; set; }
+        public string Descripcion { get; set; }
+
+        public DateTime FechaCreacion { get; set; }
+        public DateTime? FechaFinalizacion { get; set; }
+
+        public EstadoPedido Estado { get; set; }
+
+        // Relaciones
+        public Cliente? Cliente { get; set; }
+        public int? ClienteId { get; set; }
+        public Artesano? Artesano { get; set; }
+        public int? ArtesanoId { get; set; }
     }
 }
+    

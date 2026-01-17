@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class MercadoPagoAzure : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,10 +48,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     apellido = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     email_email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     rol = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CodigoVerificacion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Verificado = table.Column<bool>(type: "bit", nullable: false),
+                    TokenVerificacionEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TokenVerificacionEmailExpira = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
@@ -159,25 +161,31 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 name: "PedidosPersonalizados",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    clienteId = table.Column<int>(type: "int", nullable: true),
-                    artesanoId = table.Column<int>(type: "int", nullable: true)
+                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaFinalizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Estado = table.Column<int>(type: "int", nullable: false),
+                    ClienteId = table.Column<int>(type: "int", nullable: true),
+                    ArtesanoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PedidosPersonalizados", x => x.id);
+                    table.PrimaryKey("PK_PedidosPersonalizados", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PedidosPersonalizados_Usuarios_artesanoId",
-                        column: x => x.artesanoId,
+                        name: "FK_PedidosPersonalizados_Usuarios_ArtesanoId",
+                        column: x => x.ArtesanoId,
                         principalTable: "Usuarios",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PedidosPersonalizados_Usuarios_clienteId",
-                        column: x => x.clienteId,
+                        name: "FK_PedidosPersonalizados_Usuarios_ClienteId",
+                        column: x => x.ClienteId,
                         principalTable: "Usuarios",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -374,8 +382,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         name: "FK_Reportes_Usuarios_artesanoId",
                         column: x => x.artesanoId,
                         principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_Reportes_Usuarios_clienteId",
                         column: x => x.clienteId,
@@ -398,18 +405,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 1, null, "ADMIN", true, "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
+                values: new object[] { 1, null, "ADMIN", null, null, true, "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
-                values: new object[] { 2, null, "CLIENTE", true, "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
+                values: new object[] { 2, null, "CLIENTE", null, null, true, "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 3, null, "ARTESANO", true, "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
+                values: new object[] { 3, null, "ARTESANO", null, null, true, "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" });
 
             migrationBuilder.InsertData(
                 table: "SubCategorias",
@@ -494,14 +501,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 column: "OrdenId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PedidosPersonalizados_artesanoId",
+                name: "IX_PedidosPersonalizados_ArtesanoId",
                 table: "PedidosPersonalizados",
-                column: "artesanoId");
+                column: "ArtesanoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PedidosPersonalizados_clienteId",
+                name: "IX_PedidosPersonalizados_ClienteId",
                 table: "PedidosPersonalizados",
-                column: "clienteId");
+                column: "ClienteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductoFotos_ProductoId",

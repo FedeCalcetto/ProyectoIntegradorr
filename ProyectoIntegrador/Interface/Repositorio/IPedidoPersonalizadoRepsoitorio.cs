@@ -9,5 +9,8 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface IPedidoPersonalizadoRepsoitorio : IRepositorio<PedidoPersonalizado>
     {
+        List<PedidoPersonalizado> ObtenerPendientes();
+
+        List<PedidoPersonalizado> ObtenerPorArtesano(string emailArtesano);
     }
 }
