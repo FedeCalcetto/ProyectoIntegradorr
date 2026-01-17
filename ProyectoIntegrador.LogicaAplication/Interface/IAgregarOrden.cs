@@ -10,5 +10,7 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
     public interface IAgregarOrden
     {
         Task<List<Guid>> AgregarOrdenesAsync(int usuarioId);
+        Task<Guid> AgregarOrdenAsync(int usuarioId);
+
     }
 }

@@ -22,6 +22,29 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             _carritoRepo = carritoRepo;
         }
 
+        public async Task<Guid> AgregarOrdenAsync(int usuarioId)
+        {
+            var carrito =  _carritoRepo.ObtenerCarritoDeUsuario(usuarioId);
+
+            if (carrito == null || !carrito.Items.Any())
+                throw new ApplicationException("El carrito está vacío");
+
+            var orden = new Orden(usuarioId);
+            foreach (var item in carrito.Items)
+            {
+                orden.AgregarItem(
+                        item.productoId,
+                        item.producto.nombre,
+                        item.cantidad,
+                        item.producto.precio,
+                        item.producto.ArtesanoId
+                );
+            }
+            orden.CalcularTotal();
+            await _ordenRepo.CrearOrdenAsync(orden);
+            return orden.Id;
+        }
+
         public async Task<List<Guid>> AgregarOrdenesAsync(int usuarioId)
         {
             var itemsCarrito = _carritoRepo.ObtenerItemsDeUsuario(usuarioId);
@@ -34,9 +57,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 
             foreach (var grupo in itemsPorArtesano)
             {
-                var artesanoId = grupo.Key;
-
-                var orden = new Orden(usuarioId, artesanoId);
+                var orden = new Orden(usuarioId);
 
                 foreach (var item in grupo)
                 {
@@ -44,7 +65,9 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                         item.productoId,
                         item.producto.nombre,
                         item.cantidad,
-                        item.producto.precio
+                        item.producto.precio,
+                        item.producto.ArtesanoId
+
                     );
                 }
 
@@ -57,6 +80,8 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 
             return ordenesIds;
         }
+
+      
     }
 
 }

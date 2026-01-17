@@ -38,12 +38,12 @@ namespace ProyectoIntegrador_Web.Controllers
             if (orden == null)
                 return NotFound();
 
-            var artesano = orden.Artesano;
+            //var artesano = orden.Artesano;
 
-            if (string.IsNullOrEmpty(artesano.MercadoPagoAccessToken))
-                throw new Exception("El artesano no tiene Mercado Pago conectado");
+            //if (string.IsNullOrEmpty(artesano.MercadoPagoAccessToken))
+            //    throw new Exception("El artesano no tiene Mercado Pago conectado");
 
-            MercadoPagoConfig.AccessToken = artesano.MercadoPagoAccessToken;
+            //MercadoPagoConfig.AccessToken = artesano.MercadoPagoAccessToken;
 
             //Crear la preference 
             var request = new PreferenceRequest
@@ -61,10 +61,10 @@ namespace ProyectoIntegrador_Web.Controllers
                 {
                     ExcludedPaymentTypes = new List<PreferencePaymentTypeRequest>
         {
-            new PreferencePaymentTypeRequest
-            {
-                Id = "ticket" // Para excluir pago en efectivo
-            }
+                new PreferencePaymentTypeRequest
+                {
+                    Id = "ticket" // Para excluir pago en efectivo
+                }
         }
                 },
 
@@ -72,6 +72,9 @@ namespace ProyectoIntegrador_Web.Controllers
 
                 BackUrls = new PreferenceBackUrlsRequest
                 {
+                    //Success = "https://localhost:7131/Pago/Success",
+                    //Failure = "https://localhost:7131/Carrito",
+                    //Pending = "https://localhost:7131/Carrito"
                     Success = "https://deployprueba2025-arfrctd7agakh7eu.brazilsouth-01.azurewebsites.net/pago/success",
                     Failure = "https://deployprueba2025-arfrctd7agakh7eu.brazilsouth-01.azurewebsites.net/pago/failure",
                     Pending = "https://deployprueba2025-arfrctd7agakh7eu.brazilsouth-01.azurewebsites.net/pago/pending"
@@ -95,8 +98,8 @@ namespace ProyectoIntegrador_Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Success(
-    string status,
-    string external_reference)
+            string status,
+            string external_reference)
         {
             if (!Guid.TryParse(external_reference, out var ordenId))
                 return BadRequest();
@@ -115,7 +118,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 await _carritoService.LimpiarCarritoAsync(usuario.id);
             }
 
-            return RedirectToAction("Catalogo", "Usuario"); //Agregar lo de la factura acá
+            return RedirectToAction("FacturaPorOrden","FacturaNoFiscal",new {ordenId });
         }
         [HttpGet]
         public IActionResult Pending(string external_reference)

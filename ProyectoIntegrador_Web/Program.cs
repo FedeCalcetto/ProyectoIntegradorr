@@ -6,6 +6,7 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaAplication.Servicios;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Services;
+using Rotativa.AspNetCore;
 
 
 namespace ProyectoIntegrador_Web
@@ -33,6 +34,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<ICarritoRepositorio, CarritoEFRepositorio>();
             builder.Services.AddScoped<IReporteRepositorio, ReporteEFRepositorio>();
             builder.Services.AddScoped<IOrdenRepositorio, OrdenEFRepositorio>();
+            builder.Services.AddScoped<IFacturaRepositorio, FacturaEFRepsoitorio>();
             builder.Services.AddScoped<IPedidoPersonalizadoRepsoitorio, PedidoPersonalizadoEFRepositorio>();
 
             //Casos de uso
@@ -102,9 +104,13 @@ namespace ProyectoIntegrador_Web
              );
 
             var app = builder.Build();
-
-            builder.Services.AddDistributedMemoryCache();
             
+            app.UseRotativa();//Pata generar PDF
+            builder.Services.AddDistributedMemoryCache();
+            RotativaConfiguration.Setup(
+            app.Environment.WebRootPath,
+            "Rotativa"
+            );
 
 
             // Configure the HTTP request pipeline.
@@ -121,8 +127,8 @@ namespace ProyectoIntegrador_Web
             app.UseAuthorization();
             app.UseSession();
 
-            app.UseStaticFiles();
 
+            app.UseStaticFiles();
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",

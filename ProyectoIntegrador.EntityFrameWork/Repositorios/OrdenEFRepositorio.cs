@@ -35,14 +35,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             return await _contexto.Ordenes
             .Include(o => o.Items)
-            .Include(o => o.Artesano)
             .FirstOrDefaultAsync(o => o.Id == ordenId);
         }
 
         public async Task<List<Orden>> ObtenerPorIdsAsync(List<Guid> ids)
         {
                return await _contexto.Ordenes
-              .Include(o => o.Artesano)
               .Where(o => ids.Contains(o.Id))
               .ToListAsync();
         }

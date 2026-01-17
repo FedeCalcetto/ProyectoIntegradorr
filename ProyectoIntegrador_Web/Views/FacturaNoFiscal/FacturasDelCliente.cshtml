@@ -1,0 +1,34 @@
+﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
+@model IEnumerable<FacturaNoFiscalCliente>
+
+<h2>Mis facturas</h2>
+
+<div class="row">
+    @foreach (var factura in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Factura #@factura.Id
+                    </h5>
+
+                    <p class="card-text">
+                        Fecha: @factura.Fecha.ToString("dd/MM/yyyy") <br />
+                        Total: $@factura.Total
+                    </p>
+
+                    <a class="btn btn-outline-primary"
+                       asp-action="FacturaPorOrden"
+                       asp-route-ordenId="@factura.OrdenId">
+                        Ver detalle
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
