@@ -33,6 +33,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<ICarritoRepositorio, CarritoEFRepositorio>();
             builder.Services.AddScoped<IReporteRepositorio, ReporteEFRepositorio>();
             builder.Services.AddScoped<IOrdenRepositorio, OrdenEFRepositorio>();
+            builder.Services.AddScoped<IPedidoPersonalizadoRepsoitorio, PedidoPersonalizadoEFRepositorio>();
 
             //Casos de uso
             builder.Services.AddScoped<IAgregarProducto, AgregarProductoCasoDeUso>();
@@ -71,6 +72,17 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IEliminarReporte, EliminarReporteCasoDeUso>();
             builder.Services.AddScoped<IObtenerReporte, ObtenerReporteCasoeUso>();
             builder.Services.AddScoped<IObtenerArtesanoId, ObtenerArtesanoIdCasoDeUso>();
+            // ?? Pedidos Personalizados
+            builder.Services.AddScoped<ICrearPedidoPersonalizado, CrearPedidoPersonalizadoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerPedidosPendientes, ObtenerPedidosPendientesCasoDeUso>();
+            builder.Services.AddScoped<IAceptarPedidoPersonalizado, AceptarPedidoPersonalizadoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerMisEncargos, ObtenerMisEncargosCasoDeUso>();
+            builder.Services.AddScoped<IFinalizarPedidoPersonalizado, FinalizarPedidoPersonalizadoCasoDeUso>();
+
+
+
+
+
             builder.Services.AddScoped<IBloquearArtesano, BloquearArtesanoCasoDeUso>();
             builder.Services.AddScoped<IAgregarArtesanoLista, AgregarArtesanoListaCasoDeUso>();
             builder.Services.AddScoped<IEliminarArtesanoLista, EliminarArtesanoListaCasoDeUso>();

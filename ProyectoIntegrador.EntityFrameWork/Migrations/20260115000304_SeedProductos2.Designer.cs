@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260115000304_SeedProductos2")]
+    partial class SeedProductos2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -812,9 +815,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<long?>("MercadoPagoUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("bloqueado")
-                        .HasColumnType("bit");
-
                     b.Property<string>("descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -831,9 +831,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.ToTable("Usuarios", t =>
                         {
-                            t.Property("bloqueado")
-                                .HasColumnName("Artesano_bloqueado");
-
                             t.Property("foto")
                                 .HasColumnName("Artesano_foto");
                         });
@@ -844,9 +841,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
-
-                    b.Property<bool>("bloqueado")
-                        .HasColumnType("bit");
 
                     b.Property<string>("foto")
                         .HasColumnType("nvarchar(max)");
