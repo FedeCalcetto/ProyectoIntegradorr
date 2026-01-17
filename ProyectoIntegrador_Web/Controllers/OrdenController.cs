@@ -13,17 +13,17 @@ namespace ProyectoIntegrador_Web.Controllers
             _ordenRepo = ordenRepo;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> OrdenesPendientes(string ids)
-        {
-            var guids = ids.Split(',')
-                           .Select(Guid.Parse)
-                           .ToList();
+        //[HttpGet]
+        //public async Task<IActionResult> OrdenesPendientes(string ids)
+        //{
+        //    var guids = ids.Split(',')
+        //                   .Select(Guid.Parse)
+        //                   .ToList();
 
-            var ordenes = await _ordenRepo.ObtenerPorIdsAsync(guids);
+        //    var ordenes = await _ordenRepo.ObtenerPorIdsAsync(guids);
 
-            return View(ordenes);
-        }
+        //    return View(ordenes);
+        //}
     }
 
 }

@@ -8,6 +8,7 @@ namespace ProyectoIntegrador_Web.Controllers
     using MercadoPago.Client.Payment;
     using MercadoPago.Config;
     using MercadoPago.Resource.Payment;
+    using Microsoft.EntityFrameworkCore;
     using ProyectoIntegrador.LogicaNegocio.Entidades;
     using System.Text.Json;
 
@@ -18,14 +19,17 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IConfiguration _config;
         private readonly IOrdenRepositorio _ordenRepo;
         private readonly IProductoRepositorio _productoRepo;
+        private readonly IFacturaRepositorio _facturaRepo;
+
         public MercadoPagoWebhookController(
             IConfiguration config,
             IOrdenRepositorio ordenRepo,
-            IProductoRepositorio productoRepo)
+            IProductoRepositorio productoRepo, IFacturaRepositorio facturaRepositorio)
         {
             _config = config;
             _ordenRepo = ordenRepo;
             _productoRepo = productoRepo;
+            _facturaRepo = facturaRepositorio;
             MercadoPagoConfig.AccessToken =
                 _config["MercadoPago:AccessToken"];
         }
@@ -74,6 +78,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
                             var ordenItems = orden.Items;
 
+                            _facturaRepo.CrearFacturas(orden);
                             foreach (var item in ordenItems)
                             {
                                 var producto = _productoRepo

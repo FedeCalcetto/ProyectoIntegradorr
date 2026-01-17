@@ -1,0 +1,29 @@
+﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
+@model FacturaNoFiscalArtesano
+
+<h2>Factura no fiscal</h2>
+
+<p>
+    Esta factura muestra únicamente datos relacionados a su orden.
+    Es realizada a modo de prueba.
+</p>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5>Artesano: @Model.Artesano.nombre</h5>
+
+        <h5>Por la venta de:</h5>
+        <div>
+            @foreach (var lineaFactura in Model.itemsFactura)
+            {
+                <h5>Producto:</h5> 
+                @lineaFactura.producto.nombre
+                <h5>Precio:</h5> 
+                @lineaFactura.producto.precio
+            }
+        </div>
+
+        <p>Total vendido: $@Model.Total</p>
+        <p>Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</p>
+    </div>
+</div>

@@ -11,8 +11,9 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int Id { get; set; }
 
         public Guid OrdenId { get; set; }
-        public Orden Orden { get; set; } = null!;
-
+        public Orden Orden { get; set; }
+        public int ArtesanoId { get; set;}
+        public Artesano Artesano { get;  set;}
         public int ProductoId { get; set; }
 
         public string NombreProducto { get; set; } = string.Empty;

@@ -231,7 +231,7 @@ namespace ProyectoIntegrador_Web.Controllers
             var email = HttpContext.Session.GetString("loginUsuario");
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(email)) { 
                 return RedirectToAction("Login", "Login");
             }
             var producto = _obtenerProducto.obtener(id);

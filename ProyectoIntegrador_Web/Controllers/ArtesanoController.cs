@@ -31,7 +31,9 @@ namespace ProyectoIntegrador_Web.Controllers
             private readonly IObtenerProductoArtesano _obtenerProductoArtesano;
             private readonly IObtenerProducto _obtenerProducto;
             private readonly IEliminarArtesano _eliminarArtesano;
-            public ArtesanoController(
+            private readonly IFacturaRepositorio _facturaRepo;
+
+        public ArtesanoController(
                 IArtesanoRepositorio artesanoRepo,
                 IObtenerProducto obtenerProducto,
                 IEditarArtesano editarArtesano,
@@ -44,6 +46,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 IProductoFotoRepsoitorio productoFoto,
                 IEditarProducto editarProducto,
                 IEliminarArtesano eliminarArtesano,
+                IFacturaRepositorio facturaRepo,
                 EmailService email
             )
             {
@@ -57,6 +60,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 _eliminarProducto = eliminarProducto;
                 _editarProducto = editarProducto;
                 _eliminarArtesano = eliminarArtesano;
+                _facturaRepo = facturaRepo;
                 _email = email;
             }
         
@@ -64,7 +68,9 @@ namespace ProyectoIntegrador_Web.Controllers
         {
             if (HttpContext.Session.GetString("Rol") != null && HttpContext.Session.GetString("Rol").Trim().ToUpper().Equals("ARTESANO"))
             {
-                return View();
+                var email = HttpContext.Session.GetString("loginUsuario");
+                var facturas = _facturaRepo.ObtenerPorArtesano(email);
+                return View(facturas);
             }
             else
             {

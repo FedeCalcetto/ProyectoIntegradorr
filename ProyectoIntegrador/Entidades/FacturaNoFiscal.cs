@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaNegocio.Entidades
 {
-    public class FacturaNoFiscal
+    public abstract class FacturaNoFiscal
     {
         public int Id { get; set; }
         public List<LineaFactura> itemsFactura { get; set; }
-        public int Total { get; set; }
         public DateTime Fecha { get; set; }
-        public Cliente Cliente { get; set; }
+        public decimal Total { get; set; }
+        public Guid OrdenId { get; set; }
+        public Orden Orden { get; set; }
     }
 }

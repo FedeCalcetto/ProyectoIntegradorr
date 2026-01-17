@@ -80,12 +80,16 @@ namespace ProyectoIntegrador_Web.Controllers
         {
             var email = HttpContext.Session.GetString("loginUsuario");
             var usuario = _obtenerUsuario.Ejecutar(email);
-            var ordenesIds = await _agregarOrden.AgregarOrdenesAsync(usuario.id);
+
+            // Crear UNA sola orden con todos los ítems del carrito
+            var ordenId = await _agregarOrden.AgregarOrdenAsync(usuario.id);
+
+            // Ir directo a pagar
             return RedirectToAction(
-           "OrdenesPendientes",
-           "Orden",
-           new { ids = string.Join(",", ordenesIds) }
-   );
+                "CrearPago",
+                "Pago",
+                new {ordenId}
+            );
         }
 
 

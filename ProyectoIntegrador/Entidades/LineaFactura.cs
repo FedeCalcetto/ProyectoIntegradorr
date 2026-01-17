@@ -10,7 +10,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
     [PrimaryKey(nameof(idProducto), [nameof(idFactura)])]
     public class LineaFactura
     {
-
         public int idProducto { get; set; }
         public int idFactura { get; set; }
         public Producto producto { get; set; }

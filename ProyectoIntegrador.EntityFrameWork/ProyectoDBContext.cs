@@ -44,7 +44,7 @@ namespace ProyectoIntegrador.EntityFrameWork
                  .Property(u => u.password)
                  .HasMaxLength(255)
                  .IsRequired();
-                
+
             // 🧱 Crea tabla ClienteProductoFavorito 
             //modelBuilder.Entity<Cliente>()
             //.HasMany(c => c.productosFavoritos)
@@ -80,16 +80,47 @@ namespace ProyectoIntegrador.EntityFrameWork
 
             modelBuilder.Entity<Cliente>()
                 .HasMany(c => c.compras)
-                .WithOne(f => f.Cliente) 
+                .WithOne(f => f.Cliente)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<FacturaNoFiscal>()
-                .HasMany(f => f.itemsFactura)
-                .WithOne(lf => lf.factura)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<FacturaNoFiscalArtesano>()
+            //    .HasOne(f => f.Artesano)
+            //    .WithMany()
+            //    .HasForeignKey(f => f.ArtesanoId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+
+            //modelBuilder.Entity<FacturaNoFiscalCliente>()
+            //    .HasOne(f => f.Cliente)
+            //    .WithMany(c => c.compras)
+            //    .HasForeignKey(f => f.ClienteId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+
+
+            //modelBuilder.Entity<FacturaNoFiscal>()
+            //    .HasMany(f => f.itemsFactura)
+            //    .WithOne(lf => lf.factura)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<LineaFactura>()
                 .HasKey(lf => new { lf.idProducto, lf.idFactura });
+
+            modelBuilder.Entity<LineaFactura>()
+                .HasOne(lf => lf.factura)
+                .WithMany(f => f.itemsFactura)
+                .HasForeignKey(lf => lf.idFactura)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<LineaFactura>()
+                .HasOne(lf => lf.producto)
+                .WithMany()
+                .HasForeignKey(lf => lf.idProducto)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FacturaNoFiscal>()
+            .ToTable("Facturas")
+            .HasDiscriminator<string>("TipoFactura")
+            .HasValue<FacturaNoFiscalCliente>("CLIENTE")
+            .HasValue<FacturaNoFiscalArtesano>("ARTESANO");
 
             // 🧩 Comentarios
             modelBuilder.Entity<Comentario>()
@@ -182,27 +213,27 @@ namespace ProyectoIntegrador.EntityFrameWork
             new { Id = 5, Nombre = "Joyería Artesanal" }
             );
             modelBuilder.Entity<SubCategoria>().HasData(
-    // Cerámica
+            // Cerámica
             new { Id = 1, Nombre = "Vasos y tazas", categoriaId = 1 },
             new { Id = 2, Nombre = "Platos y bowls", categoriaId = 1 },
             new { Id = 3, Nombre = "Esculturas cerámicas", categoriaId = 1 },
 
-    // Textiles
+            // Textiles
             new { Id = 4, Nombre = "Ropa tejida", categoriaId = 2 },
             new { Id = 5, Nombre = "Alfombras", categoriaId = 2 },
             new { Id = 6, Nombre = "Accesorios textiles", categoriaId = 2 },
 
-    // Madera
+            // Madera
             new { Id = 7, Nombre = "Tallados en madera", categoriaId = 3 },
             new { Id = 8, Nombre = "Muebles pequeños", categoriaId = 3 },
             new { Id = 9, Nombre = "Decoración en madera", categoriaId = 3 },
 
-    // Cuero
+            // Cuero
             new { Id = 10, Nombre = "Carteras", categoriaId = 4 },
             new { Id = 11, Nombre = "Cinturones", categoriaId = 4 },
             new { Id = 12, Nombre = "Accesorios de cuero", categoriaId = 4 },
 
-    // Joyería Artesanal
+            // Joyería Artesanal
             new { Id = 13, Nombre = "Collares", categoriaId = 5 },
             new { Id = 14, Nombre = "Pulseras", categoriaId = 5 },
             new { Id = 15, Nombre = "Aros", categoriaId = 5 }
@@ -223,7 +254,7 @@ namespace ProyectoIntegrador.EntityFrameWork
                 departamento = "Montevideo",
                 barrio = "Centro"
             }
-     
+
         );
             //Orden
             modelBuilder.Entity<Orden>()
@@ -232,11 +263,6 @@ namespace ProyectoIntegrador.EntityFrameWork
               .HasForeignKey(o => o.ClienteId)
               .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Orden>()
-                .HasOne(o => o.Artesano)
-                .WithMany()
-                .HasForeignKey(o => o.ArtesanoId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

@@ -11,40 +11,37 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public Guid Id { get; set; }
         public int ClienteId { get; private set; }
         public Cliente Cliente { get; private set; }
-        public int ArtesanoId { get; private set; }
-        public Artesano Artesano { get; private set; }
-
 
         //Sirve para validar el pago correspondiente al artesano
-        public string? MercadoPagoSellerUserId { get; private set; }
+       // public string? MercadoPagoSellerUserId { get; private set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime? FechaPago { get; private set; }
         public EstadoOrden Estado { get; set; } 
         public decimal Total { get; set; }
         // Mercado Pago
         public string? PreferenceId { get; set; }
-        public long? MercadoPagoPaymentId { get; private set; }
+        //public long? MercadoPagoPaymentId { get; private set; }
         // Navegación
         public ICollection<OrdenItem> Items { get; set; } = new List<OrdenItem>();
 
         private Orden() { }
-        public Orden(int usuarioId, int artesanoId)
+        public Orden(int usuarioId)
         {
             Id = Guid.NewGuid();
             ClienteId = usuarioId;
-            ArtesanoId = artesanoId;
             FechaCreacion = DateTime.UtcNow;
             Estado = EstadoOrden.PendientePago;
         }
 
-        public void AgregarItem(int productoId, string nombre, int cantidad, decimal precio)
+        public void AgregarItem(int productoId, string nombre, int cantidad, decimal precio, int artesanoId)
         {
             Items.Add(new OrdenItem
             {
                 ProductoId = productoId,
                 NombreProducto = nombre,
                 Cantidad = cantidad,
-                PrecioUnitario = precio
+                PrecioUnitario = precio,
+                ArtesanoId = artesanoId
             });
         }
 
@@ -68,7 +65,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
             Estado = EstadoOrden.Pagada;
             FechaPago = DateTime.UtcNow;
-            MercadoPagoPaymentId = paymentId;
+            //MercadoPagoPaymentId = paymentId;
         }
 
         public void MarcarComoCancelada()
@@ -92,16 +89,16 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
             Estado = EstadoOrden.PendientePago;
         }
 
-        public void AsignarMercadoPagoSeller(string mpUserId)
-        {
-            MercadoPagoSellerUserId = mpUserId;
-        }
+        //public void AsignarMercadoPagoSeller(string mpUserId)
+        //{
+        //    MercadoPagoSellerUserId = mpUserId;
+        //}
 
-        public void AsignarPaymentId(long paymentId)
-        {
-            MercadoPagoPaymentId = paymentId;
-            FechaPago = DateTime.UtcNow;
-        }
+        //public void AsignarPaymentId(long paymentId)
+        //{
+        //    MercadoPagoPaymentId = paymentId;
+        //    FechaPago = DateTime.UtcNow;
+        //}
     }
 
 
