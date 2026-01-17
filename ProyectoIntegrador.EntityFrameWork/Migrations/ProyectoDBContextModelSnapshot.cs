@@ -624,6 +624,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<long?>("MercadoPagoUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<bool>("bloqueado")
+                        .HasColumnType("bit");
+
                     b.Property<string>("descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -640,6 +643,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.ToTable("Usuarios", t =>
                         {
+                            t.Property("bloqueado")
+                                .HasColumnName("Artesano_bloqueado");
+
                             t.Property("foto")
                                 .HasColumnName("Artesano_foto");
                         });
@@ -650,6 +656,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
+
+                    b.Property<bool>("bloqueado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("foto")
                         .HasColumnType("nvarchar(max)");

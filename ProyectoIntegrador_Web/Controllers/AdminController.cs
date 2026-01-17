@@ -13,13 +13,15 @@ namespace ProyectoIntegrador_Web.Controllers
         public readonly IEliminarProducto _eliminarProducto;
         public readonly IObtenerReporte _obtenerReporte;
         public readonly IArtesanoRepositorio _artesanoRepositorio;
-        public AdminController(IListadoDeReportes listadoDeReportes, IEliminarReporte eliminarReporte, IEliminarProducto eliminarProducto, IObtenerReporte obtenerReporte, IArtesanoRepositorio eliminarArtesano)
+        public readonly IBloquearArtesano _bloquearArtesano;
+        public AdminController(IListadoDeReportes listadoDeReportes, IEliminarReporte eliminarReporte, IEliminarProducto eliminarProducto, IObtenerReporte obtenerReporte, IArtesanoRepositorio eliminarArtesano, IBloquearArtesano bloquearArtesano)
         {
             _listadoDeReportes = listadoDeReportes;
             _eliminarReporte = eliminarReporte;
             _eliminarProducto = eliminarProducto;
             _obtenerReporte = obtenerReporte;
             _artesanoRepositorio = eliminarArtesano;
+            _bloquearArtesano = bloquearArtesano;
         }
 
 
@@ -67,7 +69,8 @@ namespace ProyectoIntegrador_Web.Controllers
             else if (artesanoId != null && productoId == null)
             {
                 _eliminarReporte.Ejecutar(id);
-                _artesanoRepositorio.Eliminar(artesanoId.Value);
+                //_artesanoRepositorio.Eliminar(artesanoId.Value);
+                _bloquearArtesano.bloquearArtesano(artesanoId.Value);
             }
 
             return RedirectToAction("Inicio");

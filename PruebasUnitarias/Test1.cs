@@ -186,16 +186,20 @@ namespace PruebasUnitarias
     public class ClienteTests
     {
         [TestMethod]
-        public void validarContra_ContraseñasNoCoinciden_LanzaExcepcion()
+        public void validarContra_ContraseñasNoCoinciden_LanzaNoCoincideException()
         {
             var cliente = new Cliente
             {
-                password = "Password123",
-                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("cliente@mail.com" )
+                password = BCrypt.Net.BCrypt.HashPassword("Password123"),
+                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("cliente@mail.com")
             };
 
             Assert.ThrowsException<NoCoincideException>(() =>
-                cliente.validarContra("NuevaPass123", "OtraPass123", "Password123"));
+                cliente.validarContra(
+                    "PasswordNueva1",
+                    "PasswordNueva2",
+                    "Password123"
+                ));
         }
 
         [TestMethod]
@@ -999,6 +1003,89 @@ namespace PruebasUnitarias
 
             // Assert
             repo.Verify(r => r.Eliminar(reporteId), Times.Once);
+        }
+    }
+    [TestClass]
+    public class AgregarArtesanoListaCasoDeUsoTests
+    {
+        [TestMethod]
+        public void AgregarArtesano_LlamaRepositorioAgregarArtesano()
+        {
+            // Arrange
+            var repo = new Mock<IClienteRepositorio>();
+            var caso = new AgregarArtesanoListaCasoDeUso(repo.Object);
+
+            var cliente = new Cliente
+            {
+                id = 1,
+                artesanosSeguidos = new List<Artesano>()
+            };
+
+            var artesano = new Artesano
+            {
+                id = 10
+            };
+
+            // Act
+            caso.agregarArtesano(cliente, artesano);
+
+            // Assert
+            repo.Verify(
+                r => r.agregarArtesano(cliente, artesano),
+                Times.Once
+            );
+        }
+    }
+    [TestClass]
+    public class EliminarArtesanoListaCasoDeUsoTests
+    {
+        [TestMethod]
+        public void EliminarArtesano_LlamaRepositorioEliminarArtesano()
+        {
+            // Arrange
+            var repo = new Mock<IClienteRepositorio>();
+            var caso = new EliminarArtesanoListaCasoDeUso(repo.Object);
+
+            var cliente = new Cliente
+            {
+                id = 1,
+                artesanosSeguidos = new List<Artesano>()
+            };
+
+            var artesano = new Artesano
+            {
+                id = 10
+            };
+
+            // Act
+            caso.eliminarArtesano(cliente, artesano);
+
+            // Assert
+            repo.Verify(
+                r => r.eliminarArtesano(cliente, artesano),
+                Times.Once
+            );
+        }
+    }
+    [TestClass]
+    public class BloquearArtesanoCasoDeUsoTests
+    {
+        [TestMethod]
+        public void BloquearArtesano_LlamaRepositorioBloquearArtesano()
+        {
+            // Arrange
+            var repo = new Mock<IArtesanoRepositorio>();
+            var caso = new BloquearArtesanoCasoDeUso(repo.Object);
+            int artesanoId = 5;
+
+            // Act
+            caso.bloquearArtesano(artesanoId);
+
+            // Assert
+            repo.Verify(
+                r => r.bloquearArtesano(artesanoId),
+                Times.Once
+            );
         }
     }
 }

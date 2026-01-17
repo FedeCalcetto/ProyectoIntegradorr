@@ -138,6 +138,61 @@
         </button>
     </div>
 
+    <hr class="my-5" />
+
+    <h4 class="mb-4 fw-semibold text-center">Artesanos que seguís</h4>
+
+@if (Model.ListaSeguidores?.listaDeArtesanos.Any() == true)
+{
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var artesano in Model.ListaSeguidores.listaDeArtesanos)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+
+                            <img src="@(string.IsNullOrEmpty(artesano.foto)
+                                                                         ? "/images/usuarios/default-image.jpg"
+                                                                         : artesano.foto)"
+                         class="rounded-circle mb-3"
+                         style="width:100px;height:100px;object-fit:cover;" />
+
+                            <h5 class="card-title">@artesano.nombre</h5>
+
+                            <div class="d-flex justify-content-center gap-2 mt-3">
+
+                                <!-- VER PERFIL -->
+                                <a asp-controller="Usuario"
+                                   asp-action="PerfilPublico"
+                                   asp-route-id="@artesano.id"
+                                   class="btn btn-outline-primary btn-sm">
+                                    Ver perfil
+                                </a>
+
+                                <!-- DEJAR DE SEGUIR -->
+                                <form asp-controller="Cliente"
+                                      asp-action="DejarDeSeguir"
+                                      method="post"
+                                      class="d-inline">
+                                    <input type="hidden" name="artesanoId" value="@artesano.id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Dejar de seguir
+                                    </button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+        </div>
+}
+else
+{
+        <p class="text-center text-muted">
+            Aún no seguís a ningún artesano.
+        </p>
+}
     @await Html.PartialAsync("_ModalEliminarCuenta",Model.EliminarCuenta )
     
 
