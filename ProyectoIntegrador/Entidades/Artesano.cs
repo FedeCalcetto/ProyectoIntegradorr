@@ -16,6 +16,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<FacturaNoFiscal> ventas { get; set; } = new List<FacturaNoFiscal>();
         public List<Producto> productos { get; set; } = new List<Producto>();
         public string? foto { get; set; }
+        public bool bloqueado { get; set; }
         //public List<PedidoPersonalizado> pedidosArtesano { get; set; }
         // ============================
         // MERCADO PAGO - MARKETPLACE
@@ -62,7 +63,15 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
                     throw new TelefonoUsuarioException("El teléfono solo puede contener números.");
             }
         }
-           
+        
+        public void estaBloquado()
+        {
+            if (this.bloqueado == true)
+            {
+                throw new UsuarioBloqueadoException();
+            }
+        }
+
     }
      
     }

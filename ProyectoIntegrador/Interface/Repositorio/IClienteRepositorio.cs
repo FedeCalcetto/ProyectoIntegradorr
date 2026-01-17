@@ -14,6 +14,8 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 
         void Actualizar(Cliente cliente);
         void cambioContra(Cliente cliente,string contraNueva,string contraRepetida,string contraActual);
-
+        void agregarArtesano(Cliente c, Artesano a);
+        void eliminarArtesano(Cliente c, Artesano a);
+        Cliente BuscarClientePorEmailConArtesanos(string email);
     }
 }

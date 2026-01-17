@@ -12,5 +12,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         Artesano ObtenerPorEmail(string email);
         void Actualizar(Artesano artesano);
         Artesano ObtenerProductosArtesano(string email);
+        void bloquearArtesano(int id);
     }
 }

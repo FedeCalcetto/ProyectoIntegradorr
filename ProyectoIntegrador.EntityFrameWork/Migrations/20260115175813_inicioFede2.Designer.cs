@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260109184810_MercadoPagoAzure")]
-    partial class MercadoPagoAzure
+    [Migration("20260115175813_inicioFede2")]
+    partial class inicioFede2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -534,6 +534,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
 
+                    b.Property<string>("TokenVerificacionEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TokenVerificacionEmailExpira")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Verificado")
                         .HasColumnType("bit");
 
@@ -547,8 +553,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<string>("password")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("rol")
                         .IsRequired()
@@ -621,6 +627,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<long?>("MercadoPagoUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<bool>("bloqueado")
+                        .HasColumnType("bit");
+
                     b.Property<string>("descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -637,6 +646,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.ToTable("Usuarios", t =>
                         {
+                            t.Property("bloqueado")
+                                .HasColumnName("Artesano_bloqueado");
+
                             t.Property("foto")
                                 .HasColumnName("Artesano_foto");
                         });
@@ -647,6 +659,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", b =>
                 {
                     b.HasBaseType("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario");
+
+                    b.Property<bool>("bloqueado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("foto")
                         .HasColumnType("nvarchar(max)");
@@ -815,7 +830,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
                         .WithMany()
                         .HasForeignKey("artesanoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
                         .WithMany()
