@@ -1,5 +1,6 @@
 ﻿using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
+using ProyectoIntegrador.LogicaNegocio.Excepciones;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,13 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
         public void Ejecutar(int pedidoId, string emailArtesano)
         {
             var pedido = _pedidoRepo.Obtener(pedidoId);
+
+            if (pedido == null)
+                throw new Exception("Pedido no encontrado");
+
+            if (pedido.Estado != EstadoPedido.Pendiente)
+                throw new PedidoYaAceptadoException();
+
             var artesano = _artesanoRepo.ObtenerPorEmail(emailArtesano);
 
             pedido.ArtesanoId = artesano.id;

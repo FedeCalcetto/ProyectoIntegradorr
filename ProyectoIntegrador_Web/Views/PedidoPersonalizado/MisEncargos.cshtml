@@ -1,0 +1,46 @@
+﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
+@model List<PedidoPersonalizado>
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center fw-bold">Mis encargos</h2>
+
+    @if (Model.Any())
+    {
+        foreach (var p in Model)
+        {
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@p.Titulo</h5>
+                    <p class="card-text">@p.Descripcion</p>
+
+                    <p class="text-muted mb-2">
+                        Cliente: <strong>@p.Cliente.nombre @p.Cliente.apellido</strong><br />
+                        Estado: <strong>@p.Estado</strong>
+                    </p>
+
+                    @if (p.Estado == EstadoPedido.Aceptado)
+                    {
+                        <form asp-action="Finalizar" method="post">
+                            <input type="hidden" name="id" value="@p.Id" />
+                            <button class="btn btn-primary">
+                                Finalizar pedido
+                            </button>
+                        </form>
+                    }
+                    else if (p.Estado == EstadoPedido.Finalizado)
+                    {
+                        <span class="badge bg-success">
+                            Pedido finalizado
+                        </span>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-center text-muted">
+            Aún no aceptaste ningún encargo.
+        </p>
+    }
+</div>
