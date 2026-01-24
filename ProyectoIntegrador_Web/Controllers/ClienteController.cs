@@ -19,16 +19,22 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IEditarCliente _editarCliente;
         private readonly IEliminarCliente _eliminarCliente;
+        private readonly IUsuarioRepositorio _usuarioRepo;
+        private readonly IClienteRepositorio _clienteRepo;
+        private readonly IObtenerArtesanoId _obtenerArtesano;
 
         public ClienteController(IWebHostEnvironment env, IClienteRepositorio clienteRepositorio,
                           IObtenerCliente obtenerCliente, IEditarCliente editarCliente, IEliminarCliente eliminarCliente,
-                          EmailService email)
+                          EmailService email, IUsuarioRepositorio usarioRepo, IClienteRepositorio clienteRepo, IObtenerArtesanoId obtenerArtesano)
         {
             _obtenerCliente = obtenerCliente;
             _email = email;
             _editarCliente = editarCliente;
             _eliminarCliente = eliminarCliente;
             _env = env;
+            _usuarioRepo = usarioRepo;
+            _clienteRepo = clienteRepo;
+            _obtenerArtesano = obtenerArtesano;
         }
 
         //seelct departamentos
@@ -80,7 +86,7 @@ namespace ProyectoIntegrador_Web.Controllers
             if (string.IsNullOrEmpty(email))
                 return RedirectToAction("Login", "Login");
 
-            var cliente = _obtenerCliente.Ejecutar(email);
+            var cliente = _clienteRepo.BuscarClientePorEmailConArtesanos(email);
             if (cliente == null)
                 return NotFound();
 
@@ -97,6 +103,10 @@ namespace ProyectoIntegrador_Web.Controllers
                 EliminarCuenta = new EliminarCuentaViewModel
                 {
                     Email = cliente.email.email
+                },
+                ListaSeguidores = new SeguidoresClienteViewModel
+                {
+                    listaDeArtesanos = cliente.artesanosSeguidos.ToList()
                 }
             };
 
@@ -236,6 +246,27 @@ namespace ProyectoIntegrador_Web.Controllers
                 TempData["Error"] = "Error inesperado.";
                 return View(modelo);
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DejarDeSeguir(int artesanoId)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            if (string.IsNullOrEmpty(email))
+                return RedirectToAction("Login", "Login");
+
+            var cliente = _usuarioRepo.BuscarPorEmail(email) as Cliente;
+            if (cliente == null)
+                return Unauthorized();
+
+            var artesano = _obtenerArtesano.Ejecutar(artesanoId);
+            if (artesano == null)
+                return NotFound();
+
+            _clienteRepo.eliminarArtesano(cliente, artesano);
+
+            return RedirectToAction("Perfil", "Cliente");
         }
 
         // GET: ClienteController/Details/5

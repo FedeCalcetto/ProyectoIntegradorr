@@ -83,6 +83,9 @@ namespace ProyectoIntegrador_Web
 
 
 
+            builder.Services.AddScoped<IBloquearArtesano, BloquearArtesanoCasoDeUso>();
+            builder.Services.AddScoped<IAgregarArtesanoLista, AgregarArtesanoListaCasoDeUso>();
+            builder.Services.AddScoped<IEliminarArtesanoLista, EliminarArtesanoListaCasoDeUso>();
             //REGISTRO DEL SERVICIO DE EMAIL
             builder.Services.AddScoped<EmailService>();
             builder.Services.AddTransient<EmailService>();

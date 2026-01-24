@@ -28,7 +28,7 @@
                         <th>Foto</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
-                        <th>Perfil</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,8 +37,8 @@
                         foreach (var u in Model.Usuarios)
                         {
                             <tr>
+                                <!-- FOTO -->
                                 <td>
-                                    @* Mostrar foto si existe *@
                                     @if (u is Cliente c)
                                     {
                                         <img src="@c.foto"
@@ -53,24 +53,58 @@
                                     }
                                 </td>
 
+                                <!-- DATOS -->
                                 <td>@u.nombre</td>
                                 <td>@u.apellido</td>
 
+                                <!-- ACCIONES -->
                                 <td>
+                                    <!-- Ver perfil (solo artesanos) -->
                                     @if (u is Artesano artesano)
                                     {
                                         <a asp-controller="Usuario"
                                            asp-action="PerfilPublico"
                                            asp-route-id="@u.id"
-                                           class="btn btn-outline-primary btn-sm">
+                                           class="btn btn-outline-primary btn-sm mb-1">
                                             Ver Perfil
                                         </a>
                                     }
-                                    else if (u is Cliente cliente)
+                                    else
                                     {
-                                        <span class="text-muted">—</span>
+                                        <span class="text-muted d-block">—</span>
                                     }
 
+                                    <!-- Seguir / Dejar de seguir -->
+                                    @if (Model.usuarioLogueado is Cliente cliente && u is Artesano artesanoSeguido)
+                                    {
+                                        bool yaLoSigue = cliente.artesanosSeguidos
+                                        .Any(a => a.id == artesanoSeguido.id);
+
+                                        if (!yaLoSigue)
+                                        {
+                                            <form asp-controller="Usuario"
+                                                  asp-action="Seguir"
+                                                  method="post"
+                                                  class="d-inline">
+                                                <input type="hidden" name="artesanoId" value="@artesanoSeguido.id" />
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    Seguir
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-controller="Usuario"
+                                                  asp-action="DejarDeSeguir"
+                                                  method="post"
+                                                  class="d-inline">
+                                                <input type="hidden" name="artesanoId" value="@artesanoSeguido.id" />
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    Dejar de seguir
+                                                </button>
+                                            </form>
+                                        }
+                                    }
                                 </td>
                             </tr>
                         }

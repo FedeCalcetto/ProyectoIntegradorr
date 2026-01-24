@@ -101,5 +101,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             throw new NotImplementedException();
         }
+
+        public void bloquearArtesano(int id)
+        {
+            var artesano = _contexto.Artesanos.FirstOrDefault(a => a.id == id);
+
+            if (artesano is null)
+            {
+                throw new ClienteNoEncontradoException();
+            }
+            artesano.bloqueado = true;
+            _contexto.SaveChanges();
+        }
     }
+
+
 }
