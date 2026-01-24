@@ -1,7 +1,7 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @model IEnumerable<FacturaNoFiscalArtesano>
 
-<h2>Mis facturas</h2>
+<h2>Mis ventas</h2>
 
 <div class="row">
     @foreach (var factura in Model)
@@ -10,12 +10,12 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">
-                        Factura #@factura.Id
+                        Resumen de factura
                     </h5>
 
                     <p class="card-text">
-                        Fecha: @factura.Fecha.ToString("dd/MM/yyyy") <br />
-                        Total: $@factura.Total
+                        <strong>Fecha:</strong> @factura.Fecha.ToString("dd/MM/yyyy") <br />
+                        <strong>Total:</strong> $@factura.Total
                     </p>
 
                     <a class="btn btn-outline-primary"

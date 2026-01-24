@@ -175,19 +175,36 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.LineaFactura", b =>
                 {
-                    b.Property<int>("idProducto")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("idFactura")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("NombreArtesano")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NombreProducto")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("artesanoId")
                         .HasColumnType("int");
 
                     b.Property<int>("cantidad")
                         .HasColumnType("int");
 
+                    b.Property<int>("idFactura")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("idProducto")
+                        .HasColumnType("int");
+
                     b.Property<int>("precioUnitario")
                         .HasColumnType("int");
 
-                    b.HasKey("idProducto", "idFactura");
+                    b.HasKey("Id");
 
                     b.HasIndex("idFactura");
 
@@ -773,6 +790,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             nombre = "Maria",
                             password = "Artesano123456",
                             rol = "ARTESANO"
+                        },
+                        new
+                        {
+                            id = 4,
+                            TipoUsuario = "ARTESANO",
+                            Verificado = true,
+                            apellido = "Artesana",
+                            nombre = "Ana",
+                            password = "Artesano123456",
+                            rol = "ARTESANO"
                         });
                 });
 
@@ -813,18 +840,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
-
-                    b.Property<string>("MercadoPagoAccessToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MercadoPagoRefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("MercadoPagoTokenExpira")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("MercadoPagoUserId")
-                        .HasColumnType("bigint");
 
                     b.Property<bool>("bloqueado")
                         .HasColumnType("bit");
@@ -924,21 +939,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.LineaFactura", b =>
                 {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", "factura")
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", null)
                         .WithMany("itemsFactura")
                         .HasForeignKey("idFactura")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
-                        .WithMany()
-                        .HasForeignKey("idProducto")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("factura");
-
-                    b.Navigation("producto");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Orden", b =>
@@ -1091,6 +1096,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                                 {
                                     Usuarioid = 3,
                                     email = "artesano@proyecto.com"
+                                },
+                                new
+                                {
+                                    Usuarioid = 4,
+                                    email = "artesano2@proyecto.com"
                                 });
                         });
 

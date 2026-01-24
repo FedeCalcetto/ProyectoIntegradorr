@@ -6,7 +6,6 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaAplication.Servicios;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Services;
-using Rotativa.AspNetCore;
 
 
 namespace ProyectoIntegrador_Web
@@ -54,6 +53,12 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IEliminarProducto, EliminarProductoCasoDeUso>();
             builder.Services.AddScoped<IEditarProducto, EditarProductoCasoDeUso>();
             builder.Services.AddScoped<IEliminarUsuario, EliminarUsuarioCasoDeUso>();
+            builder.Services.AddScoped<IProductoEstaEnCarrito, ProductoEstaEnCarritoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerFacturaCliente, ObtenerFacturaClienteCasoDeUso>();
+            builder.Services.AddScoped<IObtenerFacturaClientePorOrden, ObtenerFacturaClientePorOrdenCasoDeUso>();
+            builder.Services.AddScoped<IObtenerFacturaArtesano, ObtenerFacturaArtesanoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerFacturasDeUnCliente, ObtenerFacturasDeUnClienteCasoDeUso>();
+
 
             builder.Services.AddScoped<ICatalogoService, CatalogoService>();
             builder.Services.AddScoped<ISubCategoriaRepositorio, SubCategoriaEFRepositorio>();
@@ -82,6 +87,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IFinalizarPedidoPersonalizado, FinalizarPedidoPersonalizadoCasoDeUso>();
 
 
+            builder.Services.AddScoped<PdfClienteService>();
 
 
 
@@ -105,12 +111,9 @@ namespace ProyectoIntegrador_Web
 
             var app = builder.Build();
             
-            app.UseRotativa();//Pata generar PDF
-            builder.Services.AddDistributedMemoryCache();
-            RotativaConfiguration.Setup(
-            app.Environment.WebRootPath,
-            "Rotativa"
-            );
+          
+
+           
 
 
             // Configure the HTTP request pipeline.
@@ -130,6 +133,7 @@ namespace ProyectoIntegrador_Web
 
             app.UseStaticFiles();
             app.MapStaticAssets();
+           
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")

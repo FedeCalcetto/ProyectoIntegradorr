@@ -16,5 +16,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         void EliminarItem(int itemId, int cantidadABorrar);
         void Guardar();
         Task EliminarItemsCarrito(int usuarioId);
+        bool ExisteEnCarrito(int id);
     }
 }

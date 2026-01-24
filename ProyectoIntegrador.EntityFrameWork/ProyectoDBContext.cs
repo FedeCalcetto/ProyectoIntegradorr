@@ -47,20 +47,7 @@ namespace ProyectoIntegrador.EntityFrameWork
                  .HasMaxLength(255)
                  .IsRequired();
 
-            // 🧱 Crea tabla ClienteProductoFavorito 
-            //modelBuilder.Entity<Cliente>()
-            //.HasMany(c => c.productosFavoritos)
-            //.WithMany()
-            //.UsingEntity(j => j.ToTable("ClienteProductoFavorito"));
-
-            //// 🧱 Crea tabla ClienteArtesanoSeguido
-            //modelBuilder.Entity<Cliente>()
-            //.HasMany(c => c.artesanosSeguidos)
-            //.WithMany()
-
-            //.UsingEntity(j => j.ToTable("ClienteArtesanoSeguido"));
-
-            // 🔹 Propiedades "owned" (Email, Direccion)
+            
             modelBuilder.Entity<Usuario>().OwnsOne(u => u.email, email =>
             {
                 email.Property(e => e.email).HasColumnName("email_email");
@@ -85,38 +72,14 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .WithOne(f => f.Cliente)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<FacturaNoFiscalArtesano>()
-            //    .HasOne(f => f.Artesano)
-            //    .WithMany()
-            //    .HasForeignKey(f => f.ArtesanoId)
-            //    .OnDelete(DeleteBehavior.Restrict);
-
-            //modelBuilder.Entity<FacturaNoFiscalCliente>()
-            //    .HasOne(f => f.Cliente)
-            //    .WithMany(c => c.compras)
-            //    .HasForeignKey(f => f.ClienteId)
-            //    .OnDelete(DeleteBehavior.Restrict);
-
-
-            //modelBuilder.Entity<FacturaNoFiscal>()
-            //    .HasMany(f => f.itemsFactura)
-            //    .WithOne(lf => lf.factura)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.Entity<LineaFactura>()
-                .HasKey(lf => new { lf.idProducto, lf.idFactura });
-
+            .HasKey(lf => lf.Id);
             modelBuilder.Entity<LineaFactura>()
-                .HasOne(lf => lf.factura)
+                .HasOne<FacturaNoFiscal>()
                 .WithMany(f => f.itemsFactura)
                 .HasForeignKey(lf => lf.idFactura)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<LineaFactura>()
-                .HasOne(lf => lf.producto)
-                .WithMany()
-                .HasForeignKey(lf => lf.idProducto)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<FacturaNoFiscal>()
             .ToTable("Facturas")
@@ -173,10 +136,10 @@ namespace ProyectoIntegrador.EntityFrameWork
              .HasColumnName("Id");
 
             modelBuilder.Entity<PedidoPersonalizado>()
-    .HasOne(p => p.Cliente)
-    .WithMany()
-    .HasForeignKey(p => p.ClienteId)
-    .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(p => p.Cliente)
+                .WithMany()
+                .HasForeignKey(p => p.ClienteId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PedidoPersonalizado>()
                 .HasOne(p => p.Artesano)
@@ -189,42 +152,51 @@ namespace ProyectoIntegrador.EntityFrameWork
 
             // 🧪 Seed principal (TPH + owned types)
             modelBuilder.Entity<Usuario>().HasData(
-                new
-                {
-                    id = 1,
-                    nombre = "Administrador",
-                    apellido = "Principal",
-                    password = "Admin123456",
-                    rol = "ADMIN",
-                    TipoUsuario = "ADMIN",
-                    CodigoVerificacion = (string?)null, //se agrega para que no de error las migraciones, el campo debe estar como nullo
-                    Verificado = true    //se agrega para que no de error las migraciones, este debe ser falso siempre que se registre alguien
-
-
-                },
-                new
-                {
-                    id = 2,
-                    nombre = "Juan",
-                    apellido = "Cliente",
-                    password = "Cliente123456",
-                    rol = "CLIENTE",
-                    TipoUsuario = "CLIENTE",
-                    CodigoVerificacion = (string?)null,
-                    Verificado = true
-                },
-                new
-                {
-                    id = 3,
-                    nombre = "Maria",
-                    apellido = "Artesana",
-                    password = "Artesano123456",
-                    rol = "ARTESANO",
-                    TipoUsuario = "ARTESANO",
-                    CodigoVerificacion = (string?)null,
-                    Verificado = true
-                }
-            );
+     new
+     {
+         id = 1,
+         nombre = "Administrador",
+         apellido = "Principal",
+         password = "Admin123456",
+         rol = "ADMIN",
+         TipoUsuario = "ADMIN",
+         CodigoVerificacion = (string?)null,
+         Verificado = true,
+     },
+     new
+     {
+         id = 2,
+         nombre = "Juan",
+         apellido = "Cliente",
+         password = "Cliente123456",
+         rol = "CLIENTE",
+         TipoUsuario = "CLIENTE",
+         CodigoVerificacion = (string?)null,
+         Verificado = true,
+     },
+     new
+     {
+         id = 3,
+         nombre = "Maria",
+         apellido = "Artesana",
+         password = "Artesano123456",
+         rol = "ARTESANO",
+         TipoUsuario = "ARTESANO",
+         CodigoVerificacion = (string?)null,
+         Verificado = true,
+     },
+     new
+     {
+         id = 4,
+         nombre = "Ana",
+         apellido = "Artesana",
+         password = "Artesano123456",
+         rol = "ARTESANO",
+         TipoUsuario = "ARTESANO",
+         CodigoVerificacion = (string?)null,
+         Verificado = true,
+     }
+ );
 
             modelBuilder.Entity<Categoria>().HasData(
             new { Id = 1, Nombre = "Cerámica" },
@@ -303,7 +275,8 @@ namespace ProyectoIntegrador.EntityFrameWork
             modelBuilder.Entity<Usuario>().OwnsOne(u => u.email).HasData(
                 new { Usuarioid = 1, email = "admin@proyecto.com" },
                 new { Usuarioid = 2, email = "cliente@proyecto.com" },
-                new { Usuarioid = 3, email = "artesano@proyecto.com" }
+                new { Usuarioid = 3, email = "artesano@proyecto.com" },
+                new { Usuarioid = 4, email = "artesano2@proyecto.com" }
             );
 
             modelBuilder.Entity<Cliente>().OwnsOne(c => c.direccion).HasData(

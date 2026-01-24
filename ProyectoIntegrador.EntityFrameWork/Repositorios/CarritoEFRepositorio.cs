@@ -113,6 +113,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                 _contexto.SaveChanges();
         }
 
-       
+        public bool ExisteEnCarrito(int id)
+        {
+            return _contexto.CarritoItems
+                .Any(cI => cI.productoId == id);
+        }
     }
 }

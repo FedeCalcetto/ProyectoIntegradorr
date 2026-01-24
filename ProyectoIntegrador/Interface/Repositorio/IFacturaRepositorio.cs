@@ -10,10 +10,12 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
     public interface IFacturaRepositorio : IRepositorio<FacturaNoFiscal>
     {
         void CrearFacturas(Orden o);
-        bool ExisteFacturaParaOrden(Guid ordenId);
+        bool ExisteFacturaCliente(Guid ordenId);
+        FacturaNoFiscalArtesano ObtenerFacturaArtesano(int facturaId);
         FacturaNoFiscalCliente ObtenerFacturaCliente(int id);
         FacturaNoFiscalCliente ObtenerFacturaClientePorOrden(Guid ordenId);
         IEnumerable<FacturaNoFiscalArtesano> ObtenerPorArtesano(string? email);
         IEnumerable<FacturaNoFiscalCliente> ObtenerPorCliente(string? email);
+        public bool ExisteEnAlgunaLineaFactura(int productoId);
     }
 }

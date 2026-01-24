@@ -31,6 +31,7 @@ namespace ProyectoIntegrador_Web.Controllers
             private readonly IObtenerProductoArtesano _obtenerProductoArtesano;
             private readonly IObtenerProducto _obtenerProducto;
             private readonly IEliminarArtesano _eliminarArtesano;
+            private readonly IProductoEstaEnCarrito _productoEstaEnCarrito;
             private readonly IFacturaRepositorio _facturaRepo;
 
         public ArtesanoController(
@@ -47,6 +48,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 IEditarProducto editarProducto,
                 IEliminarArtesano eliminarArtesano,
                 IFacturaRepositorio facturaRepo,
+                IProductoEstaEnCarrito productoEstaEnCarrito,
                 EmailService email
             )
             {
@@ -61,6 +63,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 _editarProducto = editarProducto;
                 _eliminarArtesano = eliminarArtesano;
                 _facturaRepo = facturaRepo;
+                _productoEstaEnCarrito = productoEstaEnCarrito;
                 _email = email;
             }
         
@@ -381,7 +384,12 @@ namespace ProyectoIntegrador_Web.Controllers
         [HttpPost]
         public IActionResult EliminarProductoConfirmado(int id)
         {
-            //_producto.Eliminar(id);
+            if (_productoEstaEnCarrito.estaEnCarrito(id))
+            {
+                TempData["Error"] = "No se puede eliminar el producto porque está en un carrito.";
+                return RedirectToAction("ProductosDelArtesano");
+            }
+
             _eliminarProducto.Ejecutar(id);
             return RedirectToAction("ProductosDelArtesano");
         }

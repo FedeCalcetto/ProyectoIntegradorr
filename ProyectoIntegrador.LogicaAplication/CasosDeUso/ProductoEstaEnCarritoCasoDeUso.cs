@@ -1,0 +1,26 @@
+﻿using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
+{
+    public class ProductoEstaEnCarritoCasoDeUso : IProductoEstaEnCarrito
+    {
+        private readonly ICarritoRepositorio _carritoRepositorio;
+
+        public ProductoEstaEnCarritoCasoDeUso(ICarritoRepositorio carritoRepositorio)
+        {
+            _carritoRepositorio = carritoRepositorio;
+        }
+        public bool estaEnCarrito(int id)
+        {
+            return _carritoRepositorio.ExisteEnCarrito(id);
+
+
+        }
+    }
+}
