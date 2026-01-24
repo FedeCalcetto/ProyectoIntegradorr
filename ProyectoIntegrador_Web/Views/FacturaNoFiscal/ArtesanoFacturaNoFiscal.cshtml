@@ -4,26 +4,25 @@
 <h2>Factura no fiscal</h2>
 
 <p>
-    Esta factura muestra únicamente datos relacionados a su orden.
+    Esta factura muestra únicamente datos relacionados a su venta.
     Es realizada a modo de prueba.
 </p>
 
 <div class="card mb-3">
     <div class="card-body">
-        <h5>Artesano: @Model.Artesano.nombre</h5>
-
+        <h4>Artesano - @Model.Artesano.nombre</h4>
+        <br />
         <h5>Por la venta de:</h5>
         <div>
             @foreach (var lineaFactura in Model.itemsFactura)
             {
-                <h5>Producto:</h5> 
-                @lineaFactura.producto.nombre
-                <h5>Precio:</h5> 
-                @lineaFactura.producto.precio
+                <p><strong>Producto: </strong>@lineaFactura.NombreProducto</p>
+                <p><strong>Precio: </strong>$@lineaFactura.precioUnitario</p>
+                <p><strong>Cantidad: </strong>@lineaFactura.cantidad</p>
             }
         </div>
 
-        <p>Total vendido: $@Model.Total</p>
-        <p>Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</p>
+        <p><strong>Total vendido:</strong> $@Model.Total</p>
+        <p><strong>Fecha:</strong> @Model.Fecha.ToString("dd/MM/yyyy")</p>
     </div>
 </div>

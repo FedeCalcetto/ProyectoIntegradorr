@@ -34,8 +34,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public async Task<Orden?> ObtenerOrdenPorIdAsync(Guid ordenId)
         {
             return await _contexto.Ordenes
-            .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == ordenId);
+    .       Include(o => o.Items)
+           .ThenInclude(i => i.Artesano)
+           .FirstOrDefaultAsync(o => o.Id == ordenId);
         }
 
         public async Task<List<Orden>> ObtenerPorIdsAsync(List<Guid> ids)

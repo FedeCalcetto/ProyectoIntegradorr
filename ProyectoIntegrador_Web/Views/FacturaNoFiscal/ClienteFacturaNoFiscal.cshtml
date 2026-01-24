@@ -1,29 +1,55 @@
 ﻿ @using ProyectoIntegrador.LogicaNegocio.Entidades
 @model FacturaNoFiscalCliente
 
+@if (Model == null)
+{
+    <h3>No se encontró la factura.</h3>
+    return;
+}
+
+
 <h2>Factura no fiscal</h2>
 
 <p>
-    Esta factura muestra únicamente datos relacionados a su orden.
+    Esta factura muestra únicamente datos relacionados a su compra.
     Es realizada a modo de prueba.
 </p>
 
 <div class="card mb-3">
     <div class="card-body">
-        <h5>Cliente: @Model.Cliente.nombre</h5>
+        <h5>Cliente: @Model.Cliente?.nombre</h5>
 
         <h5>Por la compra de:</h5>
-       <div>
-        @foreach (var lineaFactura in Model.itemsFactura)
-        {
-            <h5>Artesano:</h5> @lineaFactura.producto.artesano.nombre
-            <h5>Producto:</h5> @lineaFactura.producto.nombre
-            <h5>Precio:</h5> @lineaFactura.producto.precio
-        }
-        </div>
 
-        <p>Total pagado: $@Model.Total</p>
-        <p>Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</p>
+        <ul class="list-group mb-3">
+            @if (Model.itemsFactura != null && Model.itemsFactura.Any())
+            {
+                foreach (var grupo in Model.itemsFactura
+                    .GroupBy(i => new { i.NombreProducto, i.precioUnitario, i.NombreArtesano }))
+                {
+                    var item = grupo.First();
+                    var cantidadTotal = grupo.Sum(i => i.cantidad);
+
+                    <li class="list-group-item">
+                        <strong>Producto:</strong> @item.NombreProducto <br />
+                        <strong>Precio:</strong> $@item.precioUnitario <br />
+                        <strong>Cantidad:</strong> @cantidadTotal <br />
+                        <strong>Artesano:</strong> @item.NombreArtesano
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="list-group-item">
+                    Esta factura no tiene ítems.
+                </li>
+            }
+        </ul>
+
+        <strong>Total pagado: $@Model.Total</strong><br />
+        <strong>Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</strong><br /><br />
+        <br />
+        <br />
 
         <a class="btn btn-primary"
            asp-action="PDFCliente"

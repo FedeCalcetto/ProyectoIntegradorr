@@ -198,18 +198,22 @@
                             </li>
 
                             <!--CARRITO-->
-                            <a class="nav-link position-relative d-flex align-items-center justify-content-center"
-                               asp-controller="Carrito"
-                               asp-action="Index">
+                            @if(rol == "CLIENTE")
+                            {
+                                <a class="nav-link position-relative d-flex align-items-center justify-content-center"
+                                   asp-controller="Carrito"
+                                   asp-action="Index">
 
-                                <img src="~/images/carrito/carrito.png"
-                                     alt="Carrito"
-                                     style="width:28px; height:28px;" />
+                                    <img src="~/images/carrito/carrito.png"
+                                         alt="Carrito"
+                                         style="width:28px; height:28px;" />
 
-                                @await Component.InvokeAsync("CarritoCantidad")
+                                    @await Component.InvokeAsync("CarritoCantidad")
 
-                            </a>
+                                </a>
+                            }
                         }
+                        
 
                     </ul>
                 </div>

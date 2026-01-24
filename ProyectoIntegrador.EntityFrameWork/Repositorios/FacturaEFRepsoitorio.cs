@@ -27,9 +27,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public void CrearFacturas(Orden o)
         {
-                if (ExisteFacturaParaOrden(o.Id))
-                    return;
-
+            if (!ExisteFacturaCliente(o.Id))
+            {
                 var facturaCliente = new FacturaNoFiscalCliente
                 {
                     ClienteId = o.ClienteId,
@@ -38,13 +37,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                     Total = o.Total,
                     itemsFactura = o.Items.Select(i => new LineaFactura
                     {
-                        idProducto = i.ProductoId,
+                        idProducto = i.ProductoId, //Referencia al producto, guarda historial
+                        NombreProducto = i.NombreProducto,
+                        artesanoId = i.ArtesanoId,
+                        NombreArtesano = i.Artesano.nombre,
                         precioUnitario = (int)i.PrecioUnitario,
                         cantidad = i.Cantidad
+
                     }).ToList()
+
                 };
                 _contexto.Add(facturaCliente);
-
+            }
 
                 var itemsPorArtesano = o.Items
                 .GroupBy(i => i.ArtesanoId);
@@ -59,15 +63,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                         Total = grupo.Sum(i => i.PrecioUnitario * i.Cantidad),
                         itemsFactura = grupo.Select(i => new LineaFactura
                         {
-                            idProducto = i.ProductoId,
+                            idProducto = i.ProductoId, //Referencia al producto, guarda historial
+                            NombreProducto = i.NombreProducto,
+                            artesanoId = i.ArtesanoId,
+                            NombreArtesano = i.Artesano.nombre,
                             precioUnitario = (int)i.PrecioUnitario,
                             cantidad = i.Cantidad
                         }).ToList()
                     };
                     _contexto.Add(facturaArtesano);
-                }        
-            _contexto.SaveChanges();
+                }
+                _contexto.SaveChanges();
             }
+        
         
 
         public void Editar(FacturaNoFiscal entidad)
@@ -80,15 +88,25 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             throw new NotImplementedException();
         }
 
-        public bool ExisteFacturaParaOrden(Guid ordenId)
+        public bool ExisteFacturaCliente(Guid ordenId)
         {
             return _contexto.Facturas
-                      .Any(f => f.OrdenId == ordenId);
+    .OfType<FacturaNoFiscalCliente>()
+    .Any(f => f.OrdenId == ordenId);
         }
 
         public FacturaNoFiscal Obtener(int id)
         {
            return _contexto.Facturas.FirstOrDefault(f => f.Id == id);
+        }
+
+        public FacturaNoFiscalArtesano ObtenerFacturaArtesano(int facturaId)
+        {
+            return _contexto.Facturas
+         .OfType<FacturaNoFiscalArtesano>()
+         .Include(f => f.Artesano)
+         .Include(f => f.itemsFactura)
+         .FirstOrDefault(f => f.Id == facturaId);
         }
 
         public FacturaNoFiscalCliente ObtenerFacturaCliente(int id)
@@ -97,8 +115,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
          .OfType<FacturaNoFiscalCliente>()
          .Include(f => f.Cliente)
          .Include(f => f.itemsFactura)
-             .ThenInclude(i => i.producto)
-                 .ThenInclude(p => p.artesano)
          .FirstOrDefault(f => f.Id == id);
         }
 
@@ -108,8 +124,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                    .OfType<FacturaNoFiscalCliente>()  
                    .Include(f => f.Cliente)
                    .Include(f => f.itemsFactura)
-                       .ThenInclude(lf => lf.producto)
-                           .ThenInclude(p => p.artesano)
                    .FirstOrDefault(f => f.OrdenId == ordenId);
         }
 
@@ -136,6 +150,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public IEnumerable<FacturaNoFiscal> ObtenerTodos()
         {
             return _contexto.Facturas.ToList();
+        }
+
+        public bool ExisteEnAlgunaLineaFactura(int productoId)
+        {
+            return _contexto.LineasFactura
+                .Any(lf => lf.idProducto == productoId);
         }
     }
 }

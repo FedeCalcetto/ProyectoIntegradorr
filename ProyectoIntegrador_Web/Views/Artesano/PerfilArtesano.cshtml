@@ -8,16 +8,33 @@
 
     <div class="barraLateral">
         <div class="sidebar">
-            <p>Menú</p>
-            <p>Próximamente...</p>
+            <p>Otras opciones...</p>
+            <div class="mb-3 d-flex justify-content-left">
+            <a asp-controller="Usuario"
+               asp-action="CambioContra"
+               asp-route-returnUrl="/Artesano/PerfilArtesano"
+               class="btn btn-outline-secondary">
+                Nueva contraseña
+            </a>
+        </div>
 
-            <p>caca...</p>
-            <p>@User.Identity.Name</p>
-            <p>Email: @Context.Session.GetString("loginUsuario");</p>
-            <p>Rol: @Context.Session.GetString("Rol")</p>
-            <p>caca...</p>
+        <div class="mb-3 d-flex justify-content-left">
+            <a  class="btn btn-outline-secondary"
+                   asp-controller="MercadoPagoOAuth"
+                   asp-action="Conectar">
+                Conectar con MP
+            </a>
+        </div>
 
-
+        <div class="d-flex justify-content-left mt-4">
+            <button type="button"
+                    class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalEliminarCuenta"
+                    onclick="pedirCodigoEliminarArtesano()">
+                Eliminar Cuenta
+            </button>
+        </div>
         </div>
     </div>
 
@@ -72,13 +89,6 @@
             <input type="hidden" asp-for="Foto" />
 
             <div class="mb-3">
-            <a>
-                class="btn btn-primary">
-                Conectar con Mercado Pago
-            </a>
-            </div>
-
-            <div class="mb-3">
                 <label asp-for="Nombre" class="form-label fw-semibold"></label>
                 <input asp-for="Nombre" class="form-control" />
                 <span asp-validation-for="Nombre" class="text-danger small"></span>
@@ -109,14 +119,14 @@
 
             <input type="hidden" asp-for="Password" />
 
-            <div class="mb-3">
+          @*   <div class="mb-3">
                 <a asp-controller="Usuario"
                    asp-action="CambioContra"
                    asp-route-returnUrl="/Artesano/PerfilArtesano"
                    class="btn btn-outline-secondary">
                     Nueva contraseña
                 </a>
-            </div>
+            </div> *@
 
             <!-- BOTONES -->
             <div class="d-flex justify-content-between">
@@ -126,7 +136,7 @@
 
         </form>
 
-        <div class="d-flex justify-content-center mt-4">
+       @*  <div class="d-flex justify-content-center mt-4">
             <button type="button"
                     class="btn btn-danger"
                     data-bs-toggle="modal"
@@ -134,7 +144,7 @@
                     onclick="pedirCodigoEliminarArtesano()">
                 Eliminar Cuenta
             </button>
-        </div>
+        </div> *@
 
         @if (Model.EliminarCuenta != null)
         {
