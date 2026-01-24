@@ -113,6 +113,13 @@
                                         </li>
                                         <li>
                                             <a class="dropdown-item"
+                                               asp-controller="PedidoPersonalizado"
+                                               asp-action="Crear">
+                                                Hacer pedido personalizado
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
                                                asp-controller="Usuario"
                                                asp-action="Catalogo">
                                                 Todos los productos
@@ -159,6 +166,22 @@
                                                 Perfil
                                             </a>
                                         </li>
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="PedidoPersonalizado"
+                                               asp-action="PedidosPersonalizados">
+                                                Pedidos personalizados
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="PedidoPersonalizado"
+                                               asp-action="MisEncargos">
+                                                Mis encargos
+                                            </a>
+                                        </li>
+
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="Producto"
@@ -221,11 +244,32 @@
         </nav>
     </header>
 
-        <div class="container">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
+    <div class="container">
+
+        @if (TempData.ContainsKey("Mensaje"))
+        {
+            var tipo = "success";
+
+            if (TempData.ContainsKey("TipoMensaje"))
+            {
+                tipo = TempData["TipoMensaje"]?.ToString() ?? "success";
+            }
+
+            <div class="alert alert-@tipo alert-dismissible fade show mx-3 mt-3" role="alert">
+                @TempData["Mensaje"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @* <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            @TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div> *@
+
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
 
 
     <footer class="border-top footer text-muted">

@@ -9,6 +9,6 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
 {
     public interface IObtenerPedidosPendientes
     {
-        IEnumerable<PedidoPersonalizado> Ejecutar();
+        IEnumerable<PedidoPersonalizado> Ejecutar(string busqueda, string orden);
     }
 }

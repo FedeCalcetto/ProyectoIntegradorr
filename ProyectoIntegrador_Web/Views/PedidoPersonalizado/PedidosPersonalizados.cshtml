@@ -1,0 +1,123 @@
+﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
+@using ProyectoIntegrador_Web.Models
+@model PedidosPersonalizadosPaginadosViewModel
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center fw-bold">Pedidos personalizados</h2>
+
+    @* 🔍 BUSCADOR + ORDEN *@
+    <form method="get" class="row mb-4">
+        <div class="col-md-6">
+            <input type="text"
+                   name="busqueda"
+                   value="@Model.Busqueda"
+                   class="form-control"
+                   placeholder="Buscar por título o cliente..." />
+        </div>
+
+        <div class="col-md-4">
+            <select name="orden" class="form-select">
+                <option value="fecha_desc" selected="@(Model.Orden == "fecha_desc")">
+                    Más recientes primero
+                </option>
+                <option value="fecha_asc" selected="@(Model.Orden == "fecha_asc")">
+                    Más antiguos primero
+                </option>
+                <option value="nombre_asc" selected="@(Model.Orden == "nombre_asc")">
+                    Cliente A–Z
+                </option>
+                <option value="nombre_desc" selected="@(Model.Orden == "nombre_desc")">
+                    Cliente Z–A
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">
+                Buscar
+            </button>
+        </div>
+    </form>
+
+    @* 📦 LISTADO *@
+    @if (Model.Pedidos.Any())
+    {
+        foreach (var p in Model.Pedidos)
+        {
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@p.Titulo</h5>
+                    <p class="card-text">@p.Descripcion</p>
+
+                    <p class="text-muted mb-2">
+                        Pedido por:
+                        <strong>@p.Cliente.nombre @p.Cliente.apellido</strong><br />
+                        Fecha: @p.FechaCreacion.ToShortDateString()
+                    </p>
+
+                    <form asp-action="Aceptar" method="post">
+                        <input type="hidden" name="id" value="@p.Id" />
+                        <button class="btn btn-success">
+                            Aceptar encargo
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-center text-muted">
+            No hay pedidos disponibles en este momento.
+        </p>
+    }
+
+    @* 🔽 PAGINACIÓN *@
+    @if (Model.TotalPaginas > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+
+                <li class="page-item @(Model.PaginaActual == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="PedidosPersonalizados"
+                       asp-route-pagina="@(Model.PaginaActual - 1)"
+                       asp-route-busqueda="@Model.Busqueda"
+                       asp-route-orden="@Model.Orden">
+                        Anterior
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="PedidosPersonalizados"
+                           asp-route-pagina="@i"
+                           asp-route-busqueda="@Model.Busqueda"
+                           asp-route-orden="@Model.Orden">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.PaginaActual == Model.TotalPaginas ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="PedidosPersonalizados"
+                       asp-route-pagina="@(Model.PaginaActual + 1)"
+                       asp-route-busqueda="@Model.Busqueda"
+                       asp-route-orden="@Model.Orden">
+                        Siguiente
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    }
+</div>
+
+@* <script>
+    setInterval(() => {
+        location.reload();
+    }, 1500);
+</script> *@
