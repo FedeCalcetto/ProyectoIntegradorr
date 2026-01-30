@@ -1,28 +1,58 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @model FacturaNoFiscalArtesano
 
-<h2>Factura no fiscal</h2>
 
+<div class="text-center">
+<h2>Resumen informativo de ventas</h2>
 <p>
-    Esta factura muestra únicamente datos relacionados a su venta.
-    Es realizada a modo de prueba.
+    Este apartado muestra únicamente datos relacionados a sus ventas.
 </p>
+</div>
 
-<div class="card mb-3">
+
+<div class="card mb-4 shadow-sm">
     <div class="card-body">
-        <h4>Artesano - @Model.Artesano.nombre</h4>
-        <br />
-        <h5>Por la venta de:</h5>
-        <div>
+        <h4 class="mb-3">Para el artesano - @Model.Artesano.nombre</h4>
+
+        <h5 class="mb-3">Por la venta de:</h5>
+
+        <div class="row">
             @foreach (var lineaFactura in Model.itemsFactura)
             {
-                <p><strong>Producto: </strong>@lineaFactura.NombreProducto</p>
-                <p><strong>Precio: </strong>$@lineaFactura.precioUnitario</p>
-                <p><strong>Cantidad: </strong>@lineaFactura.cantidad</p>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 bg-light border-secondary">
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold product-title">
+                                @lineaFactura.NombreProducto
+                            </h6>
+
+                            <p class="mb-1">
+                                <strong>Precio:</strong> $@lineaFactura.precioUnitario
+                            </p>
+
+                            <p class="mb-1">
+                                <strong>Cantidad:</strong> @lineaFactura.cantidad
+                            </p>
+
+                            <p class="mb-0">
+                                <strong>Subtotal:</strong>
+                                $@(lineaFactura.precioUnitario* lineaFactura.cantidad)
+                            </p>
+                        </div>
+                    </div>
+                </div>
             }
         </div>
 
-        <p><strong>Total vendido:</strong> $@Model.Total</p>
-        <p><strong>Fecha:</strong> @Model.Fecha.ToString("dd/MM/yyyy")</p>
+        <hr />
+
+        <div class="d-flex justify-content-between">
+            <p class="mb-0">
+                <strong>Total vendido:</strong> $@Model.Total
+            </p>
+            <p class="mb-0">
+                <strong>Fecha:</strong> @Model.Fecha.ToString("dd/MM/yyyy")
+            </p>
+        </div>
     </div>
 </div>

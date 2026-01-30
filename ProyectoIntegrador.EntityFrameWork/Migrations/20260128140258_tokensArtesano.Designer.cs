@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260128140258_tokensArtesano")]
+    partial class tokensArtesano
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -370,7 +373,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 5,
                             descripcion = "Alfombra tejida a mano con lana natural",
-                            imagen = "alfombra-textil.jpg",
+                            imagen = "/img/alfombra-textil.jpg",
                             nombre = "Alfombra Andina",
                             precio = 3200,
                             stock = 5
@@ -381,7 +384,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 5,
                             descripcion = "Manta de algodón tejida a mano",
-                            imagen = "alfombra-textil.jpg",
+                            imagen = "/img/alfombra-textil.jpg",
                             nombre = "Manta Textil Artesanal",
                             precio = 2800,
                             stock = 4
@@ -392,7 +395,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 8,
                             descripcion = "Mate artesanal de madera pulida",
-                            imagen = "mate-madera.jpg",
+                            imagen = "/img/mate-madera.jpg",
                             nombre = "Mate de Madera Tallado",
                             precio = 1200,
                             stock = 10
@@ -403,7 +406,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 9,
                             descripcion = "Caja artesanal de madera natural",
-                            imagen = "mate-madera.jpg",
+                            imagen = "/img/mate-madera.jpg",
                             nombre = "Caja Decorativa de Madera",
                             precio = 1500,
                             stock = 6
@@ -414,7 +417,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 4,
                             SubCategoriaId = 10,
                             descripcion = "Cartera hecha en cuero natural",
-                            imagen = "cartera-cuero.jpg",
+                            imagen = "/img/cartera-cuero.jpg",
                             nombre = "Cartera de Cuero Premium",
                             precio = 5200,
                             stock = 3
@@ -425,7 +428,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 4,
                             SubCategoriaId = 11,
                             descripcion = "Cinturón de cuero genuino",
-                            imagen = "cartera-cuero.jpg",
+                            imagen = "/img/cartera-cuero.jpg",
                             nombre = "Cinturón de Cuero Artesanal",
                             precio = 1800,
                             stock = 8
@@ -436,7 +439,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 4,
                             SubCategoriaId = 13,
                             descripcion = "Collar artesanal de plata 925",
-                            imagen = "collar-plata.jpg",
+                            imagen = "/img/collar-plata.jpg",
                             nombre = "Collar de Plata",
                             precio = 3900,
                             stock = 4
@@ -447,7 +450,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 4,
                             SubCategoriaId = 14,
                             descripcion = "Pulsera de plata hecha a mano",
-                            imagen = "collar-plata.jpg",
+                            imagen = "/img/collar-plata.jpg",
                             nombre = "Pulsera Artesanal",
                             precio = 2100,
                             stock = 7
@@ -458,7 +461,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 1,
                             descripcion = "Taza de cerámica esmaltada",
-                            imagen = "taza-ceramica.jpg",
+                            imagen = "/img/taza-ceramica.jpg",
                             nombre = "Taza de Cerámica",
                             precio = 900,
                             stock = 12
@@ -469,7 +472,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 2,
                             descripcion = "Bowl artesanal de cerámica",
-                            imagen = "taza-ceramica.jpg",
+                            imagen = "/img/taza-ceramica.jpg",
                             nombre = "Bowl de Cerámica",
                             precio = 1300,
                             stock = 6
@@ -840,6 +843,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
+
+                    b.Property<string>("MercadoPagoAccessToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MercadoPagoRefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("MercadoPagoTokenExpira")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("MercadoPagoUserId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("bloqueado")
                         .HasColumnType("bit");

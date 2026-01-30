@@ -235,20 +235,20 @@ namespace ProyectoIntegrador.EntityFrameWork
 
             modelBuilder.Entity<Producto>().HasData(
 
-          new { id = 1, nombre = "Alfombra Andina", precio = 3200, stock = 5, descripcion = "Alfombra tejida a mano con lana natural", SubCategoriaId = 5, ArtesanoId = 3, imagen = "/img/alfombra-textil.jpg" },
-          new { id = 2, nombre = "Manta Textil Artesanal", precio = 2800, stock = 4, descripcion = "Manta de algodón tejida a mano", SubCategoriaId = 5, ArtesanoId = 3, imagen = "/img/alfombra-textil.jpg" },
+          new { id = 1, nombre = "Alfombra Andina", precio = 3200, stock = 5, descripcion = "Alfombra tejida a mano con lana natural", SubCategoriaId = 5, ArtesanoId = 3, imagen = "alfombra-textil.jpg" },
+          new { id = 2, nombre = "Manta Textil Artesanal", precio = 2800, stock = 4, descripcion = "Manta de algodón tejida a mano", SubCategoriaId = 5, ArtesanoId = 3, imagen = "alfombra-textil.jpg" },
 
-          new { id = 3, nombre = "Mate de Madera Tallado", precio = 1200, stock = 10, descripcion = "Mate artesanal de madera pulida", SubCategoriaId = 8, ArtesanoId = 3, imagen = "/img/mate-madera.jpg" },
-          new { id = 4, nombre = "Caja Decorativa de Madera", precio = 1500, stock = 6, descripcion = "Caja artesanal de madera natural", SubCategoriaId = 9, ArtesanoId = 3, imagen = "/img/mate-madera.jpg" },
+          new { id = 3, nombre = "Mate de Madera Tallado", precio = 1200, stock = 10, descripcion = "Mate artesanal de madera pulida", SubCategoriaId = 8, ArtesanoId = 3, imagen = "mate-madera.jpg" },
+          new { id = 4, nombre = "Caja Decorativa de Madera", precio = 1500, stock = 6, descripcion = "Caja artesanal de madera natural", SubCategoriaId = 9, ArtesanoId = 3, imagen = "mate-madera.jpg" },
 
-          new { id = 5, nombre = "Cartera de Cuero Premium", precio = 5200, stock = 3, descripcion = "Cartera hecha en cuero natural", SubCategoriaId = 10, ArtesanoId = 4, imagen = "/img/cartera-cuero.jpg" },
-          new { id = 6, nombre = "Cinturón de Cuero Artesanal", precio = 1800, stock = 8, descripcion = "Cinturón de cuero genuino", SubCategoriaId = 11, ArtesanoId = 4, imagen = "/img/cartera-cuero.jpg" },
+          new { id = 5, nombre = "Cartera de Cuero Premium", precio = 5200, stock = 3, descripcion = "Cartera hecha en cuero natural", SubCategoriaId = 10, ArtesanoId = 4, imagen = "cartera-cuero.jpg" },
+          new { id = 6, nombre = "Cinturón de Cuero Artesanal", precio = 1800, stock = 8, descripcion = "Cinturón de cuero genuino", SubCategoriaId = 11, ArtesanoId = 4, imagen = "cartera-cuero.jpg" },
 
-          new { id = 7, nombre = "Collar de Plata", precio = 3900, stock = 4, descripcion = "Collar artesanal de plata 925", SubCategoriaId = 13, ArtesanoId = 4, imagen = "/img/collar-plata.jpg" },
-          new { id = 8, nombre = "Pulsera Artesanal", precio = 2100, stock = 7, descripcion = "Pulsera de plata hecha a mano", SubCategoriaId = 14, ArtesanoId = 4, imagen = "/img/collar-plata.jpg" },
+          new { id = 7, nombre = "Collar de Plata", precio = 3900, stock = 4, descripcion = "Collar artesanal de plata 925", SubCategoriaId = 13, ArtesanoId = 4, imagen = "collar-plata.jpg" },
+          new { id = 8, nombre = "Pulsera Artesanal", precio = 2100, stock = 7, descripcion = "Pulsera de plata hecha a mano", SubCategoriaId = 14, ArtesanoId = 4, imagen = "collar-plata.jpg" },
 
-          new { id = 9, nombre = "Taza de Cerámica", precio = 900, stock = 12, descripcion = "Taza de cerámica esmaltada", SubCategoriaId = 1, ArtesanoId = 3, imagen = "/img/taza-ceramica.jpg" },
-          new { id = 10, nombre = "Bowl de Cerámica", precio = 1300, stock = 6, descripcion = "Bowl artesanal de cerámica", SubCategoriaId = 2, ArtesanoId = 3, imagen = "/img/taza-ceramica.jpg" }
+          new { id = 9, nombre = "Taza de Cerámica", precio = 900, stock = 12, descripcion = "Taza de cerámica esmaltada", SubCategoriaId = 1, ArtesanoId = 3, imagen = "taza-ceramica.jpg" },
+          new { id = 10, nombre = "Bowl de Cerámica", precio = 1300, stock = 6, descripcion = "Bowl artesanal de cerámica", SubCategoriaId = 2, ArtesanoId = 3, imagen = "taza-ceramica.jpg" }
       );
 
 

@@ -66,21 +66,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 _productoEstaEnCarrito = productoEstaEnCarrito;
                 _email = email;
             }
-        
-        public ActionResult Inicio()
-        {
-            if (HttpContext.Session.GetString("Rol") != null && HttpContext.Session.GetString("Rol").Trim().ToUpper().Equals("ARTESANO"))
-            {
-                var email = HttpContext.Session.GetString("loginUsuario");
-                var facturas = _facturaRepo.ObtenerPorArtesano(email);
-                return View(facturas);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
+       
         public IActionResult PerfilArtesano()
         {
             var email = HttpContext.Session.GetString("loginUsuario");

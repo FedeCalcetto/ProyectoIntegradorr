@@ -100,7 +100,7 @@ namespace ProyectoIntegrador_Web.Controllers
             if (usuario is Cliente)
                 return RedirectToAction("Catalogo", "Usuario");
             else if (usuario is Artesano)
-                return RedirectToAction("Inicio", "Artesano");
+                return RedirectToAction("FacturasArtesano", "FacturaNoFiscal");
             else
                 return RedirectToAction("Inicio", "Admin");
         }

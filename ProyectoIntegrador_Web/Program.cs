@@ -58,6 +58,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IObtenerFacturaClientePorOrden, ObtenerFacturaClientePorOrdenCasoDeUso>();
             builder.Services.AddScoped<IObtenerFacturaArtesano, ObtenerFacturaArtesanoCasoDeUso>();
             builder.Services.AddScoped<IObtenerFacturasDeUnCliente, ObtenerFacturasDeUnClienteCasoDeUso>();
+            builder.Services.AddScoped<IObtenerOrden, ObtenerOrdenCasoDeUso>();
 
 
             builder.Services.AddScoped<ICatalogoService, CatalogoService>();
@@ -88,6 +89,7 @@ namespace ProyectoIntegrador_Web
 
 
             builder.Services.AddScoped<PdfClienteService>();
+            builder.Services.AddScoped<IProcesarOrdenService, ProcesarOrdenService>();
 
 
 
