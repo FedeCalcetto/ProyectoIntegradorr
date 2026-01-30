@@ -60,7 +60,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
         //  ARTESANO – aceptar pedido
         [HttpPost]
-        public IActionResult Aceptar(int id)
+        public async Task<IActionResult> Aceptar(int id)
         {
             var email = HttpContext.Session.GetString("loginUsuario");
             if (string.IsNullOrEmpty(email))
@@ -68,7 +68,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
             try
             {
-                _aceptarPedido.Ejecutar(id, email);
+                await _aceptarPedido.Ejecutar(id, email);
                 TempData["Mensaje"] = "Pedido aceptado correctamente.";
                 
             }
@@ -77,22 +77,53 @@ namespace ProyectoIntegrador_Web.Controllers
                 TempData["Mensaje"] = ex.Message;
                 TempData["TipoMensaje"] = "danger";
             }
+            catch (Exception)
+            {
+                TempData["Mensaje"] = "Ocurrió un error al aceptar el pedido.";
+                TempData["TipoMensaje"] = "danger";
+            }
 
             return RedirectToAction(nameof(PedidosPersonalizados));
         }
 
         //  ARTESANO – ver mis encargos
-        public IActionResult MisEncargos()
+        public IActionResult MisEncargos(int pagina = 1)
         {
-            var pedidos = _obtenerMisEncargos.Ejecutar(HttpContext.Session.GetString("loginUsuario"));
-            return View(pedidos);
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            if (string.IsNullOrEmpty(email))
+                return RedirectToAction("Login", "Usuario");
+
+            const int pageSize = 5; // cuantos por página
+
+            var pedidos = _obtenerMisEncargos.Ejecutar(email).ToList();
+
+            var total = pedidos.Count;
+
+            var pedidosPagina = pedidos
+                .Skip((pagina - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var vm = new MisEncargosPaginadosViewModel
+            {
+                Pedidos = pedidosPagina,
+                PaginaActual = pagina,
+                TotalPaginas = (int)Math.Ceiling(total / (double)pageSize)
+            };
+
+            return View(vm);
         }
 
         //  ARTESANO – finalizar pedido
         [HttpPost]
-        public IActionResult Finalizar(int id)
+        public async Task<IActionResult> Finalizar(int id)
         {
-            _finalizarPedido.Ejecutar(id);
+            var email = HttpContext.Session.GetString("loginUsuario");
+            if (string.IsNullOrEmpty(email))
+                return RedirectToAction("Login", "Usuario");
+
+            await _finalizarPedido.Ejecutar(id);
             return RedirectToAction(nameof(MisEncargos));
         }
 

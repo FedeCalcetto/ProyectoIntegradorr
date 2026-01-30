@@ -14,16 +14,19 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
     {
         private readonly IPedidoPersonalizadoRepsoitorio _pedidoRepo;
         private readonly IArtesanoRepositorio _artesanoRepo;
+        private readonly IEmailService _emailService;
 
         public AceptarPedidoPersonalizadoCasoDeUso(
             IPedidoPersonalizadoRepsoitorio pedidoRepo,
-            IArtesanoRepositorio artesanoRepo)
+            IArtesanoRepositorio artesanoRepo,
+            IEmailService emailService)
         {
             _pedidoRepo = pedidoRepo;
             _artesanoRepo = artesanoRepo;
+            _emailService = emailService;
         }
 
-        public void Ejecutar(int pedidoId, string emailArtesano)
+        public async Task Ejecutar(int pedidoId, string emailArtesano)
         {
             var pedido = _pedidoRepo.Obtener(pedidoId);
 
@@ -39,6 +42,27 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             pedido.Estado = EstadoPedido.Aceptado;
 
             _pedidoRepo.Editar(pedido);
+
+            ///// para pasar nombre en un valor /////
+            var nombreArtesano = $"{artesano.nombre} {artesano.apellido}";
+            var emailContacto = artesano.email?.email;
+
+            //Console.WriteLine("EMAIL RAW: " + artesano.email);
+            //Console.WriteLine("EMAIL.VALUE: " + artesano.email?.email);
+
+            var telefono = string.IsNullOrWhiteSpace(artesano.telefono)
+            ? $"Este artesano aún no proporcionó su teléfono. Podés contactarlo al mail: {emailContacto}"
+            : artesano.telefono;
+            ///////////////////////////////////////////////////
+            
+            await _emailService.EnviarAvisoPedidoAceptadoAsync(
+            pedido.Cliente.email.email,
+            $"{artesano.nombre} {artesano.apellido}",
+            telefono,
+            pedido.Titulo
+            );
         }
+
+       
     }
 }

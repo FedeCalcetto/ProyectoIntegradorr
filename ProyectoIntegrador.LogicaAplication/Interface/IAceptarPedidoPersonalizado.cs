@@ -8,7 +8,7 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
 {
     public interface IAceptarPedidoPersonalizado
     {
-        void Ejecutar(int pedidoId, string emailArtesano);
+        Task Ejecutar(int pedidoId, string emailArtesano);
     }
 
 }

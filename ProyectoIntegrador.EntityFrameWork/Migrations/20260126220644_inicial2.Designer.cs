@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260120140340_bdLocal")]
-    partial class bdLocal
+    [Migration("20260126220644_inicial2")]
+    partial class inicial2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -843,6 +843,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
+
+                    b.Property<string>("MercadoPagoAccessToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MercadoPagoRefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("MercadoPagoTokenExpira")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("MercadoPagoUserId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("bloqueado")
                         .HasColumnType("bit");
