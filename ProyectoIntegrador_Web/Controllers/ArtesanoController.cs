@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using ProyectoIntegrador.LogicaAplication.CasosDeUso;
 using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
@@ -33,6 +34,7 @@ namespace ProyectoIntegrador_Web.Controllers
             private readonly IEliminarArtesano _eliminarArtesano;
             private readonly IProductoEstaEnCarrito _productoEstaEnCarrito;
             private readonly IFacturaRepositorio _facturaRepo;
+        private readonly IDashboard _dashboard;
 
         public ArtesanoController(
                 IArtesanoRepositorio artesanoRepo,
@@ -49,9 +51,10 @@ namespace ProyectoIntegrador_Web.Controllers
                 IEliminarArtesano eliminarArtesano,
                 IFacturaRepositorio facturaRepo,
                 IProductoEstaEnCarrito productoEstaEnCarrito,
+                IDashboard dashboard,
                 EmailService email
-            )
-            {
+        )
+        {
                 _obtenerProducto = obtenerProducto;
                 _editarArtesano = editarArtesano;
                 _env = env;
@@ -65,7 +68,8 @@ namespace ProyectoIntegrador_Web.Controllers
                 _facturaRepo = facturaRepo;
                 _productoEstaEnCarrito = productoEstaEnCarrito;
                 _email = email;
-            }
+                _dashboard = dashboard;
+        }
         
         public ActionResult Inicio()
         {
@@ -392,6 +396,30 @@ namespace ProyectoIntegrador_Web.Controllers
 
             _eliminarProducto.Ejecutar(id);
             return RedirectToAction("ProductosDelArtesano");
+        }
+
+        public IActionResult Dashboard()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
+
+            if (string.IsNullOrEmpty(email) || rol != "ARTESANO")
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            var dashboardDto = _dashboard.Ejecutar(email, 12);
+
+            var viewModel = new DashboardViewModel
+            {
+                CantidadVentasTotal = dashboardDto.CantidadVentasTotal,
+                CantidadVentasMesActual = dashboardDto.CantidadVentasMesActual,
+                CantidadVentasAnoActual = dashboardDto.CantidadVentasAnoActual,
+                VariacionVentasMensual = dashboardDto.VariacionVentasMensual,
+                TopProductosVentas = dashboardDto.TopProductosVentas,
+                GraficoVentas = dashboardDto.GraficoVentas
+            };
+
+            return View(viewModel);
         }
         // GET: ArtesanoController/Create
         public ActionResult Create()

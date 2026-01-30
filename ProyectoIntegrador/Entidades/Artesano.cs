@@ -70,6 +70,67 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
             }
         }
 
+        public int Totalventas()
+        {
+            return ventas.Count;
+        }
+
+        public int VentasMesActual()
+        {
+            DateTime hoy = DateTime.UtcNow;
+            DateTime inicioMes = new DateTime(hoy.Year, hoy.Month, 1);
+
+            return ventas.Count(v => v.Fecha >= inicioMes && v.Fecha <= hoy);
+        }
+
+        public int VentasMesAnterior()
+        {
+            DateTime hoy = DateTime.UtcNow;
+            DateTime inicioMesActual = new DateTime(hoy.Year, hoy.Month, 1);
+            DateTime inicioMesAnterior = inicioMesActual.AddMonths(-1);
+
+            return ventas.Count(v =>
+                v.Fecha >= inicioMesAnterior &&
+                v.Fecha < inicioMesActual
+            );
+        }
+
+        public double VariacionVentasMensual()
+        {
+            int mesActual = VentasMesActual();
+            int mesAnterior = VentasMesAnterior();
+
+            if (mesAnterior == 0)
+                return mesActual > 0 ? 100 : 0;
+
+            return ((double)(mesActual - mesAnterior) / mesAnterior) * 100;
+        }
+
+        public int TotalventasXAno()
+        {
+            DateTime hoy = DateTime.UtcNow;
+            DateTime inicioAno = new DateTime(hoy.Year, 1, 1);
+
+            return ventas.Count(v => v.Fecha >= inicioAno && v.Fecha <= hoy);
+        }
+
+        public List<Producto> ProductosMasVendidos()
+        {
+            var topProductosIds = ventas
+            .SelectMany(v => v.Orden.Items)
+            .Where(i => i.ArtesanoId == this.id)
+            .GroupBy(i => i.ProductoId)
+            .OrderByDescending(g => g.Sum(i => i.Cantidad))
+            .Take(3)
+            .Select(g => g.Key)
+            .ToHashSet();
+
+            return productos
+                .Where(p => topProductosIds.Contains(p.id))
+                .ToList();
+        }
+
+
     }
      
     }
