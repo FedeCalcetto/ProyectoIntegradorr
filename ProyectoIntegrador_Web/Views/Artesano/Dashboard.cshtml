@@ -1,0 +1,146 @@
+﻿@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard Artesano";
+}
+
+<h2 class="mb-4">📊 Dashboard</h2>
+
+<!-- ===================== -->
+<!-- KPIs -->
+<!-- ===================== -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h6>Total ventas</h6>
+                <h3>@Model.CantidadVentasTotal</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h6>Ventas del mes</h6>
+                <h3>@Model.CantidadVentasMesActual</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h6>Ventas del año</h6>
+                <h3>@Model.CantidadVentasAnoActual</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h6>Variación mensual</h6>
+                <h3 class="@(Model.VariacionVentasMensual >= 0 ? "text-success" : "text-danger")">
+                    @Model.VariacionVentasMensual.ToString("0.##") %
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== -->
+<!-- TOP PRODUCTOS -->
+<!-- ===================== -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h4>🔥 Productos más vendidos</h4>
+
+        @if (Model.TopProductosVentas.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad vendida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var producto in Model.TopProductosVentas)
+                    {
+                        <tr>
+                            <td>@producto.NombreProducto</td>
+                            <td>@producto.CantidadVendida</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No hay ventas registradas.</p>
+        }
+    </div>
+</div>
+
+<!-- ===================== -->
+<!-- GRAFICO -->
+<!-- ===================== -->
+<div class="row">
+    <div class="col-md-12">
+        <h4>📈 Ventas por mes</h4>
+        <canvas id="ventasPorMesChart" height="100"></canvas>
+    </div>
+</div>
+
+<!-- ===================== -->
+<!-- SCRIPTS -->
+<!-- ===================== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const labels = [
+        @foreach (var item in Model.GraficoVentas)
+        {
+                <text>'@($"{item.Mes}/{item.Ano}")',</text>
+        }
+    ];
+
+    const data = [
+        @foreach (var item in Model.GraficoVentas)
+        {
+                <text>@item.Cantidad,</text>
+        }
+    ];
+
+    const ctx = document.getElementById('ventasPorMesChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Ventas',
+                data: data,
+                tension: 0.3,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>

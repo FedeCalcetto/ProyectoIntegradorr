@@ -113,6 +113,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             artesano.bloqueado = true;
             _contexto.SaveChanges();
         }
+
+        public Artesano ObtenerArtesanoDashboard(string email)
+        {
+            return _contexto.Artesanos.Include(a => a.ventas)
+                .ThenInclude(v => v.Orden)
+                .ThenInclude(o => o.Items)
+                .FirstOrDefault(a => a.email.email == email);
+
+        }
     }
 
 

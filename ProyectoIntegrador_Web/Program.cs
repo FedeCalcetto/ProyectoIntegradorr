@@ -85,7 +85,8 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IAceptarPedidoPersonalizado, AceptarPedidoPersonalizadoCasoDeUso>();
             builder.Services.AddScoped<IObtenerMisEncargos, ObtenerMisEncargosCasoDeUso>();
             builder.Services.AddScoped<IFinalizarPedidoPersonalizado, FinalizarPedidoPersonalizadoCasoDeUso>();
-
+            builder.Services.AddScoped <IObtenerArtesanoDashboard, ObtenerArtesanoDashboardCasoDeUso>();
+            builder.Services.AddScoped<IDashboard, DashboardCasoDeUso>();
 
             builder.Services.AddScoped<PdfClienteService>();
 
