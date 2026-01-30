@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260120004303_lineaFacturaActualizada")]
-    partial class lineaFacturaActualizada
+    [Migration("20260126220215_inicial")]
+    partial class inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -844,6 +844,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
 
+                    b.Property<string>("MercadoPagoAccessToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MercadoPagoRefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("MercadoPagoTokenExpira")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("MercadoPagoUserId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("bloqueado")
                         .HasColumnType("bit");
 
@@ -942,13 +954,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.LineaFactura", b =>
                 {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", "factura")
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", null)
                         .WithMany("itemsFactura")
                         .HasForeignKey("idFactura")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("factura");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Orden", b =>

@@ -101,6 +101,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<EmailService>();
             builder.Services.AddTransient<EmailService>();
             builder.Services.AddScoped<ICarritoService, CarritoService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 

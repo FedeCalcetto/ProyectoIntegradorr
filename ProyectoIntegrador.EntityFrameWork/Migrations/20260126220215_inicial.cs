@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class lineaFacturaActualizada : Migration
+    public partial class inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,6 +59,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
                     Artesano_foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Artesano_bloqueado = table.Column<bool>(type: "bit", nullable: true),
+                    MercadoPagoUserId = table.Column<long>(type: "bigint", nullable: true),
+                    MercadoPagoAccessToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MercadoPagoRefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MercadoPagoTokenExpira = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Clienteid = table.Column<int>(type: "int", nullable: true),
                     direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: true),

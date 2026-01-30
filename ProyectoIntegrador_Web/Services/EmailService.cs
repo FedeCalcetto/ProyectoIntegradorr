@@ -2,10 +2,11 @@
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using ProyectoIntegrador.LogicaAplication.Interface;
 
 namespace ProyectoIntegrador_Web.Services
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
         private readonly IConfiguration _config;
 
@@ -77,6 +78,87 @@ namespace ProyectoIntegrador_Web.Services
             mensaje.Subject = asunto;
             mensaje.Body = cuerpo;
             mensaje.IsBodyHtml = false;
+
+            await smtp.SendMailAsync(mensaje);
+        }
+
+
+        public async Task EnviarAvisoPedidoAceptadoAsync(
+         string destino,
+        string nombreArtesano,
+         string telefonoArtesano,
+        string tituloPedido)
+        {
+            var from = _config["EmailSettings:From"];
+            var password = _config["EmailSettings:Password"];
+            var host = _config["EmailSettings:Host"] ?? "smtp.gmail.com";
+            var port = int.TryParse(_config["EmailSettings:Port"], out var p) ? p : 587;
+
+
+            using var smtp = new SmtpClient(host, port);
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = new NetworkCredential(from, password);
+
+
+            var asunto = "Tu pedido fue aceptado 🎉";
+
+
+            var cuerpo = $@"
+            Hola!
+
+            Tu pedido ""{tituloPedido}"" fue aceptado por:
+            
+            👤 {nombreArtesano}
+            📞 {telefonoArtesano}
+
+            Gracias por usar nuestra plataforma 💙
+            ";
+
+
+            var mensaje = new MailMessage();
+            mensaje.From = new MailAddress(from);
+            mensaje.To.Add(destino);
+            mensaje.Subject = asunto;
+            mensaje.Body = cuerpo;
+            mensaje.IsBodyHtml = false;
+
+
+            await smtp.SendMailAsync(mensaje);
+        }
+
+        public async Task EnviarAvisoPedidoFinalizadoAsync(string destino,string tituloPedido, string nombreArtesano, string email)
+        {
+            var from = _config["EmailSettings:From"];
+            var password = _config["EmailSettings:Password"];
+            var host = _config["EmailSettings:Host"] ?? "smtp.gmail.com";
+            var port = int.TryParse(_config["EmailSettings:Port"], out var p) ? p : 587;
+
+
+            using var smtp = new SmtpClient(host, port);
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = new NetworkCredential(from, password);
+
+            var asunto = "Tu pedido fue aceptado 🎉";
+
+
+            var cuerpo = $@"
+            Hola!
+
+            Tu pedido ""{tituloPedido}"" echo X {nombreArtesano} fue finalizado!! Contactate con tu Artesano: {email}, para coordinar envio.
+
+            Gracias por usar nuestra plataforma y esperamos que disfrute de su pedido 💙
+            ";
+
+
+            var mensaje = new MailMessage();
+            mensaje.From = new MailAddress(from);
+            mensaje.To.Add(destino);
+            mensaje.Subject = asunto;
+            mensaje.Body = cuerpo;
+            mensaje.IsBodyHtml = false;
+
 
             await smtp.SendMailAsync(mensaje);
         }

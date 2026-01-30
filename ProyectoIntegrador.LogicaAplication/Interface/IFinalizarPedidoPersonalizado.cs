@@ -8,6 +8,6 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
 {
     public interface IFinalizarPedidoPersonalizado
     {
-        void Ejecutar(int pedidoId);
+        Task Ejecutar(int pedidoId);
     }
 }
