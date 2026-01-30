@@ -1,0 +1,96 @@
+﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
+@model VentaViewModel
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center fw-bold">Mis ventas</h2>
+
+    @if (Model.Ventas.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="thead-negro">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Artículos</th>
+                        <th>Tipo</th>
+                        <th>Total</th>
+                        <th class="text-center">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var factura in Model.Ventas)
+                    {
+                        <tr>
+                            <td>
+                                @factura.Fecha.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+                                @factura.itemsFactura.Count item(s)
+                            </td>
+
+                            <td>
+                                Venta
+                            </td>
+
+                            <td>
+                                <strong>$@factura.Total</strong>
+                            </td>
+
+                            <td class="text-center">
+                                <a class="btn btn-outline-info btn-sm"
+                                   asp-controller="FacturaNoFiscal"
+                                   asp-action="ArtesanoFacturaNoFiscal"
+                                   asp-route-facturaId="@factura.Id">
+                                    Ver detalle
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-center text-muted">
+            No tenés ventas registradas todavía.
+        </p>
+    }
+
+    @if (Model.TotalPaginas > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+
+                <li class="page-item @(Model.PaginaActual == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Inicio"
+                       asp-route-pagina="@(Model.PaginaActual - 1)">
+                        Anterior
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Inicio"
+                           asp-route-pagina="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.PaginaActual == Model.TotalPaginas ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Inicio"
+                       asp-route-pagina="@(Model.PaginaActual + 1)">
+                        Siguiente
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    }
+</div>

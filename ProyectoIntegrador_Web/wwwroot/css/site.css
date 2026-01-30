@@ -400,3 +400,19 @@ layout-background {
     min-width: 22px;
     text-align: center;
 }
+
+.factura-card {
+    width: 100%;
+    padding: 1rem;
+}
+
+/*VENTAS ARTESANO*/
+
+.thead-negro th {
+    background-color: #212B2A;
+    color: #fff;
+}
+
+.product-title {
+    text-decoration: underline;
+}

@@ -5,7 +5,6 @@
 <div class="container mt-4">
     <h2 class="mb-4 text-center fw-bold">Pedidos personalizados</h2>
 
-    @* 🔍 BUSCADOR + ORDEN *@
     <form method="get" class="row mb-4">
         <div class="col-md-6">
             <input type="text"
@@ -39,7 +38,6 @@
         </div>
     </form>
 
-    @* 📦 LISTADO *@
     @if (Model.Pedidos.Any())
     {
         foreach (var p in Model.Pedidos)
@@ -72,7 +70,6 @@
         </p>
     }
 
-    @* 🔽 PAGINACIÓN *@
     @if (Model.TotalPaginas > 1)
     {
         <nav class="mt-4">

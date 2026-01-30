@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.LogicaAplication.Interface
 {
-    public interface IObtenerFacturaArtesano
+    public interface IObtenerOrden
     {
-        FacturaNoFiscalArtesano obtenerFacturaArteasano(int facturaId);
-        List<FacturaNoFiscalArtesano> obtenerTodasLasFacturasDelArtesano(int id);
+        Task<Orden?> ObtenerOrdenPorIdAsync(Guid ordenId);
     }
 }

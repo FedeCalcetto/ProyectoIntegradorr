@@ -21,5 +21,10 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
         {
             return _facturaRepo.ObtenerFacturaArtesano(facturaId);
         }
+
+        public List<FacturaNoFiscalArtesano> obtenerTodasLasFacturasDelArtesano(int id)
+        {
+            return _facturaRepo.ObtenerFacturasArtesano(id);
+        }
     }
 }

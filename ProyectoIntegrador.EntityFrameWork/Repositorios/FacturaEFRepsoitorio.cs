@@ -33,7 +33,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                 {
                     ClienteId = o.ClienteId,
                     OrdenId = o.Id,
-                    Fecha = DateTime.Now,
+                    Fecha = DateTime.UtcNow,
                     Total = o.Total,
                     itemsFactura = o.Items.Select(i => new LineaFactura
                     {
@@ -59,7 +59,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
                     {
                         ArtesanoId = grupo.Key,
                         OrdenId = o.Id,
-                        Fecha = DateTime.Now,
+                        Fecha = DateTime.UtcNow,
                         Total = grupo.Sum(i => i.PrecioUnitario * i.Cantidad),
                         itemsFactura = grupo.Select(i => new LineaFactura
                         {
@@ -156,6 +156,25 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             return _contexto.LineasFactura
                 .Any(lf => lf.idProducto == productoId);
+        }
+
+        public List<FacturaNoFiscalArtesano> ObtenerFacturasArtesano(int id)
+        {
+            return _contexto.Facturas
+            .OfType<FacturaNoFiscalArtesano>()
+            .Include(f => f.itemsFactura)
+            .Where(f => f.itemsFactura.Any(i => i.artesanoId == id))
+            .OrderByDescending(f => f.Fecha)
+            .ToList();
+        }
+
+        public List<FacturaNoFiscalCliente> ObtenerFacturasCliente(int id)
+        {
+            return _contexto.Facturas
+             .OfType<FacturaNoFiscalCliente>()
+             .Where(f => f.ClienteId == id)
+             .OrderByDescending(f => f.Fecha)
+             .ToList();
         }
     }
 }

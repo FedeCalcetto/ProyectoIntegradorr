@@ -130,7 +130,7 @@
                                asp-route-id="@producto.id"
                                class="text-decoration-none text-dark">
 
-                                <div class="product-card card shadow-sm h-100">
+                                <div class="product-card factura-card card shadow-sm h-100">
 
                                     <img src="~/images/productos/@producto.imagen"
                                          class="card-img-top"
@@ -239,37 +239,35 @@
         return card.offsetWidth + 20; // ancho + gap
     }
 
-    function updateArrows() {
-         const cardWidth = getCardWidth();
-         const maxScroll = (slider.children.length * cardWidth) - (cardWidth * 3);
+        function updateArrows() {
+        const wrapper = document.querySelector(".slider-wrapper");
+        const maxScroll = slider.scrollWidth - wrapper.offsetWidth;
 
-         //  Ocultar flecha izquierda si está al inicio
-         prev.style.display = currentScroll <= 0 ? "none" : "flex";
+        prev.style.display = currentScroll <= 0 ? "none" : "flex";
+        next.style.display = currentScroll >= maxScroll ? "none" : "flex";
+    }
 
-         //  Ocultar flecha derecha si llegó al final
-         next.style.display = currentScroll >= maxScroll ? "none" : "flex";
-     }
+       next.addEventListener("click", () => {
+        const cardWidth = getCardWidth();
+        const wrapper = document.querySelector(".slider-wrapper");
+        const maxScroll = slider.scrollWidth - wrapper.offsetWidth;
 
-    next.addEventListener("click", () => {
-          const cardWidth = getCardWidth(); //Calcula el ancho de una card y calcula hasta dónde puede moverse el slider:
-          const maxScroll = (slider.children.length * cardWidth) - (cardWidth * 3);
+        if (currentScroll < maxScroll) {
+            currentScroll += cardWidth;
+            slider.style.transform = `translateX(-${currentScroll}px)`;
+            updateArrows();
+        }
+    });
 
-          if (currentScroll < maxScroll) { //deja siempre visibles 3 cards
-              currentScroll += cardWidth;
-              slider.style.transform = `translateX(-${currentScroll}px)`; //Si no llegó al límite: mueve el slider una card hacia la izquierda (se ve como que avanza hacia la derecha).
-                 updateArrows();
-          }
-      });
+          prev.addEventListener("click", () => {
+        const cardWidth = getCardWidth();
 
-      prev.addEventListener("click", () => {
-          const cardWidth = getCardWidth();
-
-          if (currentScroll > 0) {
-              currentScroll -= cardWidth;
-              slider.style.transform = `translateX(-${currentScroll}px)`;
-                  updateArrows();
-          }
-      });
+        if (currentScroll > 0) {
+            currentScroll -= cardWidth;
+            slider.style.transform = `translateX(-${currentScroll}px)`;
+            updateArrows();
+        }
+    });
 
               updateArrows();
 </script>

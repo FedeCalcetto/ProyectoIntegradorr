@@ -17,5 +17,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         IEnumerable<FacturaNoFiscalArtesano> ObtenerPorArtesano(string? email);
         IEnumerable<FacturaNoFiscalCliente> ObtenerPorCliente(string? email);
         public bool ExisteEnAlgunaLineaFactura(int productoId);
+        List<FacturaNoFiscalArtesano> ObtenerFacturasArtesano(int id);
     }
 }

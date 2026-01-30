@@ -68,6 +68,8 @@ namespace ProyectoIntegrador_Web.Controllers
                 _facturaRepo = facturaRepo;
                 _productoEstaEnCarrito = productoEstaEnCarrito;
                 _email = email;
+            }
+       
                 _dashboard = dashboard;
         }
         

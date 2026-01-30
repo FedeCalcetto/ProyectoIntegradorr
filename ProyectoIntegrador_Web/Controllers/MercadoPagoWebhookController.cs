@@ -8,8 +8,8 @@ namespace ProyectoIntegrador_Web.Controllers
     using MercadoPago.Client.Payment;
     using MercadoPago.Config;
     using MercadoPago.Resource.Payment;
-    using Microsoft.EntityFrameworkCore;
-    using ProyectoIntegrador.LogicaNegocio.Entidades;
+    using ProyectoIntegrador.LogicaAplication.Interface;
+    using ProyectoIntegrador_Web.Services;
     using System.Text.Json;
 
     [ApiController]
@@ -17,19 +17,17 @@ namespace ProyectoIntegrador_Web.Controllers
     public class MercadoPagoWebhookController : ControllerBase
     {
         private readonly IConfiguration _config;
-        private readonly IOrdenRepositorio _ordenRepo;
-        private readonly IProductoRepositorio _productoRepo;
-        private readonly IFacturaRepositorio _facturaRepo;
+        private readonly IProcesarOrdenService _pagoService;
+        private readonly IObtenerOrden _obtenerOrden;
 
         public MercadoPagoWebhookController(
             IConfiguration config,
-            IOrdenRepositorio ordenRepo,
-            IProductoRepositorio productoRepo, IFacturaRepositorio facturaRepositorio)
+            IProcesarOrdenService procesarPagosService,
+            IObtenerOrden obtenerOrden)
         {
             _config = config;
-            _ordenRepo = ordenRepo;
-            _productoRepo = productoRepo;
-            _facturaRepo = facturaRepositorio;
+            _pagoService = procesarPagosService;
+            _obtenerOrden = obtenerOrden;
             MercadoPagoConfig.AccessToken =
                 _config["MercadoPago:AccessToken"];
         }
@@ -66,48 +64,33 @@ namespace ProyectoIntegrador_Web.Controllers
 
             if (Guid.TryParse(ordenId, out var ordenGuid))
             {
-                var orden = await _ordenRepo.ObtenerOrdenPorIdAsync(ordenGuid);
+                var orden = await _obtenerOrden.ObtenerOrdenPorIdAsync(ordenGuid);
                 if (orden == null)
                     return;
                 switch (status)
                 {
                     case "approved":
-                        if (orden.Estado != EstadoOrden.Pagada)
-                        {
-                            orden.MarcarComoPagada(payment.Id.Value);
+                        if (!payment.Id.HasValue)
+                            return;
 
-                            var ordenItems = orden.Items;
-
-                            _facturaRepo.CrearFacturas(orden);
-                            foreach (var item in ordenItems)
-                            {
-                                var producto = _productoRepo
-                                    .Obtener(item.ProductoId);
-
-                                producto.DescontarStock(item.Cantidad);
-
-                                _productoRepo.Editar(producto);
-                            }
-
-                            await _ordenRepo.ActualizarOrdenAsync(orden);
-                        }
+                        await _pagoService.ProcesarOrdenPagadaAsync(
+                            orden,
+                            payment.Id.Value
+                        );
                         break;
 
                         case "rejected":
-                            orden.MarcarComoRechazada();
-                            await _ordenRepo.ActualizarOrdenAsync(orden);
+                        await _pagoService.ProcesarOrdenRechazadaAsync(orden);
                             break;
 
                         case "cancelled":
-                            orden.MarcarComoCancelada();
-                            await _ordenRepo.ActualizarOrdenAsync(orden);
-                            break;
+                        await _pagoService.ProcesarOrdenCanceladaAsync(orden);                     
+                        break;
 
                         case "pending":
                         case "in_process":
                         default:
-                            orden.MarcarComoPendiente();
-                            await _ordenRepo.ActualizarOrdenAsync(orden);
+                            await _pagoService.ProcesarOrdenPendienteAsync(orden);
                             break;
                     }
 

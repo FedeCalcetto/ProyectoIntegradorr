@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260128144450_precargaActuliazada")]
+    partial class precargaActuliazada
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -840,6 +843,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
+
+                    b.Property<string>("MercadoPagoAccessToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MercadoPagoRefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("MercadoPagoTokenExpira")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("MercadoPagoUserId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("bloqueado")
                         .HasColumnType("bit");
