@@ -11,7 +11,9 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
     public class Artesano : Usuario
     {
         public string descripcion { get; set; }
-        [StringLength(9, MinimumLength = 9, ErrorMessage = "numero invalido")]
+
+        //asdas
+        [StringLength(9, MinimumLength = 9, ErrorMessage = "Número inválido")]
         public string telefono { get; set; }
         public List<FacturaNoFiscalArtesano> ventas { get; set; } = new List<FacturaNoFiscalArtesano>();
         public List<Producto> productos { get; set; } = new List<Producto>();
@@ -19,6 +21,9 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public bool bloqueado { get; set; }
         //public List<PedidoPersonalizado>? pedidosArtesano { get; set; }
 
+
+
+        //Afsafawfwafwaf
         //MERCADO PAGO - MARKETPLACE
         //public long? MercadoPagoUserId { get; set; } //Identificador 
 
