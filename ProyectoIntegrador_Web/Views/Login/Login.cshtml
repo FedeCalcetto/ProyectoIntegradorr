@@ -1,69 +1,88 @@
 ﻿@model ProyectoIntegrador_Web.Models.LoginViewModel
 @inject IConfiguration Configuration
 @{
-
+    Layout = "_LayoutLogin";
+    ViewData["BodyClass"] = "login-body";
     ViewData["Title"] = "Login";
+
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
 
-                    <!-- Mensajes de error o información -->
-                    @if (ViewBag.Error != null)
-                    {
-                        <div class="alert alert-danger">@ViewBag.Error</div>
-                    }
-                    @if (ViewBag.Mensaje != null)
-                    {
-                        <div class="alert alert-info">@ViewBag.Mensaje</div>
-                    }
+<div class="login-wrapper">
+    <div class="login-card">
 
-                    <form asp-controller="Login" asp-action="Login" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="login-form">
+            <h6 class="brand">HechoXMí</h6>
+            <h2>Bienvenido</h2>
+            <p>Ingresá tus credenciales para continuar</p>
+           <form asp-controller="Login" asp-action="Login" method="post">
 
-                        <div class="form-group mb-3">
-                            <label asp-for="Email" class="form-label"></label>
-                            <input asp-for="Email" class="form-control" placeholder="Ingrese su correo" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
+    <!-- Error general (credenciales incorrectas, captcha, etc) -->
+    <div asp-validation-summary="ModelOnly"
+              class="text-danger small mb-2">
+    </div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="Password" class="form-label"></label>
-                            <input asp-for="Password" id="PasswordInput" type="password" class="form-control" placeholder="Ingrese su contraseña" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
+    <div class="mb-3">
+        <input asp-for="Email"
+               class="form-control"
+               placeholder="Email" />
+        <span asp-validation-for="Email"
+              class="text-danger small"></span>
+    </div>
 
-                            <!-- Mensajes dinámicos en vivo -->
-                            <div id="passwordHelp" class="text-danger mt-2"></div>
-                        </div>
+    <div class="mb-3">
+        <input asp-for="Password"
+               type="password"
+               class="form-control"
+               placeholder="Contraseña" />
+        <span asp-validation-for="Password"
+              class="text-danger small"></span>
+    </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
-                        </div>
-                          
-                        
-                        
-                        <div class="d-flex justify-content-center mt-3 mb-3">
-                            <div class="g-recaptcha" data-sitekey="@Configuration["GoogleReCaptcha:SiteKey"]"></div>
-                        </div>
+    <button type="submit" class="btn btn-dark w-100">
+        Ingresar
+    </button>
 
-                        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <p class="mt-3 text-center">
+        ¿No tenés cuenta?
+        <a asp-action="registroUsuario">Registrate</a>
+    </p>
 
-                    </form>
+    <div class="d-flex justify-content-center mt-3 mb-3 recaptcha-wrapper">
+        <div class="g-recaptcha"
+             data-sitekey="@Configuration["GoogleReCaptcha:SiteKey"]">
+        </div>
+    </div>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</form>
 
-                    <hr />
+        </div>
 
-                    <div class="text-center">
-                        <a asp-controller="Login" asp-action="registroUsuario" class="btn btn-outline-secondary btn-block">
-                            Registrarse
-                        </a>
-                    </div>
-                </div>
+        <!-- COLUMNA DERECHA -->
+        <div class="login-image">
+            <div class="image-overlay">
             </div>
         </div>
+
     </div>
 </div>
 
+
+<script>
+    const images = [
+         "/images/login/ParaLogin1.jpg",
+        "/images/login/ParaLogin2.jpg"
+    ];
+
+    let index = 0;
+    const imageDiv = document.querySelector(".login-image");
+
+    function changeImage() {
+        imageDiv.style.backgroundImage = `url('${images[index]}')`;
+        index = (index + 1) % images.length;
+    }
+
+    changeImage();
+    setInterval(changeImage, 5000); // cada 5 segundos
+</script>

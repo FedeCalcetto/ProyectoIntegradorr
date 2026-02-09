@@ -228,12 +228,6 @@ namespace ProyectoIntegrador_Web.Controllers
 
         public IActionResult DetallesProducto(int id)
         {
-            var email = HttpContext.Session.GetString("loginUsuario");
-            var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
-
-            if (string.IsNullOrEmpty(email)) { 
-                return RedirectToAction("Login", "Login");
-            }
             var producto = _obtenerProducto.obtener(id);
 
             if (producto == null)
@@ -269,9 +263,17 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View("DetallesProducto", vm);
 
             }
+            var producto = _obtenerProducto.obtener(modelo.Id);
+
+            if (HttpContext.Session.GetString("Rol") == null)
+            {
+                TempData["Error"] =
+                    "Debe iniciar sesión para reportar un producto al carrito.";
+
+                return RedirectToAction("DetallesProducto", "Producto", new { id = producto.id });
+            } 
             var email = HttpContext.Session.GetString("loginUsuario");
             var cliente = _obtenerCliente.Ejecutar(email);
-            var producto = _obtenerProducto.obtener(modelo.Id);
             try
             {
                 _agregarReporte.Ejecutar(

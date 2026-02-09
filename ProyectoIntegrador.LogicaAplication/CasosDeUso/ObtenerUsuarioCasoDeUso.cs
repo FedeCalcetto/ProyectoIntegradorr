@@ -1,6 +1,7 @@
 ﻿using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
+using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,11 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
         public Usuario Ejecutar(string email)
         {
             return _usuarioRepo.BuscarPorEmail(email);
+        }
+
+        public Usuario ObtenerPorId(int id)
+        {
+            return _usuarioRepo.Obtener(id);
         }
     }
 }

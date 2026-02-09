@@ -46,5 +46,22 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
               .ToListAsync();
         }
 
+        //public async Task GuardarPagosAsync(Guid ordenId, IEnumerable<long> paymentIds)
+        //{
+        //    var orden = await _contexto.Ordenes
+        //        .Include(o => o.Items)
+        //        .FirstOrDefaultAsync(o => o.Id == ordenId);
+
+        //    if (orden == null)
+        //        throw new Exception("Orden no encontrada");
+
+        //    foreach (var paymentId in paymentIds)
+        //    {
+        //        orden.AgregarPago(paymentId);
+        //    }
+
+        //    await _contexto.SaveChangesAsync();
+        //}
+
     }
 }

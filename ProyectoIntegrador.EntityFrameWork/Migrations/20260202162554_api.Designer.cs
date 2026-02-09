@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260128144450_precargaActuliazada")]
-    partial class precargaActuliazada
+    [Migration("20260202162554_api")]
+    partial class api
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,6 +231,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
+
+                    b.PrimitiveCollection<string>("MercadoPagoPaymentIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.PrimitiveCollection<string>("PagosAprobados")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PreferenceId")
                         .HasColumnType("nvarchar(max)");
@@ -995,8 +1003,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "Artesano")
                         .WithMany()
-                        .HasForeignKey("ArtesanoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ArtesanoId");
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
                         .WithMany()

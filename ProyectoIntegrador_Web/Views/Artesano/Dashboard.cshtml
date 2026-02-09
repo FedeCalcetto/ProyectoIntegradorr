@@ -1,4 +1,5 @@
-﻿@model DashboardViewModel
+﻿@using System.Text.Json
+@model DashboardViewModel
 
 @{
     ViewData["Title"] = "Dashboard Artesano";
@@ -97,23 +98,30 @@
 <!-- SCRIPTS -->
 <!-- ===================== -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-    const labels = [
-        @foreach (var item in Model.GraficoVentas)
-        {
-                <text>'@($"{item.Mes}/{item.Ano}")',</text>
-        }
-    ];
+document.addEventListener("DOMContentLoaded", function () {
 
-    const data = [
-        @foreach (var item in Model.GraficoVentas)
-        {
-                <text>@item.Cantidad,</text>
-        }
-    ];
+    const labels = @Html.Raw(
+        System.Text.Json.JsonSerializer.Serialize(
+            Model.GraficoVentas.Select(x => $"{x.Mes}/{x.Ano}")
+        )
+    );
 
-    const ctx = document.getElementById('ventasPorMesChart').getContext('2d');
+    const data = @Html.Raw(
+        System.Text.Json.JsonSerializer.Serialize(
+            Model.GraficoVentas.Select(x => x.Cantidad)
+        )
+    );
+
+    console.log(labels, data);
+
+    const canvas = document.getElementById('ventasPorMesChart');
+    if (!canvas) {
+        console.error("No se encontró el canvas");
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
 
     new Chart(ctx, {
         type: 'line',
@@ -128,19 +136,14 @@
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    display: true
-                }
-            },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
+                    ticks: { precision: 0 }
                 }
             }
         }
     });
+
+});
 </script>

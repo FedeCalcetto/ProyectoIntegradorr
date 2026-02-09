@@ -5,8 +5,13 @@ using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
+    using MercadoPago.Client;
+    using MercadoPago.Client.Common;
+    using MercadoPago.Client.Common;
+    using MercadoPago.Client.Payment;
     using MercadoPago.Client.Preference;
     using MercadoPago.Config;
+    using MercadoPago.Resource.Payment;
     using MercadoPago.Resource.Preference;
     using ProyectoIntegrador.LogicaAplication.Interface;
     using ProyectoIntegrador.LogicaNegocio.Entidades;
@@ -31,19 +36,10 @@ namespace ProyectoIntegrador_Web.Controllers
         [HttpGet]
         public async Task<IActionResult> CrearPago(Guid ordenId)
         {
-
-           
             //Obtener la orden
             var orden = await _ordenRepo.ObtenerOrdenPorIdAsync(ordenId);
             if (orden == null)
                 return NotFound();
-
-            //var artesano = orden.Artesano;
-
-            //if (string.IsNullOrEmpty(artesano.MercadoPagoAccessToken))
-            //    throw new Exception("El artesano no tiene Mercado Pago conectado");
-
-            //MercadoPagoConfig.AccessToken = artesano.MercadoPagoAccessToken;
 
             //Crear la preference 
             var request = new PreferenceRequest
@@ -93,7 +89,7 @@ namespace ProyectoIntegrador_Web.Controllers
             await _ordenRepo.ActualizarOrdenAsync(orden);
             //Redirigir al Checkout Pro
             return Redirect(preference.InitPoint);
-           
+
         }
 
         [HttpGet]
@@ -118,7 +114,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 await _carritoService.LimpiarCarritoAsync(usuario.id);
             }
 
-            return RedirectToAction("FacturaPorOrden","FacturaNoFiscal",new {ordenId });
+            return RedirectToAction("FacturaPorOrden", "FacturaNoFiscal", new { ordenId });
         }
         [HttpGet]
         public IActionResult Pending(string external_reference)
@@ -131,6 +127,105 @@ namespace ProyectoIntegrador_Web.Controllers
             return View("PagoFallido");
         }
 
-
     }
 }
+
+
+    ////}
+    //using Microsoft.AspNetCore.Mvc;
+    //using ProyectoIntegrador.LogicaAplication.Dtos;
+    //using ProyectoIntegrador.LogicaAplication.Interface;
+    //using ProyectoIntegrador.LogicaNegocio.Entidades;
+
+//[ApiController]
+//[Route("api/pagos")]
+//public class PagoController : ControllerBase
+//{
+//    private readonly IConfiguration _config;
+//    private readonly IObtenerUsuario _obtenerUsuario;
+//    private readonly IObtenerOrden _obtenerOrden;
+//    private readonly IOrdenRepositorio _ordenRepo;
+
+//    public PagoController(IConfiguration config, IObtenerUsuario obtenerUsuario, IObtenerOrden obtenerOrden, IOrdenRepositorio ordenRepo)
+//    {
+//        _config = config;
+//        _obtenerUsuario = obtenerUsuario;
+//        _obtenerOrden = obtenerOrden;
+//        _ordenRepo = ordenRepo;
+//    }
+
+
+
+//    [HttpPost("crear")]
+//    public async Task<IActionResult> CrearPago([FromBody] PagoRequestDto dto)
+//    {
+//        var orden = await _obtenerOrden.ObtenerOrdenPorIdAsync(dto.OrdenId);
+//        if (orden == null)
+//            return BadRequest("Orden inexistente");
+
+//        var itemsPorArtesano = orden.Items.GroupBy(i => i.ArtesanoId);
+
+//        var paymentIds = new List<long>();
+
+//        foreach (var grupo in itemsPorArtesano)
+//        {
+//            Artesano artesano = (Artesano)_obtenerUsuario.ObtenerPorId(grupo.Key);
+
+//            if (!artesano.TieneMercadoPagoConectado)
+//                return BadRequest($"El artesano {artesano.id} no tiene Mercado Pago conectado");
+
+//            MercadoPagoConfig.AccessToken = artesano.MercadoPagoAccessToken;
+//            var client = new PaymentClient();
+
+//            var total = grupo.Sum(i => i.Subtotal);
+//            var comision = total * 0.10m;
+
+//            var requestOptions = new RequestOptions();
+//            requestOptions.CustomHeaders.Add(
+//                "X-Idempotency-Key",
+//                $"{orden.Id}-{artesano.id}"
+//            );
+
+//            try
+//            {
+//                var payment = await client.CreateAsync(
+//                    new PaymentCreateRequest
+//                    {
+//                        TransactionAmount = total,
+//                        Token = dto.Token,
+//                        Installments = dto.Installments,
+//                        PaymentMethodId = dto.PaymentMethodId,
+//                        ApplicationFee = comision,
+//                        Description = "Compra marketplace",
+//                        ExternalReference = orden.Id.ToString(),
+//                        Payer = new PaymentPayerRequest
+//                        {
+//                            Email = dto.Payer.email
+//                        }
+//                    },
+//                    requestOptions
+//                );
+
+//                if (payment.Id.HasValue)
+//                    paymentIds.Add(payment.Id.Value);
+//            }
+//            catch (Exception ex)
+//            {
+//                Console.WriteLine("🔥 ERROR MP:");
+//                Console.WriteLine(ex.Message);
+//                Console.WriteLine(ex.StackTrace);
+//                return StatusCode(500, ex.Message);
+//            }
+//        }
+
+//            await _ordenRepo.GuardarPagosAsync(orden.Id, paymentIds);
+
+//        return Ok(new
+//        {
+//            success = true,
+//            pagos = paymentIds
+//        });
+//    }
+
+//}
+//}

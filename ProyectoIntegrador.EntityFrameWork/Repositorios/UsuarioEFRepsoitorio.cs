@@ -64,7 +64,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public Usuario Obtener(int id)
         {
-            throw new NotImplementedException();
+            return _contexto.Usuarios.FirstOrDefault(u => u.id == id);
         }
 
         public IEnumerable<Usuario> ObtenerTodos()

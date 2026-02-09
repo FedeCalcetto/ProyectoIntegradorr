@@ -116,10 +116,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public Artesano ObtenerArtesanoDashboard(string email)
         {
-            return _contexto.Artesanos.Include(a => a.ventas)
-                .ThenInclude(v => v.Orden)
-                .ThenInclude(o => o.Items)
-                .FirstOrDefault(a => a.email.email == email);
+            return _contexto.Artesanos
+           .Include(a => a.productos)
+           .Include(a => a.ventas)
+           .ThenInclude(v => v.Orden)
+            .ThenInclude(o => o.Items)
+           .FirstOrDefault(a => a.email.email == email);
 
         }
     }

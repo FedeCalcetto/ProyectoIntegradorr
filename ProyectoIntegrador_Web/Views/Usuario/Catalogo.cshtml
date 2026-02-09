@@ -1,63 +1,54 @@
-﻿@model ProyectoIntegrador_Web.Models.CatalogoViewModel
-
-
-@{
+﻿@{
     ViewData["Title"] = "Catálogo";
 }
 
-<h4 class="mb-3 text-center">Catálogo de productos</h4>
+<!-- HEADER NEGRO FULL WIDTH -->
+<div class="container-fluid px-0">
+    <div class="catalog-header">
+        <div class="container">
+          
 
-<!-- 🔍 BARRA DE BÚSQUEDA REUTILIZABLE -->
-<div class="w-100 mb-2">
-    <partial name="_Buscador"
-             model="Model.Buscador" />
+            <div class="w-100">
+                <partial name="_Buscador" model="Model.Buscador" />
+            </div>
+        </div>
+    </div>
+    
 </div>
 
 <!-- CONTENIDO DEL CATÁLOGO -->
-<div class="container py-4">
+<div class="container-fluid catalogo-container">
 
-    <!-- AGREGADOS RECIENTEMENTE -->
-    <h4 class="mb-3">Agregados recientemente</h4>
+    <h3 class="text-center mb-3">
+        Catálogo de productos
+    </h3>
 
-    <div class="slider-container">
-        <button class="slider-btn left" onclick="mover(this, -1)">‹</button>
+    <p class="text-muted medium mb-4 text-center">
+        <strong>Productos hechos a mano por artesanos locales</strong>
+    </p>
 
-        <div class="slider">
-            @foreach (var producto in Model.Catalogo.Recientes)
-            {
-                <div class="slider-item">
-                    <a asp-controller="Producto"
-                       asp-action="DetallesProducto"
-                       asp-route-id="@producto.Id"
-                       class="text-decoration-none text-dark">
+    <!-- AGREGADOS RECIENTEMENTE (FONDO VERDE FULL WIDTH) -->
+    <div class="productosRecientes">
+        <div class="container align-content-center">
 
-                        <partial name="_ProductoCard" model="producto" />
-                    </a>
-                </div>
-            }
-        </div>
-
-        <button class="slider-btn right" onclick="mover(this, 1)">›</button>
-    </div>
-
-
-   
-
-    <!-- POR CATEGORÍA -->
-    @foreach (var categoria in Model.Catalogo.PorCategoria)
-    {
-        <div class="catalog-section">
-
-            <h4 class="mb-3">@categoria.Nombre</h4>
+            <h4 class="mb-3 mt-3 text-success fw-semibold">
+                Agregados recientemente
+            </h4>
 
             <div class="slider-container">
                 <button class="slider-btn left" onclick="mover(this, -1)">‹</button>
 
                 <div class="slider">
-                    @foreach (var producto in categoria.Productos)
+                    @foreach (var producto in Model.Catalogo.Recientes)
                     {
                         <div class="slider-item">
-                            <partial name="_ProductoCard" model="producto" />
+                            <a asp-controller="Producto"
+                               asp-action="DetallesProducto"
+                               asp-route-id="@producto.Id"
+                               class="text-decoration-none text-dark">
+
+                                <partial name="_ProductoCard" model="producto" />
+                            </a>
                         </div>
                     }
                 </div>
@@ -66,22 +57,100 @@
             </div>
 
         </div>
-    }
+    </div>
+
+    <!-- POR CATEGORÍA -->
+    <div class="container">
+        @foreach (var categoria in Model.Catalogo.PorCategoria)
+        {
+            <div class="catalog-section">
+
+                <h4 class="mb-3">@categoria.Nombre</h4>
+
+                <div class="slider-container">
+                    <button class="slider-btn left" onclick="mover(this, -1)">‹</button>
+
+                    <div class="slider">
+                        @foreach (var producto in categoria.Productos)
+                        {
+                            <div class="slider-item">
+                                <partial name="_ProductoCard" model="producto" />
+                            </div>
+                        }
+                    </div>
+
+                    <button class="slider-btn right" onclick="mover(this, 1)">›</button>
+                </div>
+
+            </div>
+        }
+    </div>
+
 </div>
 
+<!-- BOTÓN SUBIR -->
 <button id="btnSubir" class="btn btn-outline-dark btn-subir">
-    ⬆
+    ▲
 </button>
 
+
 <script>
-    function mover(boton, direccion) {
-        const slider = boton.parentElement.querySelector('.slider');
-        const anchoCard = slider.querySelector('.slider-item').offsetWidth + 16;
-        slider.scrollLeft += direccion * anchoCard * 2;
+    function actualizarFlechas(sliderContainer) {
+        const slider = sliderContainer.querySelector('.slider');
+        const btnLeft = sliderContainer.querySelector('.slider-btn.left');
+        const btnRight = sliderContainer.querySelector('.slider-btn.right');
+
+        btnLeft.style.display = slider.scrollLeft <= 0 ? 'none' : 'block';
+          const item = slider.querySelector('.slider-item');
+    const anchoItem = item ? item.offsetWidth : 0;
+
+    btnRight.style.display =
+        slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - anchoItem / 2
+            ? 'none'
+            : 'block';
     }
+
+    function mover(boton, direccion) {
+        const sliderContainer = boton.parentElement;
+        const slider = sliderContainer.querySelector('.slider');
+        const item = slider.querySelector('.slider-item');
+
+        if (!item) return;
+
+        const gap = parseInt(getComputedStyle(slider).columnGap || 0);
+        const anchoItem = item.offsetWidth + gap;
+
+        slider.scrollBy({
+            left: direccion * anchoItem,
+            behavior: 'smooth'
+        });
+
+        // Esperamos a que termine el scroll
+        setTimeout(() => actualizarFlechas(sliderContainer), 300);
+    }
+
+    // Inicializa flechas al cargar
+    document.querySelectorAll('.slider-container').forEach(sc => {
+        actualizarFlechas(sc);
+
+        const slider = sc.querySelector('.slider');
+        slider.addEventListener('scroll', () => actualizarFlechas(sc));
+    });
 </script>
 
+  @*   <!--Oculta header -->
+    <script>
 
+        const btnToggleHeader = document.getElementById('btnToggleHeader');
+        const catalogHeader = document.querySelector('.catalog-header');
+
+        btnToggleHeader.addEventListener('click', () => {
+            catalogHeader.classList.toggle('collapsed');
+        });
+    </script>
+
+    
+ *@
 
 <!-- esto se encarga que al darle click suba -->
 <script>
@@ -96,3 +165,5 @@
         botonSubir.style.display = window.scrollY > 200 ? "block" : "none";
     });
 </script>
+
+

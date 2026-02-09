@@ -68,11 +68,12 @@ namespace ProyectoIntegrador_Web.Controllers
                 _facturaRepo = facturaRepo;
                 _productoEstaEnCarrito = productoEstaEnCarrito;
                 _email = email;
-            }
-       
                 _dashboard = dashboard;
+
         }
-        
+
+
+
         public ActionResult Inicio()
         {
             if (HttpContext.Session.GetString("Rol") != null && HttpContext.Session.GetString("Rol").Trim().ToUpper().Equals("ARTESANO"))

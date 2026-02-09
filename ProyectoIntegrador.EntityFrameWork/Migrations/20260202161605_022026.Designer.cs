@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260126220644_inicial2")]
-    partial class inicial2
+    [Migration("20260202161605_022026")]
+    partial class _022026
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -232,6 +232,14 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
 
+                    b.PrimitiveCollection<string>("MercadoPagoPaymentIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.PrimitiveCollection<string>("PagosAprobados")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PreferenceId")
                         .HasColumnType("nvarchar(max)");
 
@@ -373,7 +381,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 5,
                             descripcion = "Alfombra tejida a mano con lana natural",
-                            imagen = "/img/alfombra-textil.jpg",
+                            imagen = "alfombra-textil.jpg",
                             nombre = "Alfombra Andina",
                             precio = 3200,
                             stock = 5
@@ -384,7 +392,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 5,
                             descripcion = "Manta de algodón tejida a mano",
-                            imagen = "/img/alfombra-textil.jpg",
+                            imagen = "alfombra-textil.jpg",
                             nombre = "Manta Textil Artesanal",
                             precio = 2800,
                             stock = 4
@@ -395,7 +403,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 8,
                             descripcion = "Mate artesanal de madera pulida",
-                            imagen = "/img/mate-madera.jpg",
+                            imagen = "mate-madera.jpg",
                             nombre = "Mate de Madera Tallado",
                             precio = 1200,
                             stock = 10
@@ -406,7 +414,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 9,
                             descripcion = "Caja artesanal de madera natural",
-                            imagen = "/img/mate-madera.jpg",
+                            imagen = "mate-madera.jpg",
                             nombre = "Caja Decorativa de Madera",
                             precio = 1500,
                             stock = 6
@@ -417,7 +425,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 4,
                             SubCategoriaId = 10,
                             descripcion = "Cartera hecha en cuero natural",
-                            imagen = "/img/cartera-cuero.jpg",
+                            imagen = "cartera-cuero.jpg",
                             nombre = "Cartera de Cuero Premium",
                             precio = 5200,
                             stock = 3
@@ -428,7 +436,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 4,
                             SubCategoriaId = 11,
                             descripcion = "Cinturón de cuero genuino",
-                            imagen = "/img/cartera-cuero.jpg",
+                            imagen = "cartera-cuero.jpg",
                             nombre = "Cinturón de Cuero Artesanal",
                             precio = 1800,
                             stock = 8
@@ -439,7 +447,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 4,
                             SubCategoriaId = 13,
                             descripcion = "Collar artesanal de plata 925",
-                            imagen = "/img/collar-plata.jpg",
+                            imagen = "collar-plata.jpg",
                             nombre = "Collar de Plata",
                             precio = 3900,
                             stock = 4
@@ -450,7 +458,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 4,
                             SubCategoriaId = 14,
                             descripcion = "Pulsera de plata hecha a mano",
-                            imagen = "/img/collar-plata.jpg",
+                            imagen = "collar-plata.jpg",
                             nombre = "Pulsera Artesanal",
                             precio = 2100,
                             stock = 7
@@ -461,7 +469,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 1,
                             descripcion = "Taza de cerámica esmaltada",
-                            imagen = "/img/taza-ceramica.jpg",
+                            imagen = "taza-ceramica.jpg",
                             nombre = "Taza de Cerámica",
                             precio = 900,
                             stock = 12
@@ -472,7 +480,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             ArtesanoId = 3,
                             SubCategoriaId = 2,
                             descripcion = "Bowl artesanal de cerámica",
-                            imagen = "/img/taza-ceramica.jpg",
+                            imagen = "taza-ceramica.jpg",
                             nombre = "Bowl de Cerámica",
                             precio = 1300,
                             stock = 6
@@ -995,8 +1003,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "Artesano")
                         .WithMany()
-                        .HasForeignKey("ArtesanoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ArtesanoId");
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
                         .WithMany()

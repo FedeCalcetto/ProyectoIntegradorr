@@ -10,5 +10,7 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
     public interface IObtenerUsuario
     {
         Usuario Ejecutar(string email);
+        Usuario ObtenerPorId(int id);
+
     }
 }

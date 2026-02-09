@@ -13,6 +13,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         Task<Orden?> ObtenerOrdenPorIdAsync(Guid ordenId);
         Task ActualizarOrdenAsync(Orden orden);
         Task<List<Orden>> ObtenerPorIdsAsync(List<Guid> ids);
-
+       //Task GuardarPagosAsync(Guid ordenId, IEnumerable<long> paymentIds);
     }
 }

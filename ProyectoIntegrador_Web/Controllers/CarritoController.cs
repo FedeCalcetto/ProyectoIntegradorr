@@ -51,13 +51,20 @@ namespace ProyectoIntegrador_Web.Controllers
         public IActionResult AgregarAlCarrito(int productoId, int cantidad)
         {
             var producto = _obtenerProducto.obtener(productoId);
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var usuario = _obtenerUsuario.Ejecutar(email);
             if (producto == null)
             {
                 return NotFound("Producto no encontrado.");
             }
+            if (HttpContext.Session.GetString("Rol") == null)
+            {
+                TempData["Error"] =
+                    "Debe iniciar sesión para agregar un producto al carrito.";
 
-            var email = HttpContext.Session.GetString("loginUsuario");
-            var usuario = _obtenerUsuario.Ejecutar(email);
+                return RedirectToAction("DetallesProducto", "Producto", new { id = productoId });
+            }
+            
             _agragarAlCarrito.agregarAlCarrito(productoId, usuario.id, cantidad);
             var itemsCarrito = _mostrarProductosCarrito.mostrarProductos(usuario.id);
 
@@ -92,6 +99,22 @@ namespace ProyectoIntegrador_Web.Controllers
             );
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> ContinuarCompra()
+        //{
+        //    var email = HttpContext.Session.GetString("loginUsuario");
+        //    var usuario = _obtenerUsuario.Ejecutar(email);
+
+        //    // Crear UNA sola orden con todos los ítems del carrito
+        //    var ordenId = await _agregarOrden.AgregarOrdenAsync(usuario.id);
+
+        //    // Ir directo a pagar
+        //    return RedirectToAction(
+        //     "Checkout",
+        //     "PagoNoApi",
+        //     new { ordenId }
+        // );
+        //}
 
     }
 }

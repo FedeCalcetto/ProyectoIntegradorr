@@ -6,8 +6,6 @@
     <h3>No se encontró la factura.</h3>
     return;
 }
-
-
 <h2>Factura no fiscal</h2>
 
 <p>
@@ -19,42 +17,60 @@
     <div class="card-body">
         <h5>Cliente: @Model.Cliente?.nombre</h5>
 
-        <h5>Por la compra de:</h5>
+        <h5 class="mt-4">Detalle de la compra</h5>
 
-        <ul class="list-group mb-3">
-            @if (Model.itemsFactura != null && Model.itemsFactura.Any())
-            {
-                foreach (var grupo in Model.itemsFactura
-                    .GroupBy(i => new { i.NombreProducto, i.precioUnitario, i.NombreArtesano }))
-                {
-                    var item = grupo.First();
-                    var cantidadTotal = grupo.Sum(i => i.cantidad);
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Artesano</th>
+                        <th>Precio unitario</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.itemsFactura != null && Model.itemsFactura.Any())
+                    {
+                        foreach (var grupo in Model.itemsFactura
+                        .GroupBy(i => new { i.NombreProducto, i.precioUnitario, i.NombreArtesano }))
+                        {
+                            var item = grupo.First();
+                            var cantidadTotal = grupo.Sum(i => i.cantidad);
+                            var subtotal = cantidadTotal * item.precioUnitario;
 
-                    <li class="list-group-item">
-                        <strong>Producto:</strong> @item.NombreProducto <br />
-                        <strong>Precio:</strong> $@item.precioUnitario <br />
-                        <strong>Cantidad:</strong> @cantidadTotal <br />
-                        <strong>Artesano:</strong> @item.NombreArtesano
-                    </li>
-                }
-            }
-            else
-            {
-                <li class="list-group-item">
-                    Esta factura no tiene ítems.
-                </li>
-            }
-        </ul>
+                            <tr>
+                                <td>@item.NombreProducto</td>
+                                <td>@item.NombreArtesano</td>
+                                <td>$@item.precioUnitario</td>
+                                <td>@cantidadTotal</td>
+                                <td>$@subtotal</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                Esta factura no tiene ítems.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
-        <strong>Total pagado: $@Model.Total</strong><br />
-        <strong>Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</strong><br /><br />
-        <br />
-        <br />
+        <div class="text-end mt-3">
+            <h5>Total pagado: <strong>$@Model.Total</strong></h5>
+            <p>Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</p>
+        </div>
 
-        <a class="btn btn-primary"
+        <a class="btn btn-primary mt-3"
            asp-action="PDFCliente"
            asp-route-id="@Model.Id">
             Descargar PDF
         </a>
     </div>
 </div>
+
