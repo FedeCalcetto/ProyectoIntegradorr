@@ -9,16 +9,15 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ProyectoIntegrador_Web.styles.css" asp-append-version="true" />
 </head>
-<body class="d-flex flex-column min-vh-100">
-
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3 layout-background">
-            <div class="container-fluid">
+<body class="d-flex flex-column min-vh-100 @ViewData["BodyClass"]">
+    <header class="layout-background">
+        <nav class="navbar navbar-expand-sm box-shadow bg-transparent">
+        <div class="container-fluid ">
 
                 <a class="navbar-brand"
                    asp-controller="Home"
                    asp-action="Index">
-                    ProyectoIntegrador_Web
+                    HechoXMí
                 </a>
 
                 <button class="navbar-toggler"
@@ -39,28 +38,83 @@
                         <!-- NO LOGUEADO -->
                         @if (rol == null)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                   asp-controller="Login"
-                                   asp-action="Login">
-                                    Login
+                            <li class="nav-item ms-auto">
+                                <a class="btn btn-success"
+                                asp-controller="Login"
+                                asp-action="Login">
+                                    Iniciar sesión
                                 </a>
                             </li>
+
+
+
                         }
 
                         <!-- LOGUEADO -->
                         @if (rol != null)
                         {
+                            @if (rol == "CLIENTE"){
+                            <li>
+                                <a class="dropdown-item dropdown-item-catalogo"
+                                   asp-controller="Usuario"
+                                   asp-action="Catalogo">
+                                    <i class="bi bi-grid-3x3-gap me-2"></i>
+                                    Ver catálogo
+                                </a>
+                            </li>
 
+                            <li>
+                                <a class="dropdown-item dropdown-item-catalogo"
+                                   asp-controller="PedidoPersonalizado"
+                                   asp-action="Crear">
+                                    Hacer pedido personalizado
+                                </a>
+                            </li>
+                            }
+
+                            @if (rol == "ARTESANO")
+                            {
+                                <li>
+                                    <a class="dropdown-item dropdown-item-catalogo"
+                                       asp-controller="Producto"
+                                       asp-action="AltaProducto">
+                                        Agregar producto
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item dropdown-item-catalogo"
+                                       asp-controller="Artesano"
+                                       asp-action="ProductosDelArtesano">
+                                        Tus productos
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item dropdown-item-catalogo"
+                                       asp-controller="Artesano"
+                                       asp-action="Dashboard">
+                                        Tus ventas
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item dropdown-item-catalogo"
+                                    asp-controller="PedidoPersonalizado"
+                                       asp-action="PedidosPersonalizados">
+                                        Pedidos personalizados
+                                    </a>
+                                </li>
+
+                            }
                             <!-- BARRA DE BÚSQUEDA -->
                             @if (rol == "CLIENTE" || rol == "ARTESANO" || rol == "ADMIN")
                             {
                                 <li class="nav-item dropdown">
-                                    <button class="nav-link dropdown-toggle"
+                               @*      <button class="nav-link dropdown-toggle"
                                             type="button"
                                             data-bs-toggle="dropdown">
                                         Barra de búsqueda
-                                    </button>
+                                    </button> *@
 
                                     <ul class="dropdown-menu">
                                         <li>
@@ -111,27 +165,21 @@
                                                 Perfil
                                             </a>
                                         </li>
-                                        <li>
+                                       @*  <li>
                                             <a class="dropdown-item"
                                                asp-controller="PedidoPersonalizado"
                                                asp-action="Crear">
                                                 Hacer pedido personalizado
                                             </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="Usuario"
-                                               asp-action="Catalogo">
-                                                Todos los productos
-                                            </a>
-                                        </li>
-                                        <li>
+                                        </li> *@
+                                       
+                                       @*  <li>
                                             <a class="dropdown-item"
                                                asp-controller="Carrito"
                                                asp-action="Index">
                                                 Ver mi carrito
                                             </a>
-                                        </li>
+                                        </li> *@
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="FacturaNoFiscal"
@@ -154,26 +202,27 @@
                                     {
                                         <li>
                                             <a class="dropdown-item"
-                                               asp-controller="FacturaNoFiscal"
-                                               asp-action="FacturasArtesano">
-                                                Mis facturas
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item"
                                                asp-controller="Artesano"
                                                asp-action="PerfilArtesano">
                                                 Perfil
                                             </a>
                                         </li>
-
                                         <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="FacturaNoFiscal"
+                                               asp-action="FacturasArtesano">
+                                                Historial de facturas
+                                            </a>
+                                        </li>
+                                      
+
+                                       @*  <li>
                                             <a class="dropdown-item"
                                                asp-controller="PedidoPersonalizado"
                                                asp-action="PedidosPersonalizados">
                                                 Pedidos personalizados
                                             </a>
-                                        </li>
+                                        </li> *@
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="PedidoPersonalizado"
@@ -181,27 +230,27 @@
                                                 Mis encargos
                                             </a>
                                         </li>
-                                        <li>
+                                        @* <li>
                                             <a class="dropdown-item"
                                                asp-controller="Artesano"
                                                asp-action="Dashboard">
                                                 Tus ventas
                                             </a>
-                                        </li>
-                                        <li>
+                                        </li> *@
+                                        @* <li>
                                             <a class="dropdown-item"
                                                asp-controller="Producto"
                                                asp-action="AltaProducto">
                                                 Agregar producto
                                             </a>
-                                        </li>
-                                        <li>
+                                        </li> *@
+                                        @* <li>
                                             <a class="dropdown-item"
                                                asp-controller="Artesano"
                                                asp-action="ProductosDelArtesano">
                                                 Tus productos
                                             </a>
-                                        </li>
+                                        </li> *@
                                         <li>
                                             <a class="dropdown-item text-danger fw-semibold"
                                                asp-controller="Artesano"
@@ -229,7 +278,7 @@
                             <!--CARRITO-->
                             @if(rol == "CLIENTE")
                             {
-                                <a class="nav-link position-relative d-flex align-items-center justify-content-center"
+                                <a class="nav-link position-relative d-flex align-items-center justify-content-center carrito"
                                    asp-controller="Carrito"
                                    asp-action="Index">
 
@@ -250,7 +299,7 @@
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container-fluid px-0">
 
         @if (TempData.ContainsKey("Mensaje"))
         {
@@ -272,7 +321,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div> *@
 
-        <main role="main" class="flex-fill pb-3">
+        <main role="main" class="flex pb-3-fill ">
             @RenderBody()
         </main>
     </div>

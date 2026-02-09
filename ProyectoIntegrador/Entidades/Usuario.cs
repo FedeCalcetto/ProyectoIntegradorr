@@ -28,9 +28,10 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         // Propiedades para la verificación de email via Token (clickear el link para validar automaticamente) //
         public string? TokenVerificacionEmail { get; set; }
         public DateTime? TokenVerificacionEmailExpira { get; set; }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        
+
 
         public void Validar()
         {

@@ -26,9 +26,47 @@ namespace ProyectoIntegrador_Web.Services
 
         public async Task ProcesarOrdenPagadaAsync(Orden orden, long paymentId)
         {
+            //// 🔁 Idempotencia: si este pago ya fue procesado, no hacer nada
+            //if (orden.PagosAprobados.Contains(paymentId))
+            //    return;
+
+            //// 1️⃣ Marcar este pago como aprobado
+            //orden.MarcarPagoAprobado(paymentId);
+
+            //// 2️⃣ Si TODAVÍA no están todos aprobados → solo guardar y salir
+            //if (!orden.TodosLosPagosAprobados())
+            //{
+            //    orden.Estado = EstadoOrden.PagoParcial;
+            //    await _ordenRepo.ActualizarOrdenAsync(orden);
+            //    return;
+            //}
+
+            //// 3️⃣ Si ya estaba pagada, no repetir lógica irreversible
+            //if (orden.Estado == EstadoOrden.Pagada)
+            //    return;
+
+            //// 4️⃣ AHORA SÍ: la orden se paga DEFINITIVAMENTE
+            //orden.MarcarComoPagada(); // ⬅️ OJO: ya NO recibe paymentId
+
+            //// 5️⃣ Crear facturas (una sola vez)
+            //_facturaRepo.CrearFacturas(orden);
+
+            //// 6️⃣ Descontar stock (una sola vez)
+            //foreach (var item in orden.Items)
+            //{
+            //    var producto = _productoRepo.Obtener(item.ProductoId);
+            //    producto.DescontarStock(item.Cantidad);
+            //    _productoRepo.Editar(producto);
+            //}
+
+            //// 7️⃣ Guardar todo
+            //await _ordenRepo.ActualizarOrdenAsync(orden);
+
             if (orden.Estado != EstadoOrden.Pagada)
             {
-                orden.MarcarComoPagada(paymentId);
+                //orden.MarcarPagoAprobado(paymentId);
+                //if (orden.TodosLosPagosAprobados())
+                    orden.MarcarComoPagada(paymentId);
 
                 var ordenItems = orden.Items;
 

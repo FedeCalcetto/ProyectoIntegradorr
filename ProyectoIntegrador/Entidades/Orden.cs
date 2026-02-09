@@ -11,18 +11,20 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public Guid Id { get; set; }
         public int ClienteId { get; private set; }
         public Cliente Cliente { get; private set; }
-
-        //Sirve para validar el pago correspondiente al artesano
-       // public string? MercadoPagoSellerUserId { get; private set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime? FechaPago { get; private set; }
-        public EstadoOrden Estado { get; set; } 
+        public long MercadoPagoPaymentId { get; private set; }
+        public EstadoOrden Estado { get; set; }
         public decimal Total { get; set; }
         // Mercado Pago
         public string? PreferenceId { get; set; }
-        //public long? MercadoPagoPaymentId { get; private set; }
-        // Navegación
         public ICollection<OrdenItem> Items { get; set; } = new List<OrdenItem>();
+        //public ICollection<long> MercadoPagoPaymentIds { get; private set; }
+        //= new List<long>();
+
+        //// Pagos ya confirmados por webhook
+        //public ICollection<long> PagosAprobados { get; private set; }
+        //    = new List<long>();
 
         private Orden() { }
         public Orden(int usuarioId)
@@ -65,7 +67,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
             Estado = EstadoOrden.Pagada;
             FechaPago = DateTime.UtcNow;
-            //MercadoPagoPaymentId = paymentId;
+            MercadoPagoPaymentId = paymentId;
         }
 
         public void MarcarComoCancelada()
@@ -89,17 +91,23 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
             Estado = EstadoOrden.PendientePago;
         }
 
-        //public void AsignarMercadoPagoSeller(string mpUserId)
+
+        //public void AgregarPago(long paymentId)
         //{
-        //    MercadoPagoSellerUserId = mpUserId;
+        //    if (!MercadoPagoPaymentIds.Contains(paymentId))
+        //        MercadoPagoPaymentIds.Add(paymentId);
         //}
 
-        //public void AsignarPaymentId(long paymentId)
+        //public void MarcarPagoAprobado(long paymentId)
         //{
-        //    MercadoPagoPaymentId = paymentId;
-        //    FechaPago = DateTime.UtcNow;
+        //    if (!PagosAprobados.Contains(paymentId))
+        //        PagosAprobados.Add(paymentId);
+        //}
+
+        //public bool TodosLosPagosAprobados()
+        //{
+        //    return MercadoPagoPaymentIds.Count > 0 &&
+        //           MercadoPagoPaymentIds.All(p => PagosAprobados.Contains(p));
         //}
     }
-
-
-}
+    }

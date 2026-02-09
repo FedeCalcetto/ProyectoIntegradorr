@@ -15,7 +15,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
         public IActionResult Index()
         {
-            return RedirectToAction("Login", "Login");
+            return RedirectToAction("Catalogo", "Usuario");
         }
 
         public IActionResult Privacy()

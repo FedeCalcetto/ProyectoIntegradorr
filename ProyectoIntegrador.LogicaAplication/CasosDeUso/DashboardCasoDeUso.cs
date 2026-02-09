@@ -7,10 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 {
-    public class DashboardCasoDeUso :IDashboard
+    public class DashboardCasoDeUso : IDashboard
     {
         private readonly IArtesanoRepositorio _ArtesanoRepo;
 
@@ -21,8 +20,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 
         public DashboardDto Ejecutar(string emailArtesano, int cantidadMeses = 12)
         {
-
-            var artesano =_ArtesanoRepo.ObtenerArtesanoDashboard(emailArtesano);
+            var artesano = _ArtesanoRepo.ObtenerArtesanoDashboard(emailArtesano);
 
             DateTime hoy = DateTime.UtcNow;
             DateTime inicioPeriodo = new DateTime(hoy.Year, hoy.Month, 1)
@@ -32,12 +30,19 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                 .SelectMany(v => v.Orden.Items)
                 .Where(i => i.ArtesanoId == artesano.id)
                 .GroupBy(i => i.ProductoId)
-                .Select(g => new TopVentasDTO
+                .Select(g =>
                 {
-                    ProductoId = g.Key,
-                    NombreProducto = artesano.productos
-                        .First(p => p.id == g.Key).nombre,
-                    CantidadVendida = g.Sum(i => i.Cantidad)
+                    var producto = artesano.productos
+                        .FirstOrDefault(p => p.id == g.Key);
+
+                    return new TopVentasDTO
+                    {
+                        ProductoId = g.Key,
+                        NombreProducto = producto != null
+                            ? producto.nombre
+                            : "Producto eliminado",
+                        CantidadVendida = g.Sum(i => i.Cantidad)
+                    };
                 })
                 .OrderByDescending(x => x.CantidadVendida)
                 .Take(3)
@@ -70,7 +75,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
             };
 
             return dashboard;
-
         }
     }
 }
+

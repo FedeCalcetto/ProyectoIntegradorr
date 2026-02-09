@@ -18,7 +18,7 @@ public class CarritoCantidadViewComponent : ViewComponent
         var usuario = _obtenerUsuario.Ejecutar(email);
         var items = _mostrarProductosCarrito.mostrarProductos(usuario.id);
 
-        var cantidadTotal = items.Sum(i => i.cantidad);
+        var cantidadTotal = items.Count();
 
         return View(cantidadTotal);
     }

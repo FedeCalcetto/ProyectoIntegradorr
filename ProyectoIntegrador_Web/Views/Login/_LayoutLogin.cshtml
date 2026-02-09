@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <style>
+        body {
+            background: #f4f4f4;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<body class="login-body">
+
+      <main class="login-main">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-dark text-light mt-auto">
+        <div class="container-fluid ">
+
+            <div class="row text-center text-md-start align-items-center">
+
+                <!-- INFO -->
+                <div class="col-md-4 mb-1">
+                    <strong class="small">Proyecto Integrador</strong>
+                    <div class="small">
+                        Plataforma académica de artesanos y clientes 💙
+                    </div>
+                </div>
+
+                <!-- SOPORTE -->
+                <div class="col-md-4 mb-1">
+                    <strong class="small">Soporte</strong><br />
+                    <a href="mailto:soporte@proyectointegrador.com"
+                       class="text-decoration-none text-info small">
+                        soporte@proyectointegrador.com
+                    </a>
+                </div>
+
+                <!-- INSTITUCIONAL -->
+                <div class="col-md-4 mb-1">
+                    <strong class="small">Institucional</strong>
+                    <div class="small">
+                        ORT Uruguay — Ingeniería
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="border-secondary my-1" />
+
+            <div class="text-center small">
+                &copy; @DateTime.Now.Year — Proyecto Integrador
+            </div>
+
+        </div>
+    </footer>
+    @RenderSection("Scripts", required: false)
+
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

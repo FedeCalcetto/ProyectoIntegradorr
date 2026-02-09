@@ -142,10 +142,9 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PedidoPersonalizado>()
-                .HasOne(p => p.Artesano)
-                .WithMany()
-                .HasForeignKey(p => p.ArtesanoId)
-                .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(p => p.Artesano)
+            .WithMany()
+            .HasForeignKey(p => p.ArtesanoId);
 
 
 

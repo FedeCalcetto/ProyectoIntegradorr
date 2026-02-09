@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class _3001 : Migration
+    public partial class pro : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,11 +26,30 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             migrationBuilder.DropColumn(
                 name: "MercadoPagoUserId",
                 table: "Usuarios");
+
+            migrationBuilder.DropColumn(
+                name: "MercadoPagoPaymentIds",
+                table: "Ordenes");
+
+            migrationBuilder.DropColumn(
+                name: "PagosAprobados",
+                table: "Ordenes");
+
+            migrationBuilder.AddColumn<long>(
+                name: "MercadoPagoPaymentId",
+                table: "Ordenes",
+                type: "bigint",
+                nullable: false,
+                defaultValue: 0L);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "MercadoPagoPaymentId",
+                table: "Ordenes");
+
             migrationBuilder.AddColumn<string>(
                 name: "MercadoPagoAccessToken",
                 table: "Usuarios",
@@ -54,6 +73,20 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 table: "Usuarios",
                 type: "bigint",
                 nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "MercadoPagoPaymentIds",
+                table: "Ordenes",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "PagosAprobados",
+                table: "Ordenes",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
     }
 }

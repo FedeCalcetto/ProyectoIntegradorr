@@ -229,6 +229,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
 
+                    b.Property<long>("MercadoPagoPaymentId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("PreferenceId")
                         .HasColumnType("nvarchar(max)");
 
@@ -841,18 +844,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
 
-                    b.Property<string>("MercadoPagoAccessToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MercadoPagoRefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("MercadoPagoTokenExpira")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("MercadoPagoUserId")
-                        .HasColumnType("bigint");
-
                     b.Property<bool>("bloqueado")
                         .HasColumnType("bit");
 
@@ -992,8 +983,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "Artesano")
                         .WithMany()
-                        .HasForeignKey("ArtesanoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ArtesanoId");
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
                         .WithMany()

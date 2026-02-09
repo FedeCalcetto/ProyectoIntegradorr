@@ -17,19 +17,16 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<Producto> productos { get; set; } = new List<Producto>();
         public string? foto { get; set; }
         public bool bloqueado { get; set; }
-        //public List<PedidoPersonalizado> pedidosArtesano { get; set; }
-        
-        // MERCADO PAGO - MARKETPLACE
-        //public long? MercadoPagoUserId { get; set; }
+        //public List<PedidoPersonalizado>? pedidosArtesano { get; set; }
 
-        //public string? MercadoPagoAccessToken { get; set; }
+        //MERCADO PAGO - MARKETPLACE
+        //public long? MercadoPagoUserId { get; set; } //Identificador 
+
+        //public string? MercadoPagoAccessToken { get; set; } //sirve para autorizar, verificar la conexión
 
         //public string? MercadoPagoRefreshToken { get; set; }
 
         //public DateTime? MercadoPagoTokenExpira { get; set; }
-
-
-
 
 
         //public bool TieneMercadoPagoConectado =>

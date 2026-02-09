@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260130134602_3001")]
-    partial class _3001
+    [Migration("20260206164148_front")]
+    partial class front
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,6 +231,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
+
+                    b.Property<long>("MercadoPagoPaymentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PreferenceId")
                         .HasColumnType("nvarchar(max)");
@@ -983,8 +986,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "Artesano")
                         .WithMany()
-                        .HasForeignKey("ArtesanoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ArtesanoId");
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "Cliente")
                         .WithMany()
