@@ -23,9 +23,13 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerSubCategoria _obtenerSubCategoria;
         private readonly IObtenerCliente _obtenerCliente;
         private readonly IAgregarReporte _agregarReporte;
-
+        private readonly ICalificarProducto _calificarProducto;
+        private readonly IObtenerPromedioCalificacionDeProducto _calificacionPromedioProducto;
         public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano,
-            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto, IObtenerSubCategoria obtenerSubCategoria, IAgregarReporte agregarReporte, IObtenerCliente obtenerCliente)
+            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, 
+            IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto, 
+            IObtenerSubCategoria obtenerSubCategoria, IAgregarReporte agregarReporte, IObtenerCliente obtenerCliente, ICalificarProducto calificarProducto,
+           IObtenerPromedioCalificacionDeProducto calificacionPromedioProducto)
         {
             _obtenerArtesano = obtenerArtesano;
             _agregarProducto = producto;
@@ -40,6 +44,8 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerSubCategoria = obtenerSubCategoria;
             _agregarReporte = agregarReporte;
             _obtenerCliente = obtenerCliente;
+            _calificarProducto = calificarProducto;
+            _calificacionPromedioProducto = calificacionPromedioProducto;
         }
 
 
@@ -232,7 +238,8 @@ namespace ProyectoIntegrador_Web.Controllers
 
             if (producto == null)
                 return NotFound();
-
+            var cantidad = _calificacionPromedioProducto.ObtenerTodasLasCalificaciones(producto.id);
+            var promedio = _calificacionPromedioProducto.ObtenerPromedioPorProducto(producto.id);
             var vm = new DetallesProductoViewModel
             {
                 Id = producto.id,
@@ -245,7 +252,9 @@ namespace ProyectoIntegrador_Web.Controllers
                 Artesano = producto.artesano?.nombre,
                 SubCategoria = producto.SubCategoria?.Nombre,
                 ArtesanoId = producto.artesano.id,
-                Reporte = new AgregarReporteDto()
+                Reporte = new AgregarReporteDto(),
+                PromedioCalificacion = (double)promedio,
+                CantidadReseñas = cantidad
             };
 
             return View(vm);
@@ -296,10 +305,22 @@ namespace ProyectoIntegrador_Web.Controllers
 
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Calificar([FromBody] CalificarDto dto)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var usuario = _obtenerUsuario.Ejecutar(email);
+            await _calificarProducto.Ejecutar(dto.productoId, dto.puntaje, usuario.id);
+
+            return Ok();
+        }
         private DetallesProductoViewModel CrearDetalleVM(int id)
         {
             var producto = _obtenerProducto.obtener(id);
 
+            var cantidad = _calificacionPromedioProducto.ObtenerTodasLasCalificaciones(producto.id);
+            var promedio = _calificacionPromedioProducto.ObtenerPromedioPorProducto(producto.id);
             return new DetallesProductoViewModel
             {
                 Id = producto.id,
@@ -312,7 +333,9 @@ namespace ProyectoIntegrador_Web.Controllers
                 Artesano = producto.artesano?.nombre,
                 SubCategoria = producto.SubCategoria?.Nombre,
                 ArtesanoId = producto.artesano?.id ?? 0,
-                Reporte = new AgregarReporteDto()
+                Reporte = new AgregarReporteDto(),
+                PromedioCalificacion = (double)promedio,
+                CantidadReseñas = cantidad
             };
         }
         // GET: ProductoController
@@ -422,5 +445,8 @@ namespace ProyectoIntegrador_Web.Controllers
                 nombre = s.Nombre
             }));
         }
+
+      
+
     }
 }

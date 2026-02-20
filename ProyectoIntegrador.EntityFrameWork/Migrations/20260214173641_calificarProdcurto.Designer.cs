@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260214173641_calificarProdcurto")]
+    partial class calificarProdcurto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,35 +49,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("productoId");
 
-                    b.HasIndex("usuarioId");
-
                     b.ToTable("Calificaciones");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1,
-                            fecha = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            productoId = 1,
-                            puntaje = 5m,
-                            usuarioId = 2
-                        },
-                        new
-                        {
-                            id = 2,
-                            fecha = new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            productoId = 1,
-                            puntaje = 4m,
-                            usuarioId = 2
-                        },
-                        new
-                        {
-                            id = 3,
-                            fecha = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            productoId = 2,
-                            puntaje = 3m,
-                            usuarioId = 2
-                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Carrito", b =>
@@ -561,61 +536,61 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             Id = 1,
                             ProductoId = 1,
-                            UrlImagen = "alfombra-textil.jpg"
+                            UrlImagen = "/img/alfombra-textil.jpg"
                         },
                         new
                         {
                             Id = 2,
                             ProductoId = 2,
-                            UrlImagen = "alfombra-textil.jpg"
+                            UrlImagen = "/img/alfombra-textil.jpg"
                         },
                         new
                         {
                             Id = 3,
                             ProductoId = 3,
-                            UrlImagen = "mate-madera.jpg"
+                            UrlImagen = "/img/mate-madera.jpg"
                         },
                         new
                         {
                             Id = 4,
                             ProductoId = 4,
-                            UrlImagen = "mate-madera.jpg"
+                            UrlImagen = "/img/mate-madera.jpg"
                         },
                         new
                         {
                             Id = 5,
                             ProductoId = 5,
-                            UrlImagen = "cartera-cuero.jpg"
+                            UrlImagen = "/img/cartera-cuero.jpg"
                         },
                         new
                         {
                             Id = 6,
                             ProductoId = 6,
-                            UrlImagen = "cartera-cuero.jpg"
+                            UrlImagen = "/img/cartera-cuero.jpg"
                         },
                         new
                         {
                             Id = 7,
                             ProductoId = 7,
-                            UrlImagen = "collar-plata.jpg"
+                            UrlImagen = "/img/collar-plata.jpg"
                         },
                         new
                         {
                             Id = 8,
                             ProductoId = 8,
-                            UrlImagen = "collar-plata.jpg"
+                            UrlImagen = "/img/collar-plata.jpg"
                         },
                         new
                         {
                             Id = 9,
                             ProductoId = 9,
-                            UrlImagen = "taza-ceramica.jpg"
+                            UrlImagen = "/img/taza-ceramica.jpg"
                         },
                         new
                         {
                             Id = 10,
                             ProductoId = 10,
-                            UrlImagen = "taza-ceramica.jpg"
+                            UrlImagen = "/img/taza-ceramica.jpg"
                         });
                 });
 
@@ -826,7 +801,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Principal",
                             nombre = "Administrador",
-                            password = "$2a$11$SoI3uk3q0Lo2g61olEKWue1G9VkkIfTMvB7.4OKUGGEc6/Cw8/hpS",
+                            password = "Admin123456",
                             rol = "ADMIN"
                         },
                         new
@@ -836,7 +811,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Cliente",
                             nombre = "Juan",
-                            password = "$2a$11$YuD9kzAyuwY/POvqFq1Azueq7leolpMKyJ.2oD10z7rSSwgjCL/AG",
+                            password = "Cliente123456",
                             rol = "CLIENTE"
                         },
                         new
@@ -846,7 +821,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Artesana",
                             nombre = "Maria",
-                            password = "$2a$11$yykxM1/15bM.Zvc0gaYxL.eXv9CCVdqRSqx.Z78iiryEW4dVhlJZ.",
+                            password = "Artesano123456",
                             rol = "ARTESANO"
                         },
                         new
@@ -856,7 +831,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Artesana",
                             nombre = "Ana",
-                            password = "$2a$11$VuWSOhwrYFSba2fTwikyo.KASzk4Mel9pyu4y880yyIYYY8oP7GWe",
+                            password = "Artesano123456",
                             rol = "ARTESANO"
                         });
                 });
@@ -947,12 +922,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .WithMany("Calificaciones")
                         .HasForeignKey("productoId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("usuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
