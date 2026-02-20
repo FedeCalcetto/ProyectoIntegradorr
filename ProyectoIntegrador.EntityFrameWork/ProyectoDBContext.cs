@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using ProyectoIntegrador.LogicaAplication.Servicios;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.ValueObjects;
 
@@ -23,7 +24,7 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<Carrito> Carritos { get; set; }
         public DbSet<CarritoItem> CarritoItems { get; set; }
         public DbSet<Orden> Ordenes { get; set; }
-         
+        public DbSet<Calificación> Calificaciones { get; set; }
 
 
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
@@ -143,7 +144,17 @@ namespace ProyectoIntegrador.EntityFrameWork
             .HasForeignKey(p => p.ArtesanoId);
 
 
+            modelBuilder.Entity<Calificación>()
+                .HasOne<Producto>()
+                .WithMany(p => p.Calificaciones)
+                .HasForeignKey(c => c.productoId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Calificación>()
+                .HasOne<Usuario>()
+                .WithMany()
+                .HasForeignKey(c => c.usuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // 🧪 Seed principal (TPH + owned types)
             modelBuilder.Entity<Usuario>().HasData(
@@ -152,7 +163,7 @@ namespace ProyectoIntegrador.EntityFrameWork
          id = 1,
          nombre = "Administrador",
          apellido = "Principal",
-         password = "Admin123456",
+         password = PasswordHasher.Hash("Admin123456"),
          rol = "ADMIN",
          TipoUsuario = "ADMIN",
          CodigoVerificacion = (string?)null,
@@ -163,7 +174,7 @@ namespace ProyectoIntegrador.EntityFrameWork
          id = 2,
          nombre = "Juan",
          apellido = "Cliente",
-         password = "Cliente123456",
+         password = PasswordHasher.Hash("Cliente123456"),
          rol = "CLIENTE",
          TipoUsuario = "CLIENTE",
          CodigoVerificacion = (string?)null,
@@ -174,7 +185,7 @@ namespace ProyectoIntegrador.EntityFrameWork
          id = 3,
          nombre = "Maria",
          apellido = "Artesana",
-         password = "Artesano123456",
+         password = PasswordHasher.Hash("Artesano123456"),
          rol = "ARTESANO",
          TipoUsuario = "ARTESANO",
          CodigoVerificacion = (string?)null,
@@ -185,7 +196,7 @@ namespace ProyectoIntegrador.EntityFrameWork
          id = 4,
          nombre = "Ana",
          apellido = "Artesana",
-         password = "Artesano123456",
+         password = PasswordHasher.Hash("Artesano123456"),
          rol = "ARTESANO",
          TipoUsuario = "ARTESANO",
          CodigoVerificacion = (string?)null,
@@ -249,18 +260,48 @@ namespace ProyectoIntegrador.EntityFrameWork
 
 
             modelBuilder.Entity<ProductoFoto>().HasData(
-    new { Id = 1, ProductoId = 1, UrlImagen = "/img/alfombra-textil.jpg" },
-    new { Id = 2, ProductoId = 2, UrlImagen = "/img/alfombra-textil.jpg" },
-    new { Id = 3, ProductoId = 3, UrlImagen = "/img/mate-madera.jpg" },
-    new { Id = 4, ProductoId = 4, UrlImagen = "/img/mate-madera.jpg" },
-    new { Id = 5, ProductoId = 5, UrlImagen = "/img/cartera-cuero.jpg" },
-    new { Id = 6, ProductoId = 6, UrlImagen = "/img/cartera-cuero.jpg" },
-    new { Id = 7, ProductoId = 7, UrlImagen = "/img/collar-plata.jpg" },
-    new { Id = 8, ProductoId = 8, UrlImagen = "/img/collar-plata.jpg" },
-    new { Id = 9, ProductoId = 9, UrlImagen = "/img/taza-ceramica.jpg" },
-    new { Id = 10, ProductoId = 10, UrlImagen = "/img/taza-ceramica.jpg" }
+    new { Id = 1, ProductoId = 1, UrlImagen = "alfombra-textil.jpg" },
+    new { Id = 2, ProductoId = 2, UrlImagen = "alfombra-textil.jpg" },
+    new { Id = 3, ProductoId = 3, UrlImagen = "mate-madera.jpg" },
+    new { Id = 4, ProductoId = 4, UrlImagen = "mate-madera.jpg" },
+    new { Id = 5, ProductoId = 5, UrlImagen = "cartera-cuero.jpg" },
+    new { Id = 6, ProductoId = 6, UrlImagen = "cartera-cuero.jpg" },
+    new { Id = 7, ProductoId = 7, UrlImagen = "collar-plata.jpg" },
+    new { Id = 8, ProductoId = 8, UrlImagen = "collar-plata.jpg" },
+    new { Id = 9, ProductoId = 9, UrlImagen = "taza-ceramica.jpg" },
+    new { Id = 10, ProductoId = 10, UrlImagen = "taza-ceramica.jpg" }
 );
 
+            modelBuilder.Entity<Calificación>().HasData(
+
+                new
+                {
+                    id = 1,
+                    productoId = 1,   // producto existente
+                    usuarioId = 2,    // Juan Cliente
+                    puntaje = 5m,
+                    fecha = new DateTime(2026, 1, 10)
+                },
+
+                new
+                {
+                    id = 2,
+                    productoId = 1,
+                    usuarioId = 2,
+                    puntaje = 4m,
+                    fecha = new DateTime(2026, 1, 12)
+                },
+
+                new
+                {
+                    id = 3,
+                    productoId = 2,
+                    usuarioId = 2,
+                    puntaje = 3m,
+                    fecha = new DateTime(2026, 1, 15)
+                }
+
+            );
 
 
 

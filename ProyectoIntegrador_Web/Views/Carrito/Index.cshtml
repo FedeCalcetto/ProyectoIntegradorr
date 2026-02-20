@@ -114,14 +114,14 @@
     <div class="col-12">
         <h5 class="text-muted mb-3">También te puede interesar</h5>
 
-        <div class="product-slider-container">
+        <div class="interes-slider-container">
             @if (Model.ProductosDeInteres.Count > 0){
             <!-- Flecha izquierda -->
                <button class="slider-btn prev-btn">&#10094;</button>
 
-            <div class="slider-wrapper">
+                <div class="interes-slider-wrapper">
                 <div id="interes-slider"
-                     class="product-slider">
+                         class="interes-product-slider">
 
                         @foreach (var producto in Model.ProductosDeInteres)
                         {
@@ -225,49 +225,49 @@
 </script>
 
 
-
 <script>
-    const slider = document.getElementById("interes-slider");   // contenedor de cards
-    const prev = document.querySelector(".prev-btn"); //botones de izq y der
-     const next = document.querySelector(".next-btn");
- 
+    const slider = document.getElementById("interes-slider");
+    const prev = document.querySelector(".prev-btn");
+    const next = document.querySelector(".next-btn");
+    const wrapper = document.querySelector(".interes-slider-wrapper");
 
-    let currentScroll = 0;
+    if (slider && prev && next && wrapper) {
 
-     function getCardWidth() { //calcula el ancho de una card
-        const card = slider.querySelector(".product-card");
-        return card.offsetWidth + 20; // ancho + gap
-    }
+        let currentScroll = 0;
+
+        function getCardWidth() {
+            const card = slider.querySelector(".product-card");
+            return card ? card.offsetWidth + 20 : 0;
+        }
 
         function updateArrows() {
-        const wrapper = document.querySelector(".slider-wrapper");
-        const maxScroll = slider.scrollWidth - wrapper.offsetWidth;
+            const maxScroll = slider.scrollWidth - wrapper.offsetWidth;
 
-        prev.style.display = currentScroll <= 0 ? "none" : "flex";
-        next.style.display = currentScroll >= maxScroll ? "none" : "flex";
+            prev.style.display = currentScroll <= 0 ? "none" : "flex";
+            next.style.display = currentScroll >= maxScroll ? "none" : "flex";
+        }
+
+        next.addEventListener("click", () => {
+            const cardWidth = getCardWidth();
+            const maxScroll = slider.scrollWidth - wrapper.offsetWidth;
+
+            if (currentScroll < maxScroll) {
+                currentScroll += cardWidth;
+                slider.style.transform = `translateX(-${currentScroll}px)`;
+                updateArrows();
+            }
+        });
+
+        prev.addEventListener("click", () => {
+            const cardWidth = getCardWidth();
+
+            if (currentScroll > 0) {
+                currentScroll -= cardWidth;
+                slider.style.transform = `translateX(-${currentScroll}px)`;
+                updateArrows();
+            }
+        });
+
+        updateArrows();
     }
-
-       next.addEventListener("click", () => {
-        const cardWidth = getCardWidth();
-        const wrapper = document.querySelector(".slider-wrapper");
-        const maxScroll = slider.scrollWidth - wrapper.offsetWidth;
-
-        if (currentScroll < maxScroll) {
-            currentScroll += cardWidth;
-            slider.style.transform = `translateX(-${currentScroll}px)`;
-            updateArrows();
-        }
-    });
-
-          prev.addEventListener("click", () => {
-        const cardWidth = getCardWidth();
-
-        if (currentScroll > 0) {
-            currentScroll -= cardWidth;
-            slider.style.transform = `translateX(-${currentScroll}px)`;
-            updateArrows();
-        }
-    });
-
-              updateArrows();
 </script>

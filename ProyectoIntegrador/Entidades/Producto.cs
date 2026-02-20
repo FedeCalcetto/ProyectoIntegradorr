@@ -29,6 +29,10 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int SubCategoriaId { get; set; }
         public SubCategoria SubCategoria { get; set; }
 
+
+        public List<Calificación> Calificaciones { get; set; } = new();
+
+
         public void Validar()
         {
             validarNegativo();

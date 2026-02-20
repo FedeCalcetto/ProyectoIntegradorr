@@ -35,8 +35,12 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IOrdenRepositorio, OrdenEFRepositorio>();
             builder.Services.AddScoped<IFacturaRepositorio, FacturaEFRepsoitorio>();
             builder.Services.AddScoped<IPedidoPersonalizadoRepsoitorio, PedidoPersonalizadoEFRepositorio>();
+            builder.Services.AddScoped<ICalificarProductoRepositorio, CalificacionEFRepositorio>();
+
             builder.Services.AddScoped<IComentarioRepositorio, ComentarioEFRepositorio>();
             //Casos de uso
+            builder.Services.AddScoped<ICalificarProducto, CalificarProductoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerPromedioCalificacionDeProducto, ObtenerCalificacionProductoCasoDeUso>();
             builder.Services.AddScoped<IAgregarProducto, AgregarProductoCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
             builder.Services.AddScoped<ICambiarPassword, CambiarPasswordCasoDeUso>();

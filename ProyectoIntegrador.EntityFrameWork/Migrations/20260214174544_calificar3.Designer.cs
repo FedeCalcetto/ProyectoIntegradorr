@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260214174544_calificar3")]
+    partial class calificar3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,11 +184,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("productoId")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
                     b.HasIndex("artesanoId");
 
                     b.HasIndex("clienteId");
+
+                    b.HasIndex("productoId");
 
                     b.ToTable("Comentarios");
                 });
@@ -556,61 +564,61 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             Id = 1,
                             ProductoId = 1,
-                            UrlImagen = "alfombra-textil.jpg"
+                            UrlImagen = "/img/alfombra-textil.jpg"
                         },
                         new
                         {
                             Id = 2,
                             ProductoId = 2,
-                            UrlImagen = "alfombra-textil.jpg"
+                            UrlImagen = "/img/alfombra-textil.jpg"
                         },
                         new
                         {
                             Id = 3,
                             ProductoId = 3,
-                            UrlImagen = "mate-madera.jpg"
+                            UrlImagen = "/img/mate-madera.jpg"
                         },
                         new
                         {
                             Id = 4,
                             ProductoId = 4,
-                            UrlImagen = "mate-madera.jpg"
+                            UrlImagen = "/img/mate-madera.jpg"
                         },
                         new
                         {
                             Id = 5,
                             ProductoId = 5,
-                            UrlImagen = "cartera-cuero.jpg"
+                            UrlImagen = "/img/cartera-cuero.jpg"
                         },
                         new
                         {
                             Id = 6,
                             ProductoId = 6,
-                            UrlImagen = "cartera-cuero.jpg"
+                            UrlImagen = "/img/cartera-cuero.jpg"
                         },
                         new
                         {
                             Id = 7,
                             ProductoId = 7,
-                            UrlImagen = "collar-plata.jpg"
+                            UrlImagen = "/img/collar-plata.jpg"
                         },
                         new
                         {
                             Id = 8,
                             ProductoId = 8,
-                            UrlImagen = "collar-plata.jpg"
+                            UrlImagen = "/img/collar-plata.jpg"
                         },
                         new
                         {
                             Id = 9,
                             ProductoId = 9,
-                            UrlImagen = "taza-ceramica.jpg"
+                            UrlImagen = "/img/taza-ceramica.jpg"
                         },
                         new
                         {
                             Id = 10,
                             ProductoId = 10,
-                            UrlImagen = "taza-ceramica.jpg"
+                            UrlImagen = "/img/taza-ceramica.jpg"
                         });
                 });
 
@@ -821,7 +829,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Principal",
                             nombre = "Administrador",
-                            password = "$2a$11$SoI3uk3q0Lo2g61olEKWue1G9VkkIfTMvB7.4OKUGGEc6/Cw8/hpS",
+                            password = "Admin123456",
                             rol = "ADMIN"
                         },
                         new
@@ -831,7 +839,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Cliente",
                             nombre = "Juan",
-                            password = "$2a$11$YuD9kzAyuwY/POvqFq1Azueq7leolpMKyJ.2oD10z7rSSwgjCL/AG",
+                            password = "Cliente123456",
                             rol = "CLIENTE"
                         },
                         new
@@ -841,7 +849,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Artesana",
                             nombre = "Maria",
-                            password = "$2a$11$yykxM1/15bM.Zvc0gaYxL.eXv9CCVdqRSqx.Z78iiryEW4dVhlJZ.",
+                            password = "Artesano123456",
                             rol = "ARTESANO"
                         },
                         new
@@ -851,7 +859,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Artesana",
                             nombre = "Ana",
-                            password = "$2a$11$VuWSOhwrYFSba2fTwikyo.KASzk4Mel9pyu4y880yyIYYY8oP7GWe",
+                            password = "Artesano123456",
                             rol = "ARTESANO"
                         });
                 });
@@ -973,18 +981,25 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
-                        .WithMany("comentarios")
+                        .WithMany()
                         .HasForeignKey("artesanoId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
                         .WithMany()
                         .HasForeignKey("clienteId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
+                        .WithMany("comentarios")
+                        .HasForeignKey("productoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("artesano");
 
                     b.Navigation("cliente");
+
+                    b.Navigation("producto");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", b =>
@@ -1264,6 +1279,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Navigation("Calificaciones");
 
                     b.Navigation("Fotos");
+
+                    b.Navigation("comentarios");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", b =>
@@ -1273,8 +1290,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
                 {
-                    b.Navigation("comentarios");
-
                     b.Navigation("productos");
 
                     b.Navigation("ventas");
