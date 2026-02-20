@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class _022026 : Migration
+    public partial class InicioFede : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,10 +59,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     telefono = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: true),
                     Artesano_foto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Artesano_bloqueado = table.Column<bool>(type: "bit", nullable: true),
-                    MercadoPagoUserId = table.Column<long>(type: "bigint", nullable: true),
-                    MercadoPagoAccessToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MercadoPagoRefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MercadoPagoTokenExpira = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Clienteid = table.Column<int>(type: "int", nullable: true),
                     direccion_domicilio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     direccion_departamento = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -101,6 +97,33 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Comentarios",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    contenido = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    clienteId = table.Column<int>(type: "int", nullable: true),
+                    artesanoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comentarios", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Comentarios_Usuarios_artesanoId",
+                        column: x => x.artesanoId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Comentarios_Usuarios_clienteId",
+                        column: x => x.clienteId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Ordenes",
                 columns: table => new
                 {
@@ -108,11 +131,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     ClienteId = table.Column<int>(type: "int", nullable: false),
                     FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaPago = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    MercadoPagoPaymentId = table.Column<long>(type: "bigint", nullable: false),
                     Estado = table.Column<int>(type: "int", nullable: false),
                     Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PreferenceId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MercadoPagoPaymentIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PagosAprobados = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PreferenceId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -283,40 +305,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         principalTable: "Productos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Comentarios",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    contenido = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    clienteId = table.Column<int>(type: "int", nullable: true),
-                    artesanoId = table.Column<int>(type: "int", nullable: true),
-                    productoId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comentarios", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Comentarios_Productos_productoId",
-                        column: x => x.productoId,
-                        principalTable: "Productos",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Comentarios_Usuarios_artesanoId",
-                        column: x => x.artesanoId,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Comentarios_Usuarios_clienteId",
-                        column: x => x.clienteId,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -504,11 +492,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 name: "IX_Comentarios_clienteId",
                 table: "Comentarios",
                 column: "clienteId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comentarios_productoId",
-                table: "Comentarios",
-                column: "productoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Facturas_ArtesanoId",

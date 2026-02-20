@@ -3,13 +3,13 @@
 <div class="container mt-4">
 
     <!-- MENSAJE DE ÉXITO -->
-    @if (TempData["Mensaje"] != null)
+    @* @if (TempData["Mensaje"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             @TempData["Mensaje"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    }
+    } *@
 
     <!-- PERFIL DEL ARTESANO -->
     <div class="card mb-4">
@@ -45,14 +45,12 @@
             foreach (var producto in Model.Productos)
             {
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-
                     <a asp-controller="Producto"
                        asp-action="DetallesProducto"
                        asp-route-id="@producto.id"
                        class="text-decoration-none text-dark">
 
-                        <div class="product-card card shadow-sm h-100">
-
+                        <div class="card shadow-sm h-100">
                             <img src="~/images/productos/@producto.imagen"
                                  class="card-img-top"
                                  style="height:160px; object-fit:contain;"
@@ -62,10 +60,8 @@
                                 <h6 class="mb-1">@producto.nombre</h6>
                                 <p class="fw-bold mb-0">$@producto.precio</p>
                             </div>
-
                         </div>
                     </a>
-
                 </div>
             }
         }
@@ -77,6 +73,64 @@
                 </p>
             </div>
         }
+    </div>
+
+    <!-- COMENTARIOS DEL ARTESANO -->
+    <hr class="my-4" />
+
+    <h4 class="mb-3">Comentarios</h4>
+
+    @if (Model.Artesano.comentarios != null && Model.Artesano.comentarios.Any())
+    {
+        <div class="list-group mb-4">
+            @foreach (var comentario in Model.Artesano.comentarios)
+            {
+                <div class="list-group-item">
+                    <p class="mb-1">@comentario.contenido</p>
+
+                    @if (comentario.cliente != null)
+                    {
+                        <small class="text-muted">
+                            — @comentario.cliente.nombre
+                        </small>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">
+            Este artesano aún no tiene comentarios.
+        </p>
+    }
+
+    <!-- FORMULARIO PARA AGREGAR COMENTARIO -->
+    <div class="mb-4">
+        <h6 class="fw-semibold">Dejar un comentario</h6>
+
+        <form asp-controller="Usuario"
+              asp-action="ComentarArtesano"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" name="artesanoId" value="@Model.Artesano.id" />
+
+            <div class="mb-2">
+                <textarea asp-for="Comentario.contenido"
+                          class="form-control"
+                          rows="3"
+                          placeholder="Escriba su comentario"></textarea>
+
+                <span asp-validation-for="Comentario.contenido"
+                      class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-sm btn-primary">
+                💬 Enviar comentario
+            </button>
+        </form>
     </div>
 
     <!-- FORMULARIO DE REPORTE DEL ARTESANO -->
@@ -92,7 +146,6 @@
 
             @Html.AntiForgeryToken()
 
-            <!-- ID DEL ARTESANO -->
             <input type="hidden" name="artesanoId" value="@Model.Artesano.id" />
 
             <div class="mb-2">

@@ -1088,5 +1088,78 @@ namespace PruebasUnitarias
             );
         }
     }
+    [TestClass]
+    public class AgregrComentarioCasoDeUsoTests
+    {
+        [TestMethod]
+        public void Ejecutar_ArtesanoNull_LanzaExcepcion()
+        {
+            // Arrange
+            var repo = new Mock<IComentarioRepositorio>();
+            var caso = new AgregrComentarioCasoDeUso(repo.Object);
+
+            var dto = new AgregarComentarioDto
+            {
+                contenido = "Buen trabajo"
+            };
+
+            var cliente = new Cliente { id = 1 };
+
+            // Act + Assert
+            Assert.ThrowsException<Exception>(() =>
+                caso.Ejecutar(dto, cliente, null)
+            );
+        }
+
+        [TestMethod]
+        public void Ejecutar_ClienteNull_LanzaExcepcion()
+        {
+            // Arrange
+            var repo = new Mock<IComentarioRepositorio>();
+            var caso = new AgregrComentarioCasoDeUso(repo.Object);
+
+            var dto = new AgregarComentarioDto
+            {
+                contenido = "Excelente artesano"
+            };
+
+            var artesano = new Artesano { id = 2 };
+
+            // Act + Assert
+            Assert.ThrowsException<Exception>(() =>
+                caso.Ejecutar(dto, null, artesano)
+            );
+        }
+
+        [TestMethod]
+        public void Ejecutar_DatosValidos_LlamaRepositorioAgregar()
+        {
+            // Arrange
+            var repo = new Mock<IComentarioRepositorio>();
+            var caso = new AgregrComentarioCasoDeUso(repo.Object);
+
+            var dto = new AgregarComentarioDto
+            {
+                contenido = "Muy recomendable"
+            };
+
+            var cliente = new Cliente { id = 1 };
+            var artesano = new Artesano { id = 2 };
+
+            // Act
+            caso.Ejecutar(dto, cliente, artesano);
+
+            // Assert
+            repo.Verify(r =>
+                r.Agregar(It.Is<Comentario>(c =>
+                    c.contenido == "Muy recomendable" &&
+                    c.clienteId == 1 &&
+                    c.artesanoId == 2
+                )),
+                Times.Once
+            );
+        }
+    }
+
 }
 

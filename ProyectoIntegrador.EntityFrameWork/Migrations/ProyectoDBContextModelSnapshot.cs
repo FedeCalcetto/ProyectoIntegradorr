@@ -126,16 +126,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("productoId")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
                     b.HasIndex("artesanoId");
 
                     b.HasIndex("clienteId");
-
-                    b.HasIndex("productoId");
 
                     b.ToTable("Comentarios");
                 });
@@ -908,25 +903,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
-                        .WithMany()
+                        .WithMany("comentarios")
                         .HasForeignKey("artesanoId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
                         .WithMany()
                         .HasForeignKey("clienteId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
-                        .WithMany("comentarios")
-                        .HasForeignKey("productoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("artesano");
 
                     b.Navigation("cliente");
-
-                    b.Navigation("producto");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", b =>
@@ -1204,8 +1192,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>
                 {
                     b.Navigation("Fotos");
-
-                    b.Navigation("comentarios");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", b =>
@@ -1215,6 +1201,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
                 {
+                    b.Navigation("comentarios");
+
                     b.Navigation("productos");
 
                     b.Navigation("ventas");

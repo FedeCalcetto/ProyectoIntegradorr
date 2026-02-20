@@ -77,6 +77,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
             return _contexto.Usuarios
                        .OfType<Artesano>()
                        .Include(a => a.productos)
+                       .Include(a => a.comentarios)
+                       .ThenInclude(c => c.cliente)
                        .FirstOrDefault(a => a.id == id);
         }
 

@@ -19,6 +19,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<Producto> productos { get; set; } = new List<Producto>();
         public string? foto { get; set; }
         public bool bloqueado { get; set; }
+        public List<Comentario> comentarios { get; set; } = new List<Comentario>();
         //public List<PedidoPersonalizado>? pedidosArtesano { get; set; }
 
 
