@@ -37,6 +37,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IPedidoPersonalizadoRepsoitorio, PedidoPersonalizadoEFRepositorio>();
             builder.Services.AddScoped<ICalificarProductoRepositorio, CalificacionEFRepositorio>();
 
+            builder.Services.AddScoped<IComentarioRepositorio, ComentarioEFRepositorio>();
             //Casos de uso
             builder.Services.AddScoped<ICalificarProducto, CalificarProductoCasoDeUso>();
             builder.Services.AddScoped<IObtenerPromedioCalificacionDeProducto, ObtenerCalificacionProductoCasoDeUso>();
@@ -91,7 +92,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IFinalizarPedidoPersonalizado, FinalizarPedidoPersonalizadoCasoDeUso>();
             builder.Services.AddScoped <IObtenerArtesanoDashboard, ObtenerArtesanoDashboardCasoDeUso>();
             builder.Services.AddScoped<IDashboard, DashboardCasoDeUso>();
-
+            builder.Services.AddScoped<IAgregarComentario, AgregrComentarioCasoDeUso>();
             builder.Services.AddScoped<PdfClienteService>();
             builder.Services.AddScoped<IProcesarOrdenService, ProcesarOrdenService>();
 

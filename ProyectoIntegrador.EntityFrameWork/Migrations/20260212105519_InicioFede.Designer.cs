@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260202162554_api")]
-    partial class api
+    [Migration("20260212105519_InicioFede")]
+    partial class InicioFede
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,16 +129,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("productoId")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
                     b.HasIndex("artesanoId");
 
                     b.HasIndex("clienteId");
-
-                    b.HasIndex("productoId");
 
                     b.ToTable("Comentarios");
                 });
@@ -232,13 +227,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
 
-                    b.PrimitiveCollection<string>("MercadoPagoPaymentIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.PrimitiveCollection<string>("PagosAprobados")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("MercadoPagoPaymentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PreferenceId")
                         .HasColumnType("nvarchar(max)");
@@ -852,18 +842,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
 
-                    b.Property<string>("MercadoPagoAccessToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MercadoPagoRefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("MercadoPagoTokenExpira")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("MercadoPagoUserId")
-                        .HasColumnType("bigint");
-
                     b.Property<bool>("bloqueado")
                         .HasColumnType("bit");
 
@@ -928,25 +906,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
-                        .WithMany()
+                        .WithMany("comentarios")
                         .HasForeignKey("artesanoId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
                         .WithMany()
                         .HasForeignKey("clienteId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
-                        .WithMany("comentarios")
-                        .HasForeignKey("productoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("artesano");
 
                     b.Navigation("cliente");
-
-                    b.Navigation("producto");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", b =>
@@ -1224,8 +1195,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>
                 {
                     b.Navigation("Fotos");
-
-                    b.Navigation("comentarios");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", b =>
@@ -1235,6 +1204,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
                 {
+                    b.Navigation("comentarios");
+
                     b.Navigation("productos");
 
                     b.Navigation("ventas");
