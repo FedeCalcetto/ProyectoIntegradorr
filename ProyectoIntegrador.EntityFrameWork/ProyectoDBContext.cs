@@ -92,19 +92,15 @@ namespace ProyectoIntegrador.EntityFrameWork
                 .HasOne(c => c.cliente)
                 .WithMany()
                 .HasForeignKey(c => c.clienteId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Comentario>()
                 .HasOne(c => c.artesano)
-                .WithMany()
+                .WithMany(a => a.comentarios)
                 .HasForeignKey(c => c.artesanoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Comentario>()
-                .HasOne(c => c.producto)
-                .WithMany(p => p.comentarios)
-                .HasForeignKey(c => c.productoId)
-                .OnDelete(DeleteBehavior.Cascade);
+            
 
             // 🧩 Reportes
             modelBuilder.Entity<Reporte>()

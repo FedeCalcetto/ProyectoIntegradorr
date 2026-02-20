@@ -9,5 +9,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface IComentarioRepositorio : IRepositorio<Comentario>
     {
+        void EliminarPorArtesano(int id);
     }
 }

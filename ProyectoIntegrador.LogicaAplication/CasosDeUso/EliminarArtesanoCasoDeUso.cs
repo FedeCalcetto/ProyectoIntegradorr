@@ -12,12 +12,15 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
     {
         private readonly IArtesanoRepositorio _repoArtesano;
         private readonly IObtenerArtesano _obtenerArtesano;
+        private readonly IComentarioRepositorio _comentarioRepositorio;
 
         public EliminarArtesanoCasoDeUso(IArtesanoRepositorio repoArtesano,
-                                         IObtenerArtesano obtenerArtesano)
+                                         IObtenerArtesano obtenerArtesano,
+                                         IComentarioRepositorio comentarioRepositorio)
         {
             _repoArtesano = repoArtesano;
             _obtenerArtesano = obtenerArtesano;
+            _comentarioRepositorio = comentarioRepositorio;
         }
 
         public void Ejecutar(string email)
@@ -26,7 +29,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 
             if (artesano == null)
                 throw new Exception("El artesano no existe.");
-
+            _comentarioRepositorio.EliminarPorArtesano(artesano.id);
             _repoArtesano.Eliminar(artesano.id);
         }
 

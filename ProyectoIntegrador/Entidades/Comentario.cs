@@ -1,4 +1,5 @@
-﻿using ProyectoIntegrador.LogicaNegocio.Interface.Validacion;
+﻿using ProyectoIntegrador.LogicaNegocio.Excepciones;
+using ProyectoIntegrador.LogicaNegocio.Interface.Validacion;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,18 +18,20 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public Cliente? cliente { get; set; }
         public int? artesanoId { get; set; }
         public Artesano? artesano { get; set; }
-        public int? productoId { get; set; }
-        public Producto? producto { get; set; }
 
-
-        //Si el usuario reporta un rpoducto el booleano queda en true y el producto no es null
-        //y asi en viceversa con el artesano
-        // y si no  es un reporte quedan los 2 en false
 
 
         public void Validar()
         {
-            throw new NotImplementedException();
+            validarContenido();
+        }
+
+        public void validarContenido()
+        {
+            if ((string.IsNullOrWhiteSpace(contenido)))
+            {
+                throw new ContenidoVacioException();
+            }
         }
     }
 }
