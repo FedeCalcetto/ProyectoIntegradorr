@@ -290,12 +290,13 @@ namespace PruebasUnitarias
         {
             var repo = new Mock<IArtesanoRepositorio>();
             var obtener = new Mock<IObtenerArtesano>();
+            var comentario = new Mock<IComentarioRepositorio>();
 
             var artesano = new Artesano { id = 4 };
 
             obtener.Setup(o => o.Ejecutar("art@mail.com")).Returns(artesano); //Acá ya se esta usando las clases del sistema, pero con repositorios falsos.
 
-            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object,comentario.Object);
 
             caso.Ejecutar("art@mail.com");
 
@@ -309,7 +310,7 @@ namespace PruebasUnitarias
         {
             var repo = new Mock<IArtesanoRepositorio>();
             var obtener = new Mock<IObtenerArtesano>();
-
+            var comentario = new Mock<IComentarioRepositorio>();
             // Artesano existente con ID = 9999
             var artesano = new Artesano { id = 9999 };
 
@@ -321,7 +322,7 @@ namespace PruebasUnitarias
             repo.Setup(r => r.Eliminar(9999))
                 .Throws(new Exception("No existe artesano con ese ID"));
 
-            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object, comentario.Object);
 
             // Test: el caso de uso debe lanzar excepción
             Assert.ThrowsException<Exception>(() =>
@@ -337,12 +338,12 @@ namespace PruebasUnitarias
         {
             var repo = new Mock<IArtesanoRepositorio>();
             var obtener = new Mock<IObtenerArtesano>();
-
+            var comentario = new Mock<IComentarioRepositorio>();
             // Simula que NO existe artesano con ese email
             obtener.Setup(o => o.Ejecutar("noexiste@mail.com"))
                    .Returns((Artesano)null);
 
-            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object, comentario.Object);
 
             Assert.ThrowsException<Exception>(() =>
                 caso.Ejecutar("noexiste@mail.com")
@@ -709,11 +710,11 @@ namespace PruebasUnitarias
             // Arrange
             var repo = new Mock<IArtesanoRepositorio>();
             var obtener = new Mock<IObtenerArtesano>();
-
+            var comentario = new Mock<IComentarioRepositorio>();
             obtener.Setup(o => o.Ejecutar("correo@test.com"))
                    .Returns((Artesano)null);
 
-            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object, comentario.Object);
 
             // Act & Assert
             Assert.ThrowsException<Exception>(() => caso.Ejecutar("correo@test.com"));
@@ -725,7 +726,7 @@ namespace PruebasUnitarias
             // Arrange
             var repo = new Mock<IArtesanoRepositorio>();
             var obtener = new Mock<IObtenerArtesano>();
-
+            var comentario = new Mock<IComentarioRepositorio>();
             var artesano = new Artesano
             {
                 id = 10,
@@ -737,7 +738,7 @@ namespace PruebasUnitarias
             obtener.Setup(o => o.Ejecutar("correo@test.com"))
                    .Returns(artesano);
 
-            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object);
+            var caso = new EliminarArtesanoCasoDeUso(repo.Object, obtener.Object, comentario.Object);
 
             // Act
             caso.Ejecutar("correo@test.com");

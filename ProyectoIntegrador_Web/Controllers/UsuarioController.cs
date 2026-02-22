@@ -27,11 +27,9 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IUsuarioRepositorio _usuarioRepo;
         private readonly IClienteRepositorio _clienteRepo;
         private readonly IObtenerClienteConFavoritos _obtenerClienteConFav;
-
-        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo, IObtenerClienteConFavoritos obtenerClienteConFav)
         private readonly IAgregarComentario _agregarComentario;
 
-        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo,IAgregarComentario agregarComentario)
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo,IAgregarComentario agregarComentario, IObtenerClienteConFavoritos obtenerClienteConFav)
         {
             _cambiarPassword = cambiarPassword;
             _eliminarUsuario = eliminarUsuario;

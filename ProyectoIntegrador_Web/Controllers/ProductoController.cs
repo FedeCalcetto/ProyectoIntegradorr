@@ -24,17 +24,13 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerCliente _obtenerCliente;
         private readonly IAgregarReporte _agregarReporte;
         private readonly IObtenerClienteConFavoritos _obtenerClienteConFav;
-
-
-        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano,
-            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto, IObtenerSubCategoria obtenerSubCategoria, IAgregarReporte agregarReporte, IObtenerCliente obtenerCliente, IObtenerClienteConFavoritos obtenerClienteConFav)
         private readonly ICalificarProducto _calificarProducto;
         private readonly IObtenerPromedioCalificacionDeProducto _calificacionPromedioProducto;
         public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano,
             IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, 
             IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto, 
             IObtenerSubCategoria obtenerSubCategoria, IAgregarReporte agregarReporte, IObtenerCliente obtenerCliente, ICalificarProducto calificarProducto,
-           IObtenerPromedioCalificacionDeProducto calificacionPromedioProducto)
+           IObtenerPromedioCalificacionDeProducto calificacionPromedioProducto, IObtenerClienteConFavoritos obtenerClienteConFav)
         {
             _obtenerArtesano = obtenerArtesano;
             _agregarProducto = producto;
@@ -272,7 +268,7 @@ namespace ProyectoIntegrador_Web.Controllers
                 ArtesanoId = producto.artesano.id,
                 Reporte = new AgregarReporteDto(),
 
-                EsFavorito = esFavorito
+                EsFavorito = esFavorito,
                 PromedioCalificacion = (double)promedio,
                 CantidadReseñas = cantidad
             };
