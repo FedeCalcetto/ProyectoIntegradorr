@@ -118,5 +118,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         {
             throw new NotImplementedException();
         }
+
+        public Cliente ObtenerClienteConFavoritos(string email) //Trae al cliente con ese email y carga su coleccion productosFavoritos
+        {
+            return _contexto.Usuarios
+           .OfType<Cliente>()
+           .Include(c => c.productosFavoritos)
+           .FirstOrDefault(c => c.email.email == email);
+        }
     }
 }

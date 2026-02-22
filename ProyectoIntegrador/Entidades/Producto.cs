@@ -29,6 +29,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public List<Comentario> comentarios { get; set; } = new List<Comentario>();
         public int SubCategoriaId { get; set; }
         public SubCategoria SubCategoria { get; set; }
+       
 
         public void Validar()
         {

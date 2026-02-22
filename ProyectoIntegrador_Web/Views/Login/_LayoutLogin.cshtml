@@ -12,16 +12,47 @@
             background: #f4f4f4;
             margin: 0;
         }
+
+        /* ===== LOADER ===== */
+        #globalLoader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .loader-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .loader-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        }
     </style>
 </head>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<body class="login-body d-flex flex-column min-vh-100">
 
-<body class="login-body">
+    <!-- ===== LOADER GLOBAL ===== -->
+    <div id="globalLoader" class="d-none">
+        <div class="loader-backdrop"></div>
 
-      <main class="login-main">
+        <div class="loader-box text-center">
+            <div class="spinner-border text-dark" role="status"></div>
+            <div id="loaderMessage" class="mt-2 fw-semibold">Procesando...</div>
+            <div class="small text-muted">Por favor esperá</div>
+        </div>
+    </div>
+
+    <main class="login-main flex-grow-1">
         @RenderBody()
     </main>
 
@@ -65,10 +96,52 @@
 
         </div>
     </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     @RenderSection("Scripts", required: false)
 
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ===== SCRIPT LOADER ===== -->
+    <script>
+        function showLoader(message) {
+            const loader = document.getElementById("globalLoader");
+            const msg = document.getElementById("loaderMessage");
+
+            if (msg && message) {
+                msg.textContent = message;
+            }
+
+            if (loader) {
+                loader.classList.remove("d-none");
+            }
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById("globalLoader");
+            if (loader) loader.classList.add("d-none");
+        }
+
+        document.addEventListener("submit", function (e) {
+            const form = e.target;
+            if (!(form instanceof HTMLFormElement)) return;
+
+            if (!form.classList.contains("js-loader")) return;
+
+            const method = (form.getAttribute("method") || "get").toLowerCase();
+            if (method !== "post") return;
+
+            const customMessage = form.getAttribute("data-loader-text");
+
+            showLoader(customMessage || "Procesando...");
+
+            const btns = form.querySelectorAll("button[type='submit'], input[type='submit']");
+            btns.forEach(b => b.disabled = true);
+        });
+
+        window.addEventListener("pageshow", hideLoader);
+    </script>
+
 
 </body>
-
 </html>

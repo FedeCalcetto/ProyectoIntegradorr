@@ -53,7 +53,7 @@
                         Fecha: @p.FechaCreacion.ToShortDateString()
                     </p>
 
-                    <form asp-action="Aceptar" method="post">
+                    <form asp-action="Aceptar" method="post" class="js-loader" data-loader-text="Aceptando pedido...">
                         <input type="hidden" name="id" value="@p.Id" />
                         <button class="btn btn-success">
                             Aceptar encargo

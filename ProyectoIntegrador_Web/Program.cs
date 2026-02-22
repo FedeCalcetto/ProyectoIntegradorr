@@ -80,6 +80,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IEliminarReporte, EliminarReporteCasoDeUso>();
             builder.Services.AddScoped<IObtenerReporte, ObtenerReporteCasoeUso>();
             builder.Services.AddScoped<IObtenerArtesanoId, ObtenerArtesanoIdCasoDeUso>();
+            builder.Services.AddScoped<IObtenerClienteConFavoritos, ObtenerClienteConFavoritosCasoDeUso>();
             // ?? Pedidos Personalizados
             builder.Services.AddScoped<ICrearPedidoPersonalizado, CrearPedidoPersonalizadoCasoDeUso>();
             builder.Services.AddScoped<IObtenerPedidosPendientes, ObtenerPedidosPendientesCasoDeUso>();
@@ -88,11 +89,12 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IFinalizarPedidoPersonalizado, FinalizarPedidoPersonalizadoCasoDeUso>();
             builder.Services.AddScoped <IObtenerArtesanoDashboard, ObtenerArtesanoDashboardCasoDeUso>();
             builder.Services.AddScoped<IDashboard, DashboardCasoDeUso>();
+            builder.Services.AddScoped<IToggleFavorito, ToggleFavoritoCasoDeUso>();
 
             builder.Services.AddScoped<PdfClienteService>();
             builder.Services.AddScoped<IProcesarOrdenService, ProcesarOrdenService>();
 
-
+            builder.Services.AddScoped<IAgregarFavorito, AgregarFavoritoCasoDeUso>();
 
             builder.Services.AddScoped<IBloquearArtesano, BloquearArtesanoCasoDeUso>();
             builder.Services.AddScoped<IAgregarArtesanoLista, AgregarArtesanoListaCasoDeUso>();

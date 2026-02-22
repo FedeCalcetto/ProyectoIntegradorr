@@ -16,5 +16,7 @@ namespace ProyectoIntegrador.LogicaAplication.Dtos
 
         public string Categoria { get; set; }
         public string SubCategoria { get; set; }
+        public bool EsFavorito { get; set; }
+
     }
 }

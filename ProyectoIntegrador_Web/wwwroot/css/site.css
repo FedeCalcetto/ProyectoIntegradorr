@@ -620,3 +620,116 @@ body.login-body {
     margin-bottom: -3px;
     padding: 10px
 }
+
+/* Loader solo para forms marcados */
+#globalLoader {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+}
+
+    #globalLoader .loader-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+    }
+
+    #globalLoader .loader-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border-radius: 14px;
+        padding: 18px 22px;
+        min-width: 240px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+
+/* favoritos */
+
+.fav-btn {
+    border: 0;
+    background: rgba(255,255,255,.95);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    cursor: pointer;
+}
+
+    .fav-btn i {
+        font-size: 18px;
+        color: #111;
+    }
+
+    /* Rojo cuando ya es favorito */
+    .fav-btn.is-fav i {
+        color: #dc3545;
+    }
+
+.producto-card-fav {
+    position: relative;
+    /*overflow: hidden; /* evita que el botón "genere espacio" */
+}
+
+    /* Contenedor del botón (form) */
+    .producto-card-fav .fav-btn-form {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 60;
+        opacity: 0;
+        transition: opacity .15s ease;
+        z-index: 5 !important;
+    }
+
+    /* Solo aparece al pasar el mouse */
+    .producto-card-fav:hover .fav-btn-form {
+        opacity: 1;
+    }
+
+    /* El overlay del stretched-link siempre por debajo del botón */
+    .producto-card-fav .stretched-link::after {
+        z-index: 1 !important;
+    }
+
+    /* Botón */
+    .producto-card-fav .fav-btn {
+        border: 0;
+        background: rgba(255,255,255,.95);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,.2);
+        cursor: pointer;
+        position: relative;
+        z-index: 11 !important;
+    }
+
+        .producto-card-fav .fav-btn i {
+            font-size: 18px;
+            color: #111;
+        }
+
+        /* Rojo cuando ya es favorito */
+        .producto-card-fav .fav-btn.is-fav i {
+            color: #dc3545;
+        }
+
+.fav-btn-form, .fav-btn-form * {
+    pointer-events: auto !important;
+}
+
+.js-card {
+    cursor: pointer;
+}
+
+

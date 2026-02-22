@@ -17,5 +17,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         void agregarArtesano(Cliente c, Artesano a);
         void eliminarArtesano(Cliente c, Artesano a);
         Cliente BuscarClientePorEmailConArtesanos(string email);
+        Cliente ObtenerClienteConFavoritos(string email);
     }
 }

@@ -1,22 +1,31 @@
 ﻿@model ProyectoIntegrador.LogicaAplication.Dtos.ProductoCatalogoDto
 
-<div class="card catalogoCard h-100 shadow-sm" onclick="window.location='@Url.Action("DetallesProducto", "Producto", new { id = Model.Id })'"
-     style="cursor:pointer;">
-    
+@{
+    var rol = Context.Session.GetString("Rol")?.ToUpper();
+    var esCliente = rol == "CLIENTE";
+}
 
-    <!-- IMAGEN -->
-    <!-- <img src="@Model.Imagen"
-         class="card-img-top"
-         style="height:180px; object-fit:cover;"
-         alt="@Model.Nombre" />
-         
-         Para aque esto funque hay que actualizar la bd
-             UPDATE Productos
-            SET imagen = '/images/productos/' + imagen
-            WHERE imagen NOT LIKE '/images/%';
-         
-            porque busca esa ruta dentro de wwwroot
-         -->
+<div class="card catalogoCard h-100 shadow-sm producto-card-fav position-relative js-card"
+     data-url="@Url.Action("DetallesProducto", "Producto", new { id = Model.Id })">
+
+    @if (esCliente)
+    {
+        <form asp-controller="Cliente"
+              asp-action="ToggleFavorito"
+              method="post"
+              class="fav-btn-form">
+
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="productoId" value="@Model.Id" />
+
+            <button type="button"
+                    class="fav-btn js-fav-btn @(Model.EsFavorito ? "is-fav" : "")"
+                    data-producto-id="@Model.Id"
+                    title="Favorito">
+                <i class="bi @(Model.EsFavorito ? "bi-heart-fill" : "bi-heart")"></i>
+            </button>
+        </form>
+    }
 
     <img src="@("/images/productos/" + Model.Imagen)"
          class="card-img-top"
@@ -24,29 +33,22 @@
          alt="@Model.Nombre" />
 
     <div class="card-body">
-
-        <!-- NOMBRE -->
         <h6 class="card-title mb-1">@Model.Nombre</h6>
-
-        <!-- ARTESANO -->
-        <div class="text-muted small mb-2">
-            @Model.Artesano
-        </div>
-
-        <!-- PRECIO -->
-        <div class="fw-bold fs-6">
-            $ @Model.Precio
-        </div>
-
-        
-        @* FUTURO LINK A DETALLE *@
-        @*
-        <a asp-controller="Producto"   no usar esto porque hace toda la card clickeable y eso causa
-           asp-action="Detalle"        que no se pueda apretar el boton, ya que queda como "debajo" de este a.
-           asp-route-id="@Model.Id"
-           class="stretched-link">
-        </a>
-        *@
-
+        <div class="text-muted small mb-2">@Model.Artesano</div>
+        <div class="fw-bold fs-6">$ @Model.Precio</div>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener("click", function (e) {
+      const card = e.target.closest(".js-card");
+      if (!card) return;
+
+      // si el click fue en el form/botón de favorito, no navegues
+      if (e.target.closest(".fav-btn-form")) return;
+
+      const url = card.getAttribute("data-url");
+      if (url) window.location.href = url;
+    });
+</script>
