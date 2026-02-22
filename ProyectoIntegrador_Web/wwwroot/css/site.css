@@ -18,7 +18,7 @@ html {
 }
 
 body {
- 
+    overflow-x: hidden;
 }
 
 
@@ -154,7 +154,6 @@ body {
 .product-slider-container {
     position: relative;
     width: 100%;
-    overflow: hidden;
     padding: 20px 50px;
 }
 
@@ -403,6 +402,31 @@ body {
     background: #ffffff;
     border-radius: 70%;
 }
+
+.interes-slider-container {
+    position: relative;
+    width: 100%;
+    padding: 20px 60px; /* espacio para flechas */
+}
+
+.interes-slider-wrapper {
+    overflow: hidden;
+    width: 100%;
+}
+
+.interes-product-slider {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.4s ease;
+    will-change: transform;
+}
+
+    .interes-product-slider .product-card {
+        min-width: 220px; /* ancho fijo */
+        flex: 0 0 calc((100% - 80px) / 5);
+    }
+
+
 /*VENTAS ARTESANO*/
 .thead-negro th {
     background-color: #212B2A;

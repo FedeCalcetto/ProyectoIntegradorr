@@ -1,4 +1,5 @@
 ﻿using ProyectoIntegrador.LogicaAplication.Interface;
+using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,12 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
     public class EliminarUsuarioCasoDeUso : IEliminarUsuario
     {
         private readonly IUsuarioRepositorio _usuarioRepositorio;
+        private readonly IComentarioRepositorio _comentarioRepo;
 
-        public EliminarUsuarioCasoDeUso(IUsuarioRepositorio usuarioRepositorio)
+        public EliminarUsuarioCasoDeUso(IUsuarioRepositorio usuarioRepositorio, IComentarioRepositorio comentarioRepo)
         {
             _usuarioRepositorio = usuarioRepositorio;
+            _comentarioRepo = comentarioRepo;
         }
 
         public void Ejecutar(string email)
@@ -23,6 +26,11 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 
             if (usuario == null)
                 throw new Exception("El usuario no existe.");
+
+            if(usuario is Artesano artesano)
+            {
+                _comentarioRepo.EliminarPorArtesano(artesano.id);
+            }
 
             _usuarioRepositorio.Eliminar(usuario.id);
         }

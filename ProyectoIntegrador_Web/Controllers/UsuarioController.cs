@@ -29,6 +29,9 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerClienteConFavoritos _obtenerClienteConFav;
 
         public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo, IObtenerClienteConFavoritos obtenerClienteConFav)
+        private readonly IAgregarComentario _agregarComentario;
+
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo,IAgregarComentario agregarComentario)
         {
             _cambiarPassword = cambiarPassword;
             _eliminarUsuario = eliminarUsuario;
@@ -42,6 +45,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _usuarioRepo = usuarioRepo;
             _clienteRepo = clienteRepo;
             _obtenerClienteConFav = obtenerClienteConFav;
+            _agregarComentario = agregarComentario;
         }
 
 
@@ -244,7 +248,44 @@ namespace ProyectoIntegrador_Web.Controllers
                 return View("PerfilPublico", vm);
             }
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ComentarArtesano(int clienteId, int artesanoId, AgregarComentarioDto comentario)
+        {
+            if (!ModelState.IsValid)
+            {
+                var vm = CrearDetalleVM(artesanoId);
+                vm.Comentario = comentario;
+                return View("PerfilPublico", vm);
+            }
 
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var cliente = _obtenerCliente.Ejecutar(email);
+            var artesano = _obtenerArtesano.Ejecutar(artesanoId);
+
+            if (cliente == null || artesano == null)
+                return NotFound();
+
+            try
+            {
+                _agregarComentario.Ejecutar(
+                    comentario,
+                    c: cliente,
+                    a: artesano
+                );
+
+                TempData["Mensaje"] = "Comentario enviado correctamente";
+                return RedirectToAction("PerfilPublico", new { id = artesanoId });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
+
+                var vm = CrearDetalleVM(artesanoId);
+                vm.Comentario = comentario;
+                return View("PerfilPublico", vm);
+            }
+        }
 
         private PerfilPublicoViewModel CrearDetalleVM(int id)
         {
@@ -254,7 +295,8 @@ namespace ProyectoIntegrador_Web.Controllers
             {
                 Artesano = artesano,
                 Productos = artesano.productos,
-                Reporte = new AgregarReporteDto()
+                Reporte = new AgregarReporteDto(),
+                Comentario = new AgregarComentarioDto()
             };
         }
 

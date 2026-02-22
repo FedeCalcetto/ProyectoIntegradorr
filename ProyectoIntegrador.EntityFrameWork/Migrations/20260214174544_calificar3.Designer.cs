@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260202162554_api")]
-    partial class api
+    [Migration("20260214174544_calificar3")]
+    partial class calificar3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,61 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Calificación", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("productoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("puntaje")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("usuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("productoId");
+
+                    b.HasIndex("usuarioId");
+
+                    b.ToTable("Calificaciones");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            fecha = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            productoId = 1,
+                            puntaje = 5m,
+                            usuarioId = 2
+                        },
+                        new
+                        {
+                            id = 2,
+                            fecha = new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            productoId = 1,
+                            puntaje = 4m,
+                            usuarioId = 2
+                        },
+                        new
+                        {
+                            id = 3,
+                            fecha = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            productoId = 2,
+                            puntaje = 3m,
+                            usuarioId = 2
+                        });
+                });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Carrito", b =>
                 {
@@ -232,13 +287,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
 
-                    b.PrimitiveCollection<string>("MercadoPagoPaymentIds")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.PrimitiveCollection<string>("PagosAprobados")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("MercadoPagoPaymentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PreferenceId")
                         .HasColumnType("nvarchar(max)");
@@ -852,18 +902,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int?>("Clienteid")
                         .HasColumnType("int");
 
-                    b.Property<string>("MercadoPagoAccessToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MercadoPagoRefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("MercadoPagoTokenExpira")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("MercadoPagoUserId")
-                        .HasColumnType("bigint");
-
                     b.Property<bool>("bloqueado")
                         .HasColumnType("bit");
 
@@ -904,6 +942,21 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("CLIENTE");
+                });
+
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Calificación", b =>
+                {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", null)
+                        .WithMany("Calificaciones")
+                        .HasForeignKey("productoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("usuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.CarritoItem", b =>
@@ -1223,6 +1276,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", b =>
                 {
+                    b.Navigation("Calificaciones");
+
                     b.Navigation("Fotos");
 
                     b.Navigation("comentarios");

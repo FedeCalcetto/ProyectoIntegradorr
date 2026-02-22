@@ -15,9 +15,11 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerFacturaCliente _obtenerFacturCliente;
         private readonly IObtenerUsuario _obtenerUsuario;
         private readonly PdfClienteService _pdf;
+        private readonly ICalificarProductoRepositorio _calificacionRepo;
 
         public FacturaNoFiscalController(PdfClienteService pdf, IObtenerFacturaClientePorOrden obtenerFacturaClientePorOrden, 
-            IObtenerFacturasDeUnCliente obtenerFacturasDeUnCliente, IObtenerFacturaArtesano obtenerFacturaArtesano, IObtenerFacturaCliente obtenerFacturCliente, IObtenerUsuario obtenerUsuario)
+            IObtenerFacturasDeUnCliente obtenerFacturasDeUnCliente, IObtenerFacturaArtesano obtenerFacturaArtesano, IObtenerFacturaCliente obtenerFacturCliente, 
+            IObtenerUsuario obtenerUsuario, ICalificarProductoRepositorio calificacionRepo)
         {
             _pdf = pdf;
             _obtenerFacturaClientePorOrden = obtenerFacturaClientePorOrden;
@@ -26,6 +28,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerFacturaArtesano = obtenerFacturaArtesano;
             _obtenerFacturCliente = obtenerFacturCliente;
             _obtenerUsuario = obtenerUsuario;
+            _calificacionRepo = calificacionRepo;
         }
         public IActionResult FacturaPorOrden(Guid ordenId)
         {

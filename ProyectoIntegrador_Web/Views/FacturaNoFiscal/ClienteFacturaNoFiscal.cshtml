@@ -1,5 +1,6 @@
 ﻿ @using ProyectoIntegrador.LogicaNegocio.Entidades
 @model FacturaNoFiscalCliente
+@Html.AntiForgeryToken()
 
 @if (Model == null)
 {
@@ -28,6 +29,7 @@
                         <th>Precio unitario</th>
                         <th>Cantidad</th>
                         <th>Subtotal</th>
+                        <th>Calificar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,6 +48,19 @@
                                 <td>$@item.precioUnitario</td>
                                 <td>@cantidadTotal</td>
                                 <td>$@subtotal</td>
+                                <td>
+                                    <div class="rating"
+                                         data-producto="@item.idProducto">
+
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="bi bi-star star-click"
+                                               data-value="@i"
+                                               style="cursor:pointer; font-size:1.3rem;"></i>
+                                        }
+
+                                    </div>
+                                </td>
                             </tr>
                         }
                     }
@@ -74,3 +89,52 @@
     </div>
 </div>
 
+<script>
+    document.querySelectorAll(".star-click").forEach(star => {
+
+        star.addEventListener("click", function () {
+
+            const puntaje = this.getAttribute("data-value");
+            const container = this.closest(".rating");
+            const productoId = container.getAttribute("data-producto");
+
+            fetch('/Producto/Calificar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken':
+                        document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({
+                    productoId: parseInt(productoId),
+                    puntaje: parseInt(puntaje)
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    pintarEstrellas(container, puntaje);
+                    alert("Gracias por calificar ⭐");
+                } else {
+                    alert("No se pudo calificar.");
+                }
+            });
+        });
+    });
+
+    function pintarEstrellas(container, puntaje) {
+
+        const stars = container.querySelectorAll(".star-click");
+
+        stars.forEach(star => {
+
+            if (star.getAttribute("data-value") <= puntaje) {
+                star.classList.remove("bi-star");
+                star.classList.add("bi-star-fill", "text-warning");
+            } else {
+                star.classList.remove("bi-star-fill");
+                star.classList.add("bi-star");
+            }
+
+        });
+    }
+</script>

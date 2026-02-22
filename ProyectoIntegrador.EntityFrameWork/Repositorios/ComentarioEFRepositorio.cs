@@ -20,7 +20,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public void Agregar(Comentario entidad)
         {
-            throw new NotImplementedException();
+            entidad.Validar();
+            _contexto.Comentarios.Add(entidad);
+            _contexto.SaveChanges();
         }
 
         public void Editar(Comentario entidad)
@@ -41,6 +43,15 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
         public IEnumerable<Comentario> ObtenerTodos()
         {
             throw new NotImplementedException();
+        }
+        public void EliminarPorArtesano(int artesanoId)
+        {
+            var comentarios = _contexto.Comentarios
+                .Where(c => c.artesanoId == artesanoId)
+                .ToList();
+
+            _contexto.Comentarios.RemoveRange(comentarios);
+            _contexto.SaveChanges();
         }
     }
 }

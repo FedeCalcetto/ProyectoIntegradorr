@@ -8,5 +8,6 @@ namespace ProyectoIntegrador_Web.Models
         public Artesano Artesano { get; set; }
         public IEnumerable<Producto> Productos { get; set; }
         public AgregarReporteDto Reporte { get; set; } = new();
+        public AgregarComentarioDto Comentario { get; set; } = new();
     }
 }
