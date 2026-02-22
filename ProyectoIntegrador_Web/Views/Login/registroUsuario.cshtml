@@ -18,7 +18,9 @@
 
             <form asp-controller="Login"
                   asp-action="registroUsuario"
-                  method="post">
+                  method="post"
+                  class="js-loader"
+                  data-loader-text="Procesando...">
 
                 <!-- Error general -->
                 <div asp-validation-summary="ModelOnly"

@@ -16,6 +16,7 @@ namespace ProyectoIntegrador_Web.Models
         public int? ArtesanoId { get; set; }
         public string? SubCategoria { get; set; }
         public AgregarReporteDto Reporte { get; set; } = new();
+        public bool EsFavorito { get; set; }
 
         public double PromedioCalificacion { get; set; }
         public int CantidadReseñas { get; set; }

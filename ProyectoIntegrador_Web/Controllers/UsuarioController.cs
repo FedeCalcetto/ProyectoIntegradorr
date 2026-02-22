@@ -26,6 +26,9 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IAgregarReporte _agregarReporte;
         private readonly IUsuarioRepositorio _usuarioRepo;
         private readonly IClienteRepositorio _clienteRepo;
+        private readonly IObtenerClienteConFavoritos _obtenerClienteConFav;
+
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo, IObtenerClienteConFavoritos obtenerClienteConFav)
         private readonly IAgregarComentario _agregarComentario;
 
         public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo,IAgregarComentario agregarComentario)
@@ -41,6 +44,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _agregarReporte = agregarReporte;
             _usuarioRepo = usuarioRepo;
             _clienteRepo = clienteRepo;
+            _obtenerClienteConFav = obtenerClienteConFav;
             _agregarComentario = agregarComentario;
         }
 
@@ -469,7 +473,42 @@ namespace ProyectoIntegrador_Web.Controllers
             // DTO de la capa aplicación
             var catalogoDto = _catalogoService.ObtenerCatalogoInicial();
 
-            // ViewModel de la capa Web
+            // favoritos del cliente logueado
+            var rol = HttpContext.Session.GetString("Rol")?.ToUpper();
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            var favoritosIds = new HashSet<int>();
+
+            if (rol == "CLIENTE" && !string.IsNullOrEmpty(email))
+            {
+                var cliente = _obtenerClienteConFav.Ejecutar(email);
+
+                favoritosIds = cliente?.productosFavoritos?
+                    .Select(p => p.id) 
+                    .ToHashSet()
+                    ?? new HashSet<int>();
+            }
+
+            //  marcar EsFavorito en Recientes
+            if (catalogoDto?.Recientes != null)
+            {
+                foreach (var p in catalogoDto.Recientes)
+                    p.EsFavorito = favoritosIds.Contains(p.Id);
+            }
+
+            //  marcar EsFavorito en PorCategoria
+            if (catalogoDto?.PorCategoria != null)
+            {
+                foreach (var cat in catalogoDto.PorCategoria)
+                {
+                    if (cat?.Productos == null) continue;
+
+                    foreach (var p in cat.Productos)
+                        p.EsFavorito = favoritosIds.Contains(p.Id);
+                }
+            }
+
+            // ViewModel de la capa Web, esto carga talalogo
             var vm = new CatalogoViewModel
             {
                 Catalogo = catalogoDto,
@@ -481,7 +520,7 @@ namespace ProyectoIntegrador_Web.Controllers
             };
 
             return View(vm);
-        }
+        }   
 
 
         private IActionResult VolverAlPerfilSegunRol()

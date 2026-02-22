@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Detalle del producto";
+
+    var rol = Context.Session.GetString("Rol")?.ToUpper();
+    var esCliente = rol == "CLIENTE";
 }
 
 <div class="container mt-5">
@@ -24,7 +27,29 @@
                     data-bs-dismiss="alert"></button>
         </div>
     }
-    <div class="card shadow-sm p-4">
+
+    <div class="card shadow-sm p-4 position-relative">
+
+        @* ❤️ BOTÓN FAVORITO (arriba a la derecha) *@
+        @if (esCliente)
+        {
+            <form asp-controller="Cliente"
+                  asp-action="AgregarFavorito"
+                  method="post"
+                  class="position-absolute"
+                  style="top: 14px; right: 14px; z-index: 5;">
+
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productoId" value="@Model.Id" />
+
+                <button type="button"
+                        class="fav-btn js-fav-btn @(Model.EsFavorito ? "is-fav" : "")"
+                        data-producto-id="@Model.Id"
+                        title="Agregar a favoritos">
+                    <i class="bi @(Model.EsFavorito ? "bi-heart-fill" : "bi-heart")"></i>
+                </button>
+            </form>
+        }
 
         <!-- Breadcrumb -->
         <nav class="mb-3">
@@ -58,9 +83,7 @@
             </div>
 
             <!-- INFO / COMPRA -->
-           
             <div class="col-md-7">
-
                 <div class="row">
 
                     <!-- 🧾 INFO PRODUCTO -->
@@ -171,9 +194,7 @@
                     </div>
 
                 </div>
-
             </div>
-
 
             <!-- FORMULARIO DE REPORTE -->
             <hr class="my-4" />

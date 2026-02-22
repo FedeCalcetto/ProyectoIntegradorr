@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProyectoIntegrador.LogicaAplication.CasosDeUso;
 using ProyectoIntegrador.LogicaAplication.Dtos;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
@@ -22,10 +23,13 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IUsuarioRepositorio _usuarioRepo;
         private readonly IClienteRepositorio _clienteRepo;
         private readonly IObtenerArtesanoId _obtenerArtesano;
+        private readonly IObtenerProducto _obtenerProducto;
+        private readonly IToggleFavorito _toggleFavorito;
+
 
         public ClienteController(IWebHostEnvironment env, IClienteRepositorio clienteRepositorio,
                           IObtenerCliente obtenerCliente, IEditarCliente editarCliente, IEliminarCliente eliminarCliente,
-                          EmailService email, IUsuarioRepositorio usarioRepo, IClienteRepositorio clienteRepo, IObtenerArtesanoId obtenerArtesano)
+                          EmailService email, IUsuarioRepositorio usarioRepo, IClienteRepositorio clienteRepo, IObtenerArtesanoId obtenerArtesano, IObtenerProducto obtenerProducto, IToggleFavorito toggleFavorito)
         {
             _obtenerCliente = obtenerCliente;
             _email = email;
@@ -35,6 +39,9 @@ namespace ProyectoIntegrador_Web.Controllers
             _usuarioRepo = usarioRepo;
             _clienteRepo = clienteRepo;
             _obtenerArtesano = obtenerArtesano;
+            _obtenerProducto = obtenerProducto;
+            _toggleFavorito = toggleFavorito;
+            
         }
 
         //seelct departamentos
@@ -344,70 +351,137 @@ namespace ProyectoIntegrador_Web.Controllers
        
         }
 
-       /* public async Task<IActionResult> ConfirmarEliminacion()
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
-
-            if (email == null)
-                return RedirectToAction("Login", "Login");
-
-            string codigo = new Random().Next(100000, 999999).ToString();
-
-            HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
-            HttpContext.Session.SetString("EliminarExpira_" + email,
-                DateTime.Now.AddMinutes(10).ToString());
-
-            await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
-
-            TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
-
-            return View(new EliminarCuentaViewModel { Email = email });
-        }   
-
-
-        public IActionResult CuentaEliminada()
-        {
-            return View();
-        }
+        // productos favoritos
 
 
         [HttpPost]
-        public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
+        [ValidateAntiForgeryToken]
+        public IActionResult AgregarFavorito(int productoId)
         {
-            var email = modelo.Email;
-            var codigoIngresado = modelo.Codigo;
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.ToUpper();
 
-            var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
-            var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
+            if (string.IsNullOrEmpty(email) || rol != "CLIENTE")
+                return Unauthorized();
 
-            if (codigoGuardado == null || expiraStr == null)
+            var esFavorito = _toggleFavorito.Ejecutar(email, productoId);
+
+            return Json(new { ok = true, esFavorito });
+        }
+
+        //ir a vista de productos favoritos
+        public IActionResult ProductosFavoritos()
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.ToUpper();
+
+            if (string.IsNullOrEmpty(email) || rol != "CLIENTE")
+                return RedirectToAction("Login", "Login");
+
+            var cliente = _clienteRepo.ObtenerClienteConFavoritos(email);
+            var favoritos = cliente?.productosFavoritos?.ToList() ?? new List<Producto>();
+
+            return View(favoritos);
+        }
+        //var cliente = _obtenerClienteConFavoritos.Ejecutar(email);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ToggleFavorito(int productoId)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var rol = HttpContext.Session.GetString("Rol")?.ToUpper();
+
+            if (string.IsNullOrEmpty(email) || rol != "CLIENTE")
+                return Unauthorized();
+
+            var cliente = _clienteRepo.ObtenerClienteConFavoritos(email);
+            var producto = _obtenerProducto.obtener(productoId);
+
+            if (cliente == null || producto == null)
+                return NotFound();
+
+            var yaEsFav = cliente.productosFavoritos.Any(p => p.id == productoId);
+
+            if (yaEsFav)
             {
-                TempData["Error"] = "El código expiró. Pedí uno nuevo.";
-                return RedirectToAction("ConfirmarEliminacion");
+                var prod = cliente.productosFavoritos.First(p => p.id == productoId);
+                cliente.productosFavoritos.Remove(prod);
+            }
+            else
+            {
+                cliente.productosFavoritos.Add(producto);
             }
 
-            DateTime expira = DateTime.Parse(expiraStr);
-            if (DateTime.Now > expira)
-            {
-                TempData["Error"] = "El código expiró.";
-                return RedirectToAction("ConfirmarEliminacion");
-            }
+            _clienteRepo.Actualizar(cliente);
 
-            if (codigoGuardado != codigoIngresado)
-            {
-                TempData["Error"] = "Código incorrecto.";
-                return RedirectToAction("ConfirmarEliminacion");
-            }
+            // ✅ devolvemos estado para pintar el corazón
+            return Json(new { ok = true, esFavorito = !yaEsFav });
+        }
 
-            // eliminar usuario
-            var cliente = _obtenerCliente.Ejecutar(email);
-            _eliminarCliente.Ejecutar(cliente.email.email);
+        /* public async Task<IActionResult> ConfirmarEliminacion()
+         {
+             var email = HttpContext.Session.GetString("loginUsuario");
 
-            // limpiar sesión
-            HttpContext.Session.Clear();
+             if (email == null)
+                 return RedirectToAction("Login", "Login");
 
-            return RedirectToAction("CuentaEliminada");
-        }*/
+             string codigo = new Random().Next(100000, 999999).ToString();
+
+             HttpContext.Session.SetString("CodigoEliminar_" + email, codigo);
+             HttpContext.Session.SetString("EliminarExpira_" + email,
+                 DateTime.Now.AddMinutes(10).ToString());
+
+             await _email.EnviarCodigoAsync(email, codigo, "eliminacion");
+
+             TempData["Mensaje"] = "Te enviamos un código para confirmar la eliminación de tu cuenta.";
+
+             return View(new EliminarCuentaViewModel { Email = email });
+         }   
+
+
+         public IActionResult CuentaEliminada()
+         {
+             return View();
+         }
+
+
+         [HttpPost]
+         public IActionResult EliminarCuenta(EliminarCuentaViewModel modelo)
+         {
+             var email = modelo.Email;
+             var codigoIngresado = modelo.Codigo;
+
+             var codigoGuardado = HttpContext.Session.GetString("CodigoEliminar_" + email);
+             var expiraStr = HttpContext.Session.GetString("EliminarExpira_" + email);
+
+             if (codigoGuardado == null || expiraStr == null)
+             {
+                 TempData["Error"] = "El código expiró. Pedí uno nuevo.";
+                 return RedirectToAction("ConfirmarEliminacion");
+             }
+
+             DateTime expira = DateTime.Parse(expiraStr);
+             if (DateTime.Now > expira)
+             {
+                 TempData["Error"] = "El código expiró.";
+                 return RedirectToAction("ConfirmarEliminacion");
+             }
+
+             if (codigoGuardado != codigoIngresado)
+             {
+                 TempData["Error"] = "Código incorrecto.";
+                 return RedirectToAction("ConfirmarEliminacion");
+             }
+
+             // eliminar usuario
+             var cliente = _obtenerCliente.Ejecutar(email);
+             _eliminarCliente.Ejecutar(cliente.email.email);
+
+             // limpiar sesión
+             HttpContext.Session.Clear();
+
+             return RedirectToAction("CuentaEliminada");
+         }*/
 
 
     }

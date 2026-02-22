@@ -15,7 +15,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
 
         public List<Artesano> artesanosSeguidos { get; set; } = new List<Artesano>();
         public ICollection<FacturaNoFiscalCliente> compras { get; set; }
-        public List<Producto> productosFavoritos { get; set; }
+        public List<Producto> productosFavoritos { get; set; } = new();
         //public List<PedidoPersonalizado> pedidosCliente { get; set; }
         public Direccion? direccion { get; set; }
         public string? foto { get; set; }

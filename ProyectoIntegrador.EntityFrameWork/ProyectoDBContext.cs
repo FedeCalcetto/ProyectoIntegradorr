@@ -143,6 +143,20 @@ namespace ProyectoIntegrador.EntityFrameWork
             .WithMany()
             .HasForeignKey(p => p.ArtesanoId);
 
+            modelBuilder.Entity<Cliente>()
+    .HasMany(c => c.productosFavoritos)
+    .WithMany()
+    .UsingEntity<Dictionary<string, object>>(
+        "ClienteProductoFavorito",
+        j => j.HasOne<Producto>()
+              .WithMany()
+              .HasForeignKey("ProductoId")
+              .OnDelete(DeleteBehavior.NoAction),
+        j => j.HasOne<Cliente>()
+              .WithMany()
+              .HasForeignKey("ClienteId")
+              .OnDelete(DeleteBehavior.NoAction)
+    );
 
             modelBuilder.Entity<Calificación>()
                 .HasOne<Producto>()

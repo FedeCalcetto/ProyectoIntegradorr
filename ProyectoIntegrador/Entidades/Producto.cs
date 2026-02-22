@@ -28,6 +28,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public Artesano artesano { get; set; }
         public int SubCategoriaId { get; set; }
         public SubCategoria SubCategoria { get; set; }
+       
 
 
         public List<Calificación> Calificaciones { get; set; } = new();

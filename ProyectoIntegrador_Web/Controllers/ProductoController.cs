@@ -23,6 +23,11 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerSubCategoria _obtenerSubCategoria;
         private readonly IObtenerCliente _obtenerCliente;
         private readonly IAgregarReporte _agregarReporte;
+        private readonly IObtenerClienteConFavoritos _obtenerClienteConFav;
+
+
+        public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano,
+            IAgregarProducto producto, IObtenerSubcategorias obtenerSubcategorias, IObtenerTodosLosProductos obtenerTodosLosProductos, IObtenerUsuario obtenerUsuario, IMostrarProductosCarrito mostrarProductosCarrito, IProductosFiltrados productosFiltrados, IObtenerProducto obtenerProducto, IObtenerSubCategoria obtenerSubCategoria, IAgregarReporte agregarReporte, IObtenerCliente obtenerCliente, IObtenerClienteConFavoritos obtenerClienteConFav)
         private readonly ICalificarProducto _calificarProducto;
         private readonly IObtenerPromedioCalificacionDeProducto _calificacionPromedioProducto;
         public ProductoController(IWebHostEnvironment env, IObtenerCategorias obtenerCategorias, ISubCategoriaRepositorio subCategoria, IObtenerArtesano obtenerArtesano,
@@ -44,6 +49,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerSubCategoria = obtenerSubCategoria;
             _agregarReporte = agregarReporte;
             _obtenerCliente = obtenerCliente;
+            _obtenerClienteConFav = obtenerClienteConFav;
             _calificarProducto = calificarProducto;
             _calificacionPromedioProducto = calificacionPromedioProducto;
         }
@@ -238,6 +244,18 @@ namespace ProyectoIntegrador_Web.Controllers
 
             if (producto == null)
                 return NotFound();
+
+            var rol = HttpContext.Session.GetString("Rol")?.ToUpper();
+            var email = HttpContext.Session.GetString("loginUsuario");
+
+            bool esFavorito = false;
+
+            if (rol == "CLIENTE" && !string.IsNullOrEmpty(email))
+            {
+                var cliente = _obtenerClienteConFav.Ejecutar(email);
+                esFavorito = cliente?.productosFavoritos?.Any(p => p.id == id) ?? false;
+            }
+
             var cantidad = _calificacionPromedioProducto.ObtenerTodasLasCalificaciones(producto.id);
             var promedio = _calificacionPromedioProducto.ObtenerPromedioPorProducto(producto.id);
             var vm = new DetallesProductoViewModel
@@ -253,6 +271,8 @@ namespace ProyectoIntegrador_Web.Controllers
                 SubCategoria = producto.SubCategoria?.Nombre,
                 ArtesanoId = producto.artesano.id,
                 Reporte = new AgregarReporteDto(),
+
+                EsFavorito = esFavorito
                 PromedioCalificacion = (double)promedio,
                 CantidadReseñas = cantidad
             };
@@ -446,6 +466,7 @@ namespace ProyectoIntegrador_Web.Controllers
             }));
         }
 
+       
       
 
     }
