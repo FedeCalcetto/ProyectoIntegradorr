@@ -17,18 +17,23 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly ILogin _loginCu;
         private readonly EmailService _email;
         private readonly IConfiguration _config;
+        private readonly ISolicitarResetPassword _solicitarReset;
+        private readonly IConfirmarResetPassword _confirmarReset;
+
 
         public LoginController(
             IUsuarioRepositorio usuarioRepositorio,
             IAgregarUsuario agregarUsuario,
             EmailService email,
-            IConfiguration config, ILogin login)
+            IConfiguration config, ILogin login, ISolicitarResetPassword solicitarReset, IConfirmarResetPassword confirmarReset)
         {
             _usuarioRepositorio = usuarioRepositorio;
             _agregarUsuario = agregarUsuario;
             _email = email;
             _config = config;
             _loginCu = login;
+            _solicitarReset = solicitarReset;
+            _confirmarReset = confirmarReset;
         }
 
         // ===========================================================
@@ -288,5 +293,60 @@ namespace ProyectoIntegrador_Web.Controllers
             return View("VerificarEmail");
         }
 
+        // ===========================================================
+        //                  Solicitar reset password
+        // ===========================================================
+        [HttpGet]
+        public IActionResult OlvidePassword()
+        {
+            return View(new ForgotPasswordViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> OlvidePassword(ForgotPasswordViewModel vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
+
+            // baseUrl para construir link
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+
+            await _solicitarReset.Ejecutar(vm.Email, baseUrl);
+
+            
+            TempData["Mensaje"] = "Si el correo existe, te enviamos un enlace para restablecer tu contraseña.";
+            TempData["TipoMensaje"] = "success";
+
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token)
+        {
+            return View(new ResetPasswordViewModel { Token = token });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ResetPassword(ResetPasswordViewModel vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
+
+            try
+            {
+                _confirmarReset.Ejecutar(vm.Token, vm.NuevaPassword, vm.RepetirPassword);
+
+                TempData["Mensaje"] = "Contraseña actualizada. Ya podés iniciar sesión.";
+                TempData["TipoMensaje"] = "success";
+
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(vm);
+            }
+        }
     }
+
 }

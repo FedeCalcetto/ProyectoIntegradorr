@@ -14,5 +14,6 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
         void Actualizar(Usuario usuario);
         List<Usuario> BusquedaDeUsuarios(string filtro);
         Usuario BuscarPorToken(string token);
+        Usuario BuscarPorTokenReset(string token);
     }
 }

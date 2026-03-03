@@ -126,6 +126,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
            u.TokenVerificacionEmail == token);
         }
 
-        
+        public Usuario BuscarPorTokenReset(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return null;
+
+            return _contexto.Usuarios.FirstOrDefault(u => u.TokenResetPassword == token);
+        }
     }
 }

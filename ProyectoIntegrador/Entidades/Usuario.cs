@@ -24,6 +24,9 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public string? CodigoVerificacion { get; set; }
         public bool Verificado { get; set; }
 
+        public string? TokenResetPassword { get; set; }
+        public DateTime? TokenResetPasswordExpira { get; set; }
+
 
         // Propiedades para la verificación de email via Token (clickear el link para validar automaticamente) //
         public string? TokenVerificacionEmail { get; set; }

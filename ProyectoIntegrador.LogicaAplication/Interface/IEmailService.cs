@@ -21,5 +21,9 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
         string nombreArtesano,
         string emailArtesano
         );
+
+        Task EnviarResetPasswordAsync(
+        string destino,
+        string link);
     }
 }

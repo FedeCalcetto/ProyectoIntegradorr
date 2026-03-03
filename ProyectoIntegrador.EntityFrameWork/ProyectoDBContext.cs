@@ -25,8 +25,6 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<CarritoItem> CarritoItems { get; set; }
         public DbSet<Orden> Ordenes { get; set; }
         public DbSet<Calificación> Calificaciones { get; set; }
-
-
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {
         }
@@ -177,7 +175,7 @@ namespace ProyectoIntegrador.EntityFrameWork
          id = 1,
          nombre = "Administrador",
          apellido = "Principal",
-         password = PasswordHasher.Hash("Admin123456"),
+         password = "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe",
          rol = "ADMIN",
          TipoUsuario = "ADMIN",
          CodigoVerificacion = (string?)null,
@@ -188,7 +186,7 @@ namespace ProyectoIntegrador.EntityFrameWork
          id = 2,
          nombre = "Juan",
          apellido = "Cliente",
-         password = PasswordHasher.Hash("Cliente123456"),
+         password = "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe",
          rol = "CLIENTE",
          TipoUsuario = "CLIENTE",
          CodigoVerificacion = (string?)null,
@@ -199,7 +197,7 @@ namespace ProyectoIntegrador.EntityFrameWork
          id = 3,
          nombre = "Maria",
          apellido = "Artesana",
-         password = PasswordHasher.Hash("Artesano123456"),
+         password = "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe",
          rol = "ARTESANO",
          TipoUsuario = "ARTESANO",
          CodigoVerificacion = (string?)null,
@@ -210,7 +208,7 @@ namespace ProyectoIntegrador.EntityFrameWork
          id = 4,
          nombre = "Ana",
          apellido = "Artesana",
-         password = PasswordHasher.Hash("Artesano123456"),
+         password = "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe",
          rol = "ARTESANO",
          TipoUsuario = "ARTESANO",
          CodigoVerificacion = (string?)null,
