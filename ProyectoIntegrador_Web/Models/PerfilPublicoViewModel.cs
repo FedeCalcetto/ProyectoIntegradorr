@@ -9,5 +9,7 @@ namespace ProyectoIntegrador_Web.Models
         public IEnumerable<Producto> Productos { get; set; }
         public AgregarReporteDto Reporte { get; set; } = new();
         public AgregarComentarioDto Comentario { get; set; } = new();
+        public double PromedioCalificacion { get; set; }
+        public int CantidadReseñas { get; set; }
     }
 }

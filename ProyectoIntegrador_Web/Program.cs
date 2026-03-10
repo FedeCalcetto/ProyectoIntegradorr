@@ -41,6 +41,8 @@ namespace ProyectoIntegrador_Web
             //Casos de uso
             builder.Services.AddScoped<ICalificarProducto, CalificarProductoCasoDeUso>();
             builder.Services.AddScoped<IObtenerPromedioCalificacionDeProducto, ObtenerCalificacionProductoCasoDeUso>();
+            builder.Services.AddScoped<ICalificarArtesano, CalificarArtesanoCasoDeUso>();
+            builder.Services.AddScoped<IObtenerPromedioCalificacionArtesano, ObtenerCalificacionArtesanoCasoDeUso>();
             builder.Services.AddScoped<IAgregarProducto, AgregarProductoCasoDeUso>();
             builder.Services.AddScoped<IAgregarUsuario, AgregarUsuarioCasoDeUso>();
             builder.Services.AddScoped<ICambiarPassword, CambiarPasswordCasoDeUso>();

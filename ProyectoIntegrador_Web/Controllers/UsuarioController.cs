@@ -28,8 +28,10 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IClienteRepositorio _clienteRepo;
         private readonly IObtenerClienteConFavoritos _obtenerClienteConFav;
         private readonly IAgregarComentario _agregarComentario;
+        private readonly ICalificarArtesano _calificarArtesano;
+        private readonly IObtenerPromedioCalificacionArtesano _promedioCalificacion;
 
-        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo,IAgregarComentario agregarComentario, IObtenerClienteConFavoritos obtenerClienteConFav)
+        public UsuarioController(ICambiarPassword cambiarPassword,IEliminarUsuario eliminarUsuario,EmailService email, ICatalogoService catalogoService,IBusquedaDeUsuarios busquedaDeUsuarios, IObtenerCategorias obtenerCategorias, IObtenerArtesanoId obtenerArtesanoId,IObtenerCliente obtenerCliente,IAgregarReporte agregarReporte,IUsuarioRepositorio usuarioRepo,IClienteRepositorio clienteRepo,IAgregarComentario agregarComentario, IObtenerClienteConFavoritos obtenerClienteConFav,ICalificarArtesano calificarArtesano, IObtenerPromedioCalificacionArtesano promedioArtesano)
         {
             _cambiarPassword = cambiarPassword;
             _eliminarUsuario = eliminarUsuario;
@@ -44,6 +46,8 @@ namespace ProyectoIntegrador_Web.Controllers
             _clienteRepo = clienteRepo;
             _obtenerClienteConFav = obtenerClienteConFav;
             _agregarComentario = agregarComentario;
+            _calificarArtesano = calificarArtesano;
+            _promedioCalificacion = promedioArtesano;
         }
 
 
@@ -285,16 +289,31 @@ namespace ProyectoIntegrador_Web.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Calificar([FromBody] CalificarArtesanoDto dto)
+        {
+            var email = HttpContext.Session.GetString("loginUsuario");
+            var cliente = _obtenerCliente.Ejecutar(email);
+            await _calificarArtesano.Ejecutar(dto.arteId, dto.puntaje, cliente.id);
+
+            return Ok();
+        }
+
         private PerfilPublicoViewModel CrearDetalleVM(int id)
         {
             var artesano = _obtenerArtesano.Ejecutar(id);
+            var cantidad = _promedioCalificacion.ObtenerTotalCalificacionesArtesano(artesano.id);
+            var promedio = _promedioCalificacion.ObtenerPromedioPorArtesano(artesano.id);
 
             return new PerfilPublicoViewModel
             {
                 Artesano = artesano,
                 Productos = artesano.productos,
                 Reporte = new AgregarReporteDto(),
-                Comentario = new AgregarComentarioDto()
+                Comentario = new AgregarComentarioDto(),
+                PromedioCalificacion = (double)promedio,
+                CantidadReseñas = cantidad
             };
         }
 
