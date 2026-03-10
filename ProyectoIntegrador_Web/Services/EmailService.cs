@@ -162,5 +162,40 @@ namespace ProyectoIntegrador_Web.Services
 
             await smtp.SendMailAsync(mensaje);
         }
+        public async Task EnviarResetPasswordAsync(string destino, string link)
+        {
+            var from = _config["EmailSettings:From"];
+            var password = _config["EmailSettings:Password"];
+            var host = _config["EmailSettings:Host"] ?? "smtp.gmail.com";
+            var port = int.TryParse(_config["EmailSettings:Port"], out var p) ? p : 587;
+
+            using var smtp = new SmtpClient(host, port);
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = new NetworkCredential(from, password);
+
+            var asunto = "Restablecer contraseña";
+            var cuerpo = $@"
+                Hola!
+
+                Recibimos una solicitud para restablecer tu contraseña.
+
+                Abrí este enlace para crear una nueva contraseña:
+                {link}
+
+                Este enlace expira en 30 minutos.
+
+                Si no fuiste vos, ignorá este email.
+                ";
+
+            var mensaje = new MailMessage();
+            mensaje.From = new MailAddress(from);
+            mensaje.To.Add(destino);
+            mensaje.Subject = asunto;
+            mensaje.Body = cuerpo;
+            mensaje.IsBodyHtml = false;
+
+            await smtp.SendMailAsync(mensaje);
+        }
     }
 }

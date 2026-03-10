@@ -5,6 +5,7 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Entidades;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Models;
+using System.Buffers.Text;
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -254,6 +255,7 @@ namespace ProyectoIntegrador_Web.Controllers
 
             var cantidad = _calificacionPromedioProducto.ObtenerTodasLasCalificaciones(producto.id);
             var promedio = _calificacionPromedioProducto.ObtenerPromedioPorProducto(producto.id);
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
             var vm = new DetallesProductoViewModel
             {
                 Id = producto.id,
@@ -270,7 +272,10 @@ namespace ProyectoIntegrador_Web.Controllers
 
                 EsFavorito = esFavorito,
                 PromedioCalificacion = (double)promedio,
-                CantidadReseñas = cantidad
+                CantidadReseñas = cantidad,
+
+                UrlCompartir = $"{baseUrl}/Producto/DetallesProducto/{producto.id}",
+                ImagenCompartir = $"{baseUrl}/images/productos/{producto.imagen}"
             };
 
             return View(vm);

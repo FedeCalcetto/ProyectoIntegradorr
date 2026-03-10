@@ -25,8 +25,6 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<CarritoItem> CarritoItems { get; set; }
         public DbSet<Orden> Ordenes { get; set; }
         public DbSet<Calificación> Calificaciones { get; set; }
-
-
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {
         }

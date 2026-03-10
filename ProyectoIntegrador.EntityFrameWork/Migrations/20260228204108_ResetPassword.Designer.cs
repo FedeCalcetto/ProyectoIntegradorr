@@ -12,8 +12,8 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    [Migration("20260216124049_paraDeploy2")]
-    partial class paraDeploy2
+    [Migration("20260228204108_ResetPassword")]
+    partial class ResetPassword
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ClienteProductoFavorito", b =>
+                {
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ClienteId", "ProductoId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("ClienteProductoFavorito");
+                });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Calificación", b =>
                 {
@@ -184,16 +199,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("productoId")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
                     b.HasIndex("artesanoId");
 
                     b.HasIndex("clienteId");
-
-                    b.HasIndex("productoId");
 
                     b.ToTable("Comentarios");
                 });
@@ -390,9 +400,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Property<int>("ArtesanoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Clienteid")
-                        .HasColumnType("int");
-
                     b.Property<int>("SubCategoriaId")
                         .HasColumnType("int");
 
@@ -417,8 +424,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasKey("id");
 
                     b.HasIndex("ArtesanoId");
-
-                    b.HasIndex("Clienteid");
 
                     b.HasIndex("SubCategoriaId");
 
@@ -564,61 +569,61 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         {
                             Id = 1,
                             ProductoId = 1,
-                            UrlImagen = "/img/alfombra-textil.jpg"
+                            UrlImagen = "alfombra-textil.jpg"
                         },
                         new
                         {
                             Id = 2,
                             ProductoId = 2,
-                            UrlImagen = "/img/alfombra-textil.jpg"
+                            UrlImagen = "alfombra-textil.jpg"
                         },
                         new
                         {
                             Id = 3,
                             ProductoId = 3,
-                            UrlImagen = "/img/mate-madera.jpg"
+                            UrlImagen = "mate-madera.jpg"
                         },
                         new
                         {
                             Id = 4,
                             ProductoId = 4,
-                            UrlImagen = "/img/mate-madera.jpg"
+                            UrlImagen = "mate-madera.jpg"
                         },
                         new
                         {
                             Id = 5,
                             ProductoId = 5,
-                            UrlImagen = "/img/cartera-cuero.jpg"
+                            UrlImagen = "cartera-cuero.jpg"
                         },
                         new
                         {
                             Id = 6,
                             ProductoId = 6,
-                            UrlImagen = "/img/cartera-cuero.jpg"
+                            UrlImagen = "cartera-cuero.jpg"
                         },
                         new
                         {
                             Id = 7,
                             ProductoId = 7,
-                            UrlImagen = "/img/collar-plata.jpg"
+                            UrlImagen = "collar-plata.jpg"
                         },
                         new
                         {
                             Id = 8,
                             ProductoId = 8,
-                            UrlImagen = "/img/collar-plata.jpg"
+                            UrlImagen = "collar-plata.jpg"
                         },
                         new
                         {
                             Id = 9,
                             ProductoId = 9,
-                            UrlImagen = "/img/taza-ceramica.jpg"
+                            UrlImagen = "taza-ceramica.jpg"
                         },
                         new
                         {
                             Id = 10,
                             ProductoId = 10,
-                            UrlImagen = "/img/taza-ceramica.jpg"
+                            UrlImagen = "taza-ceramica.jpg"
                         });
                 });
 
@@ -787,6 +792,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
 
+                    b.Property<string>("TokenResetPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TokenResetPasswordExpira")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("TokenVerificacionEmail")
                         .HasColumnType("nvarchar(max)");
 
@@ -829,7 +840,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Principal",
                             nombre = "Administrador",
-                            password = "$2a$11$TDGzW96H/VB0UcThDKz5V.wAk6dZEDcdtud5YL8O2Dy4wqH7WQceq",
+                            password = "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe",
                             rol = "ADMIN"
                         },
                         new
@@ -839,7 +850,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Cliente",
                             nombre = "Juan",
-                            password = "$2a$11$SfZ3q4L2eZcdgFYBAH.85.ODATaXZm56Rgxzh0W4ZhbgP/C9GHG1u",
+                            password = "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe",
                             rol = "CLIENTE"
                         },
                         new
@@ -849,7 +860,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Artesana",
                             nombre = "Maria",
-                            password = "$2a$11$znZXhvpQIo0TyK71Ip/NYuVcHVv749zm8sDS5q48dheVV8V87PXFq",
+                            password = "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe",
                             rol = "ARTESANO"
                         },
                         new
@@ -859,7 +870,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             Verificado = true,
                             apellido = "Artesana",
                             nombre = "Ana",
-                            password = "$2a$11$ByiDzQypJ1NkuvAokHWCwOUeJi1sBA0.DY0NJNo45J3T6IQh8/eHG",
+                            password = "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe",
                             rol = "ARTESANO"
                         });
                 });
@@ -944,6 +955,21 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasDiscriminator().HasValue("CLIENTE");
                 });
 
+            modelBuilder.Entity("ClienteProductoFavorito", b =>
+                {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", null)
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Calificación", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", null)
@@ -981,25 +1007,18 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Comentario", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", "artesano")
-                        .WithMany()
+                        .WithMany("comentarios")
                         .HasForeignKey("artesanoId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", "cliente")
                         .WithMany()
                         .HasForeignKey("clienteId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", "producto")
-                        .WithMany("comentarios")
-                        .HasForeignKey("productoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("artesano");
 
                     b.Navigation("cliente");
-
-                    b.Navigation("producto");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.FacturaNoFiscal", b =>
@@ -1075,10 +1094,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasForeignKey("ArtesanoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Cliente", null)
-                        .WithMany("productosFavoritos")
-                        .HasForeignKey("Clienteid");
 
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", "SubCategoria")
                         .WithMany("Productos")
@@ -1279,8 +1294,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Navigation("Calificaciones");
 
                     b.Navigation("Fotos");
-
-                    b.Navigation("comentarios");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria", b =>
@@ -1290,6 +1303,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
                 {
+                    b.Navigation("comentarios");
+
                     b.Navigation("productos");
 
                     b.Navigation("ventas");
@@ -1300,8 +1315,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.Navigation("artesanosSeguidos");
 
                     b.Navigation("compras");
-
-                    b.Navigation("productosFavoritos");
                 });
 #pragma warning restore 612, 618
         }

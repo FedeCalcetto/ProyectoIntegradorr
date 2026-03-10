@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class InicioFede : Migration
+    public partial class favoritos2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -189,8 +189,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     imagen = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     stock = table.Column<int>(type: "int", nullable: false),
                     ArtesanoId = table.Column<int>(type: "int", nullable: false),
-                    SubCategoriaId = table.Column<int>(type: "int", nullable: false),
-                    Clienteid = table.Column<int>(type: "int", nullable: true)
+                    SubCategoriaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -207,11 +206,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Productos_Usuarios_Clienteid",
-                        column: x => x.Clienteid,
-                        principalTable: "Usuarios",
-                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -281,6 +275,34 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Calificaciones",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    productoId = table.Column<int>(type: "int", nullable: false),
+                    usuarioId = table.Column<int>(type: "int", nullable: false),
+                    puntaje = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Calificaciones", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Calificaciones_Productos_productoId",
+                        column: x => x.productoId,
+                        principalTable: "Productos",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Calificaciones_Usuarios_usuarioId",
+                        column: x => x.usuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CarritoItems",
                 columns: table => new
                 {
@@ -305,6 +327,28 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         principalTable: "Productos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClienteProductoFavorito",
+                columns: table => new
+                {
+                    ClienteId = table.Column<int>(type: "int", nullable: false),
+                    ProductoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClienteProductoFavorito", x => new { x.ClienteId, x.ProductoId });
+                    table.ForeignKey(
+                        name: "FK_ClienteProductoFavorito_Productos_ProductoId",
+                        column: x => x.ProductoId,
+                        principalTable: "Productos",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_ClienteProductoFavorito_Usuarios_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -401,20 +445,20 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 1, null, "ADMIN", null, null, true, "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
+                values: new object[] { 1, null, "ADMIN", null, null, true, "Principal", "Administrador", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ADMIN", "admin@proyecto.com" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
-                values: new object[] { 2, null, "CLIENTE", null, null, true, "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
+                values: new object[] { 2, null, "CLIENTE", null, null, true, "Cliente", "Juan", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
                 values: new object[,]
                 {
-                    { 3, null, "ARTESANO", null, null, true, "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" },
-                    { 4, null, "ARTESANO", null, null, true, "Artesana", "Ana", "Artesano123456", "ARTESANO", "artesano2@proyecto.com" }
+                    { 3, null, "ARTESANO", null, null, true, "Artesana", "Maria", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ARTESANO", "artesano@proyecto.com" },
+                    { 4, null, "ARTESANO", null, null, true, "Artesana", "Ana", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ARTESANO", "artesano2@proyecto.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -441,19 +485,29 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.InsertData(
                 table: "Productos",
-                columns: new[] { "id", "ArtesanoId", "Clienteid", "SubCategoriaId", "descripcion", "imagen", "nombre", "precio", "stock" },
+                columns: new[] { "id", "ArtesanoId", "SubCategoriaId", "descripcion", "imagen", "nombre", "precio", "stock" },
                 values: new object[,]
                 {
-                    { 1, 3, null, 5, "Alfombra tejida a mano con lana natural", "alfombra-textil.jpg", "Alfombra Andina", 3200, 5 },
-                    { 2, 3, null, 5, "Manta de algodón tejida a mano", "alfombra-textil.jpg", "Manta Textil Artesanal", 2800, 4 },
-                    { 3, 3, null, 8, "Mate artesanal de madera pulida", "mate-madera.jpg", "Mate de Madera Tallado", 1200, 10 },
-                    { 4, 3, null, 9, "Caja artesanal de madera natural", "mate-madera.jpg", "Caja Decorativa de Madera", 1500, 6 },
-                    { 5, 4, null, 10, "Cartera hecha en cuero natural", "cartera-cuero.jpg", "Cartera de Cuero Premium", 5200, 3 },
-                    { 6, 4, null, 11, "Cinturón de cuero genuino", "cartera-cuero.jpg", "Cinturón de Cuero Artesanal", 1800, 8 },
-                    { 7, 4, null, 13, "Collar artesanal de plata 925", "collar-plata.jpg", "Collar de Plata", 3900, 4 },
-                    { 8, 4, null, 14, "Pulsera de plata hecha a mano", "collar-plata.jpg", "Pulsera Artesanal", 2100, 7 },
-                    { 9, 3, null, 1, "Taza de cerámica esmaltada", "taza-ceramica.jpg", "Taza de Cerámica", 900, 12 },
-                    { 10, 3, null, 2, "Bowl artesanal de cerámica", "taza-ceramica.jpg", "Bowl de Cerámica", 1300, 6 }
+                    { 1, 3, 5, "Alfombra tejida a mano con lana natural", "alfombra-textil.jpg", "Alfombra Andina", 3200, 5 },
+                    { 2, 3, 5, "Manta de algodón tejida a mano", "alfombra-textil.jpg", "Manta Textil Artesanal", 2800, 4 },
+                    { 3, 3, 8, "Mate artesanal de madera pulida", "mate-madera.jpg", "Mate de Madera Tallado", 1200, 10 },
+                    { 4, 3, 9, "Caja artesanal de madera natural", "mate-madera.jpg", "Caja Decorativa de Madera", 1500, 6 },
+                    { 5, 4, 10, "Cartera hecha en cuero natural", "cartera-cuero.jpg", "Cartera de Cuero Premium", 5200, 3 },
+                    { 6, 4, 11, "Cinturón de cuero genuino", "cartera-cuero.jpg", "Cinturón de Cuero Artesanal", 1800, 8 },
+                    { 7, 4, 13, "Collar artesanal de plata 925", "collar-plata.jpg", "Collar de Plata", 3900, 4 },
+                    { 8, 4, 14, "Pulsera de plata hecha a mano", "collar-plata.jpg", "Pulsera Artesanal", 2100, 7 },
+                    { 9, 3, 1, "Taza de cerámica esmaltada", "taza-ceramica.jpg", "Taza de Cerámica", 900, 12 },
+                    { 10, 3, 2, "Bowl artesanal de cerámica", "taza-ceramica.jpg", "Bowl de Cerámica", 1300, 6 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Calificaciones",
+                columns: new[] { "id", "fecha", "productoId", "puntaje", "usuarioId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 5m, 2 },
+                    { 2, new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 4m, 2 },
+                    { 3, new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3m, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -461,17 +515,27 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 columns: new[] { "Id", "ProductoId", "UrlImagen" },
                 values: new object[,]
                 {
-                    { 1, 1, "/img/alfombra-textil.jpg" },
-                    { 2, 2, "/img/alfombra-textil.jpg" },
-                    { 3, 3, "/img/mate-madera.jpg" },
-                    { 4, 4, "/img/mate-madera.jpg" },
-                    { 5, 5, "/img/cartera-cuero.jpg" },
-                    { 6, 6, "/img/cartera-cuero.jpg" },
-                    { 7, 7, "/img/collar-plata.jpg" },
-                    { 8, 8, "/img/collar-plata.jpg" },
-                    { 9, 9, "/img/taza-ceramica.jpg" },
-                    { 10, 10, "/img/taza-ceramica.jpg" }
+                    { 1, 1, "alfombra-textil.jpg" },
+                    { 2, 2, "alfombra-textil.jpg" },
+                    { 3, 3, "mate-madera.jpg" },
+                    { 4, 4, "mate-madera.jpg" },
+                    { 5, 5, "cartera-cuero.jpg" },
+                    { 6, 6, "cartera-cuero.jpg" },
+                    { 7, 7, "collar-plata.jpg" },
+                    { 8, 8, "collar-plata.jpg" },
+                    { 9, 9, "taza-ceramica.jpg" },
+                    { 10, 10, "taza-ceramica.jpg" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Calificaciones_productoId",
+                table: "Calificaciones",
+                column: "productoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Calificaciones_usuarioId",
+                table: "Calificaciones",
+                column: "usuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarritoItems_carritoId",
@@ -482,6 +546,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 name: "IX_CarritoItems_productoId",
                 table: "CarritoItems",
                 column: "productoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClienteProductoFavorito_ProductoId",
+                table: "ClienteProductoFavorito",
+                column: "ProductoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentarios_artesanoId",
@@ -549,11 +618,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 column: "ArtesanoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Productos_Clienteid",
-                table: "Productos",
-                column: "Clienteid");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Productos_SubCategoriaId",
                 table: "Productos",
                 column: "SubCategoriaId");
@@ -588,7 +652,13 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Calificaciones");
+
+            migrationBuilder.DropTable(
                 name: "CarritoItems");
+
+            migrationBuilder.DropTable(
+                name: "ClienteProductoFavorito");
 
             migrationBuilder.DropTable(
                 name: "Comentarios");
