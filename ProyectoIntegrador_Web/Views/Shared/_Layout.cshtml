@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Globalization
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,6 +13,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     @await RenderSectionAsync("Head", required: false)
 </head>
+
+
+
 <body class="d-flex flex-column min-vh-100 @ViewData["BodyClass"]">
 
     <div id="globalLoader" class="d-none">
@@ -49,6 +53,17 @@
                             var email = Context.Session.GetString("loginUsuario");
                         }
 
+                        @if (rol == null || rol != null)
+                        {
+                            <form method="get">
+                                <select name="culture" onchange="this.form.submit()">
+                                    <option value="es" selected="@(CultureInfo.CurrentUICulture.Name.StartsWith("es"))">Español</option>
+                                    <option value="en-US" selected="@(CultureInfo.CurrentUICulture.Name == "en-US")">English</option>
+                                </select>
+                            </form>
+                            <p>@System.Globalization.CultureInfo.CurrentUICulture</p>
+                        }
+
                         <!-- NO LOGUEADO -->
                         @if (rol == null)
                         {
@@ -63,6 +78,8 @@
 
 
                         }
+
+                   
 
                         <!-- LOGUEADO -->
                         @if (rol != null)
@@ -155,8 +172,8 @@
                                     </ul>
                                 </li>
                             }
-                           
-                         
+
+                          
 
 
                             <!-- PERFIL A LA DERECHA -->
@@ -312,6 +329,8 @@
 
                                 </a>
                             }
+
+
                         }
                         
 
@@ -400,7 +419,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+    
     @await RenderSectionAsync("Scripts", required: false)
 
 
@@ -442,6 +461,8 @@
 
         window.addEventListener("pageshow", hideLoader);
     </script>
+
+
 
     <form id="antiForgeryForm" style="display:none;">
         @Html.AntiForgeryToken()

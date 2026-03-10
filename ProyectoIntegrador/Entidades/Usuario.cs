@@ -39,8 +39,19 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public void Validar()
         {
             validarNombres();
+            validarContraUsuario();
         }
-
+        public void validarContraUsuario()
+        {
+            if (password.Length < 10 || password.Length > 30)
+            {
+                throw new passwordUsuarioException();
+            }
+            if (!password.Any(char.IsUpper) || !password.Any(char.IsLower))
+            {
+                throw new MayusculaPasswordException();
+            }
+        }
         public void validarNombres()
         {
             if (nombre.Length < 1 || apellido.Length < 1)

@@ -13,15 +13,29 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public int usuarioId { get; set; }
         public decimal puntaje { get; set; } 
         public DateTime fecha { get; set; } = DateTime.Now;
+        public int artesanoId { get; set; }
 
 
 
         private Calificación() { }
-        public Calificación(int proId, int uId, decimal ptj)
+        public static Calificación ParaProducto(int productoId, int usuarioId, decimal puntaje)
         {
-            productoId = proId;
-            usuarioId = uId;
-            puntaje = ptj;
+            return new Calificación
+            {
+                productoId = productoId,
+                usuarioId = usuarioId,
+                puntaje = puntaje
+            };
+        }
+
+        public static Calificación ParaArtesano(int artesanoId, int usuarioId, decimal puntaje)
+        {
+            return new Calificación
+            {
+                artesanoId = artesanoId,
+                usuarioId = usuarioId,
+                puntaje = puntaje
+            };
         }
 
     }
