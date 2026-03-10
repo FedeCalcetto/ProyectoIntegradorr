@@ -1,10 +1,25 @@
 ﻿@model DetallesProductoViewModel
+@using System.Text.Json
 
 @{
     ViewData["Title"] = "Detalle del producto";
 
     var rol = Context.Session.GetString("Rol")?.ToUpper();
     var esCliente = rol == "CLIENTE";
+}
+
+@section Head {
+    <meta property="og:type" content="product" />
+    <meta property="og:title" content="@Model.Nombre" />
+    <meta property="og:description" content="@(Model.Descripcion?.Length > 140 ? Model.Descripcion.Substring(0, 140) + "..." : Model.Descripcion)" />
+    <meta property="og:image" content="@Model.ImagenCompartir" />
+    <meta property="og:url" content="@Model.UrlCompartir" />
+    <meta property="og:site_name" content="HechoXMí" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@Model.Nombre" />
+    <meta name="twitter:description" content="@Model.Descripcion" />
+    <meta name="twitter:image" content="@Model.ImagenCompartir" />
+
 }
 
 <div class="container mt-5">
@@ -50,6 +65,15 @@
                 </button>
             </form>
         }
+
+        @* 🔗 COMPARTIR *@
+        <button type="button"
+                class="fav-btn position-absolute"
+                style="top: 14px; right: @(esCliente ? "64px" : "14px"); z-index: 5;"
+                title="Compartir producto"
+                onclick="compartirProducto()">
+            <i class="bi bi-share"></i>
+        </button>
 
         <!-- Breadcrumb -->
         <nav class="mb-3">
@@ -259,3 +283,53 @@
    onclick="event.preventDefault(); alert('Perfil del artesano próximamente');">
     @Model.Artesano
 </a> *@
+
+<script>
+    async function compartirProducto() {
+
+        const url = @Html.Raw(JsonSerializer.Serialize(Model.UrlCompartir));
+        const titulo = @Html.Raw(JsonSerializer.Serialize(Model.Nombre));
+
+        const texto = `🧶 ${titulo}
+
+    Mirá este producto en HechoXMí:
+    ${url}`;
+
+        try {
+
+            if (navigator.share) {
+
+                await navigator.share({
+                    title: titulo,
+                    text: texto,
+                    url: url
+                });
+
+            } else {
+
+                await navigator.clipboard.writeText(url);
+
+                // notificación bonita
+                const mensaje = document.createElement("div");
+                mensaje.textContent = "Link copiado al portapapeles 📋";
+                mensaje.style.position = "fixed";
+                mensaje.style.bottom = "20px";
+                mensaje.style.right = "20px";
+                mensaje.style.background = "#212529";
+                mensaje.style.color = "white";
+                mensaje.style.padding = "10px 14px";
+                mensaje.style.borderRadius = "8px";
+                mensaje.style.zIndex = "9999";
+                mensaje.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
+
+                document.body.appendChild(mensaje);
+
+                setTimeout(() => mensaje.remove(), 2000);
+
+            }
+
+        } catch (error) {
+            console.log("No se pudo compartir:", error);
+        }
+    }
+</script>

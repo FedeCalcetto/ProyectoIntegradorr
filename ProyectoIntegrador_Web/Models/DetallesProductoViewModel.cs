@@ -20,5 +20,7 @@ namespace ProyectoIntegrador_Web.Models
 
         public double PromedioCalificacion { get; set; }
         public int CantidadReseñas { get; set; }
+        public string UrlCompartir { get; set; }
+        public string ImagenCompartir { get; set; }
     }
 }
