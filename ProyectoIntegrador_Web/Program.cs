@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using ProyectoIntegrador.EntityFrameWork;
 using ProyectoIntegrador.EntityFrameWork.Repositorios;
 using ProyectoIntegrador.LogicaAplication.CasosDeUso;
@@ -6,6 +8,7 @@ using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaAplication.Servicios;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Services;
+using System.Globalization;
 
 
 namespace ProyectoIntegrador_Web
@@ -93,7 +96,7 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IAceptarPedidoPersonalizado, AceptarPedidoPersonalizadoCasoDeUso>();
             builder.Services.AddScoped<IObtenerMisEncargos, ObtenerMisEncargosCasoDeUso>();
             builder.Services.AddScoped<IFinalizarPedidoPersonalizado, FinalizarPedidoPersonalizadoCasoDeUso>();
-            builder.Services.AddScoped <IObtenerArtesanoDashboard, ObtenerArtesanoDashboardCasoDeUso>();
+            builder.Services.AddScoped<IObtenerArtesanoDashboard, ObtenerArtesanoDashboardCasoDeUso>();
             builder.Services.AddScoped<IDashboard, DashboardCasoDeUso>();
             builder.Services.AddScoped<IToggleFavorito, ToggleFavoritoCasoDeUso>();
 
@@ -122,11 +125,38 @@ namespace ProyectoIntegrador_Web
             }
              );
 
-            var app = builder.Build();
-            
-          
 
-           
+
+            builder.Services.AddLocalization(options =>
+            {
+                options.ResourcesPath = "Lenguajes"; 
+            });
+
+
+            var supportedCultures = new[]
+            {
+                new CultureInfo("es"),
+                new CultureInfo("en-US")
+            };
+
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("es");
+
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+
+                options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
+            });
+
+            var app = builder.Build();
+
+
+            var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(localizationOptions.Value);
+
 
 
             // Configure the HTTP request pipeline.
@@ -138,21 +168,23 @@ namespace ProyectoIntegrador_Web
             }
 
             app.UseHttpsRedirection();
-            app.UseRouting();
-            app.UseSession();
-            app.UseAuthorization();
-            app.UseSession();
-
 
             app.UseStaticFiles();
-            app.MapStaticAssets();
-           
+
+            app.UseRouting();
+
+            app.UseSession();
+
+            app.UseAuthorization();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();
+
+
+
         }
     }
 }
