@@ -1160,6 +1160,124 @@ namespace PruebasUnitarias
                 Times.Once
             );
         }
+
+        [TestClass]
+        public class ObtenerCalificacionArtesanoCasoDeUsoTests
+        {
+            [TestMethod]
+            public void ObtenerPromedioPorArtesano_RetornaValorDelRepositorio()
+            {
+                // Arrange
+                var repo = new Mock<ICalificarProductoRepositorio>();
+                int artesanoId = 5;
+                decimal promedioEsperado = 4.5m;
+
+                repo.Setup(r => r.ObtenerPromedioPorArtesano(artesanoId))
+                    .Returns(promedioEsperado);
+
+                var caso = new ObtenerCalificacionArtesanoCasoDeUso(repo.Object);
+
+                // Act
+                var resultado = caso.ObtenerPromedioPorArtesano(artesanoId);
+
+                // Assert
+                Assert.AreEqual(promedioEsperado, resultado);
+                repo.Verify(r => r.ObtenerPromedioPorArtesano(artesanoId), Times.Once);
+            }
+
+            [TestMethod]
+            public void ObtenerTotalCalificacionesArtesano_RetornaValorDelRepositorio()
+            {
+                // Arrange
+                var repo = new Mock<ICalificarProductoRepositorio>();
+                int artesanoId = 5;
+                int totalEsperado = 10;
+
+                repo.Setup(r => r.ObtenerTotalCalificacionesArtesano(artesanoId))
+                    .Returns(totalEsperado);
+
+                var caso = new ObtenerCalificacionArtesanoCasoDeUso(repo.Object);
+
+                // Act
+                var resultado = caso.ObtenerTotalCalificacionesArtesano(artesanoId);
+
+                // Assert
+                Assert.AreEqual(totalEsperado, resultado);
+                repo.Verify(r => r.ObtenerTotalCalificacionesArtesano(artesanoId), Times.Once);
+            }
+        }
+
+        [TestClass]
+        public class CalificarArtesanoCasoDeUsoTests
+        {
+            [TestMethod]
+            public async Task Ejecutar_PuntajeInvalido_LanzaExcepcion()
+            {
+                // Arrange
+                var repo = new Mock<ICalificarProductoRepositorio>();
+                var caso = new CalificarArtesanoCasoDeUso(repo.Object);
+
+                // Act + Assert
+                await Assert.ThrowsExceptionAsync<Exception>(() =>
+                    caso.Ejecutar(arteId: 1, puntaje: 6, usuarioId: 10)
+                );
+            }
+
+            [TestMethod]
+            public async Task Ejecutar_CalificacionExistente_ActualizaPuntaje()
+            {
+                // Arrange
+                var repo = new Mock<ICalificarProductoRepositorio>();
+
+                var calificacionExistente =
+                    Calificación.ParaArtesano(1, 10, 3);
+
+                repo.Setup(r =>
+                    r.ObtenerPorUsuarioYArtesano(10, 1)
+                ).ReturnsAsync(calificacionExistente);
+
+                var caso = new CalificarArtesanoCasoDeUso(repo.Object);
+
+                // Act
+                await caso.Ejecutar(arteId: 1, puntaje: 5, usuarioId: 10);
+
+                // Assert
+                Assert.AreEqual(5, calificacionExistente.puntaje);
+
+                repo.Verify(r => r.Actualizar(calificacionExistente), Times.Once);
+                repo.Verify(r =>
+                    r.AgregarParaArtesano(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<decimal>()),
+                    Times.Never
+                );
+            }
+
+            [TestMethod]
+            public async Task Ejecutar_SinCalificacionPrevia_AgregaNueva()
+            {
+                // Arrange
+                var repo = new Mock<ICalificarProductoRepositorio>();
+
+                repo.Setup(r =>
+                    r.ObtenerPorUsuarioYArtesano(It.IsAny<int>(), It.IsAny<int>())
+                ).ReturnsAsync((Calificación)null);
+
+                var caso = new CalificarArtesanoCasoDeUso(repo.Object);
+
+                // Act
+                await caso.Ejecutar(arteId: 2, puntaje: 4, usuarioId: 20);
+
+                // Assert
+                repo.Verify(r =>
+                    r.AgregarParaArtesano(2, 20, 4),
+                    Times.Once
+                );
+
+                repo.Verify(r =>
+                    r.Actualizar(It.IsAny<Calificación>()),
+                    Times.Never
+                );
+            }
+        }
     }
 
 }

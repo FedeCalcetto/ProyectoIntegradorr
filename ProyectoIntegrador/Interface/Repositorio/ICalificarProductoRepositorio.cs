@@ -11,11 +11,22 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
     {
         Task<Calificación?> ObtenerPorUsuarioYProducto(int usuarioId, int productoId);
 
+        Task<Calificación?> ObtenerPorUsuarioYArtesano(int usuarioId, int arteId);
+
         void Agregar(int productoId, int usuarioId, decimal puntaje);
+
+        void AgregarParaArtesano(int arteId, int usuarioId, decimal puntaje);
 
         void Actualizar(Calificación calificacion);
 
         decimal ObtenerPromedioPorProducto(int productoId);
+
+        decimal ObtenerPromedioPorArtesano(int arteId);
+
         int  ObtenerTotalCalificaciones(int productoId);
+
+        int ObtenerTotalCalificacionesArtesano(int arteId);
+
+
     }
 }
