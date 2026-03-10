@@ -27,4 +27,10 @@
     <ProjectReference Include="..\ProyectoIntegrador.SeguridadEncriptacion\ProyectoIntegrador.SeguridadEncriptacion.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\SharedResource.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
