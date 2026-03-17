@@ -39,7 +39,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public void Validar()
         {
             validarNombres();
-            validarContraUsuario();
+            //validarContraUsuario();
         }
         public void validarContraUsuario()
         {

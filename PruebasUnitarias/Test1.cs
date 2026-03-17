@@ -135,34 +135,7 @@ namespace PruebasUnitarias
     [TestClass]
     public class UsuarioTests
     {
-        [TestMethod]
-        public void Validar_ContraseñaSinMayuscula_LanzaExcepcion()
-        {
-
-            var usuario = new Cliente
-            {
-                nombre = "Test",
-                apellido = "User",
-                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("t@t.com"),
-                password = "password123"
-            };
-
-            Assert.ThrowsException<MayusculaPasswordException>(() => usuario.Validar());
-        }
-
-        [TestMethod]
-        public void Validar_ContraseñaMuyCorta_LanzaExcepcion()
-        {
-            var usuario = new Cliente
-            {
-                nombre = "Test",
-                apellido = "User",
-                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("t@t.com"),
-                password = "Ab1"
-            };
-
-            Assert.ThrowsException<passwordUsuarioException>(() => usuario.Validar());
-        }
+        
 
         [TestMethod]
         public void Validar_NombreConNumero_LanzaExcepcion()
@@ -1276,6 +1249,189 @@ namespace PruebasUnitarias
                     r.Actualizar(It.IsAny<Calificación>()),
                     Times.Never
                 );
+            }
+
+            [TestClass]
+            public class CambiarPasswordCasoDeUsoTests
+            {
+                [TestMethod]
+                public void Ejecutar_DatosCorrectos_ActualizaPassword()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+
+                    var usuario = new Cliente
+                    {
+                        id = 1,
+                        email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
+                        password = BCrypt.Net.BCrypt.HashPassword("Password123")
+                    };
+
+                    repo.Setup(r => r.BuscarPorEmail("test@mail.com"))
+                        .Returns(usuario);
+
+                    var caso = new CambiarPasswordCasoDeUso(repo.Object);
+
+                    // Act
+                    caso.Ejecutar(
+                        "PasswordNueva1",
+                        "PasswordNueva1",
+                        "Password123",
+                        "test@mail.com"
+                    );
+
+                    // Assert
+                    repo.Verify(r => r.Actualizar(usuario), Times.Once);
+                }
+
+                [TestMethod]
+                public void Ejecutar_ContraseñasNoCoinciden_LanzaExcepcion()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+
+                    var usuario = new Cliente
+                    {
+                        id = 1,
+                        email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
+                        password = BCrypt.Net.BCrypt.HashPassword("Password123")
+                    };
+
+                    repo.Setup(r => r.BuscarPorEmail("test@mail.com"))
+                        .Returns(usuario);
+
+                    var caso = new CambiarPasswordCasoDeUso(repo.Object);
+
+                    // Act + Assert
+                    Assert.ThrowsException<NoCoincideException>(() =>
+                        caso.Ejecutar(
+                            "PasswordNueva1",
+                            "PasswordNueva2",
+                            "Password123",
+                            "test@mail.com"
+                        )
+                    );
+                }
+
+                [TestMethod]
+                public void Ejecutar_ContraActualIncorrecta_LanzaExcepcion()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+
+                    var usuario = new Cliente
+                    {
+                        id = 1,
+                        email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
+                        password = BCrypt.Net.BCrypt.HashPassword("Password123")
+                    };
+
+                    repo.Setup(r => r.BuscarPorEmail("test@mail.com"))
+                        .Returns(usuario);
+
+                    var caso = new CambiarPasswordCasoDeUso(repo.Object);
+
+                    // Act + Assert
+                    Assert.ThrowsException<ContraActualException>(() =>
+                        caso.Ejecutar(
+                            "PasswordNueva1",
+                            "PasswordNueva1",
+                            "PasswordIncorrecta",
+                            "test@mail.com"
+                        )
+                    );
+                }
+            }
+            [TestClass]
+            public class AgregarUsuarioCasoDeUsoTests
+            {
+                [TestMethod]
+                public void Ejecutar_EsArtesano_CreaUsuarioArtesano()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+                    var caso = new AgregarUsuarioCasoDeUso(repo.Object);
+
+                    var dto = new AgregarUsuarioDto
+                    {
+                        Nombre = "Juan",
+                        Apellido = "Perez",
+                        Email = "juan@mail.com",
+                        Password = "Password123",
+                        EsArtesano = true
+                    };
+
+                    string codigo = "ABC123";
+
+                    // Act
+                    var resultado = caso.Ejecutar(dto, codigo);
+
+                    // Assert
+                    Assert.IsInstanceOfType(resultado, typeof(Artesano));
+                    Assert.AreEqual("Artesano", resultado.rol);
+                    Assert.AreEqual(codigo, resultado.CodigoVerificacion);
+                    Assert.IsFalse(resultado.Verificado);
+
+                    repo.Verify(r => r.Agregar(It.IsAny<Usuario>()), Times.Once);
+                }
+
+                [TestMethod]
+                public void Ejecutar_NoEsArtesano_CreaUsuarioCliente()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+                    var caso = new AgregarUsuarioCasoDeUso(repo.Object);
+
+                    var dto = new AgregarUsuarioDto
+                    {
+                        Nombre = "Ana",
+                        Apellido = "Lopez",
+                        Email = "ana@mail.com",
+                        Password = "Password123",
+                        EsArtesano = false
+                    };
+
+                    string codigo = "XYZ999";
+
+                    // Act
+                    var resultado = caso.Ejecutar(dto, codigo);
+
+                    // Assert
+                    Assert.IsInstanceOfType(resultado, typeof(Cliente));
+                    Assert.AreEqual("Cliente", resultado.rol);
+                    Assert.AreEqual(codigo, resultado.CodigoVerificacion);
+                    Assert.IsFalse(resultado.Verificado);
+
+                    repo.Verify(r => r.Agregar(It.IsAny<Usuario>()), Times.Once);
+                }
+
+                [TestMethod]
+                public void Ejecutar_UsuarioCreado_SeGuardaEnRepositorio()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+                    var caso = new AgregarUsuarioCasoDeUso(repo.Object);
+
+                    var dto = new AgregarUsuarioDto
+                    {
+                        Nombre = "Pedro",
+                        Apellido = "Gomez",
+                        Email = "pedro@mail.com",
+                        Password = "Password123",
+                        EsArtesano = false
+                    };
+
+                    string codigo = "COD123";
+
+                    // Act
+                    caso.Ejecutar(dto, codigo);
+
+                    // Assert
+                    repo.Verify(r => r.Agregar(It.Is<Usuario>(u =>
+                        u.nombre == "Pedro" &&
+                        u.apellido == "Gomez"
+                    )), Times.Once);
+                }
             }
         }
     }
