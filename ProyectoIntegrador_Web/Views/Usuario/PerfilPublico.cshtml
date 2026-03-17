@@ -1,17 +1,11 @@
 ﻿    @model PerfilPublicoViewModel
+    @using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");}
+<<div class="container mt-4">
 
-<div class="container mt-4">
-
-    <!-- MENSAJE DE ÉXITO -->
-    @* @if (TempData["Mensaje"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["Mensaje"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    } *@
-
-    <!-- PERFIL DEL ARTESANO -->
+    <!-- PERFIL -->
     <div class="card mb-4">
         <div class="card-body text-center">
 
@@ -20,39 +14,65 @@
                 <img src="@Model.Artesano.foto"
                      class="img-fluid rounded-circle mb-3"
                      style="width:150px;height:150px;object-fit:cover;"
-                     alt="Foto de @Model.Artesano.nombre" />
+                     alt="@localizer["FotoDe"] @Model.Artesano.nombre" />
             }
             else
             {
                 <img src="/img/default-user.png"
                      class="img-fluid rounded-circle mb-3"
                      style="width:150px;height:150px;object-fit:cover;"
-                     alt="Foto por defecto" />
+                     alt="@localizer["FotoPorDefecto"]" />
             }
 
             <h2>@Model.Artesano.nombre</h2>
             <p class="text-muted">@Model.Artesano.descripcion</p>
-            <p><strong>Teléfono:</strong> @Model.Artesano.telefono</p>
 
-            <!-- ⭐ CALIFICACIÓN DEL ARTESANO -->
+            <p>
+                <strong>@localizer["Telefono"]:</strong>
+                @Model.Artesano.telefono
+            </p>
+
+            <!-- ⭐ RATING -->
             <div class="mt-3">
 
                 <div class="rating-artesano"
                      data-artesano="@Model.Artesano.id">
 
+                    @{
+                        var promedio = Model.PromedioCalificacion;
+                        var estrellasEnteras = (int)Math.Floor(promedio);
+                        var tieneMedia = (promedio - estrellasEnteras) >= 0.5;
+                    }
+
                     @for (int i = 1; i <= 5; i++)
                     {
-                        <i class="bi bi-star star-artesano"
-                           data-value="@i"
-                           style="cursor:pointer;font-size:1.6rem;"></i>
+                        if (i <= estrellasEnteras)
+                        {
+                            <i class="bi bi-star-fill text-warning star-artesano"
+                               data-value="@i"
+                               style="cursor:pointer;font-size:1.6rem;"></i>
+                        }
+                        else if (i == estrellasEnteras + 1 && tieneMedia)
+                        {
+                            <i class="bi bi-star-half text-warning star-artesano"
+                               data-value="@i"
+                               style="cursor:pointer;font-size:1.6rem;"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-star text-warning star-artesano"
+                               data-value="@i"
+                               style="cursor:pointer;font-size:1.6rem;"></i>
+                        }
                     }
 
                 </div>
 
                 <div class="mt-1">
                     <small class="text-muted">
-                        Promedio: @Model.PromedioCalificacion.ToString("0.0")
-                        (@Model.CantidadReseñas reseñas)
+                        @localizer["Promedio"]:
+                        @Model.PromedioCalificacion.ToString("0.0")
+                        (@Model.CantidadReseñas @localizer["Resenas"])
                     </small>
                 </div>
 
@@ -61,8 +81,8 @@
         </div>
     </div>
 
-    <!-- LISTA DE PRODUCTOS -->
-    <h4 class="mb-3">Productos</h4>
+    <!-- PRODUCTOS -->
+    <h4 class="mb-3">@localizer["Productos"]</h4>
 
     <div class="row">
         @if (Model.Productos != null && Model.Productos.Any())
@@ -79,7 +99,7 @@
                             <img src="~/images/productos/@producto.imagen"
                                  class="card-img-top"
                                  style="height:160px; object-fit:contain;"
-                                 alt="Producto @producto.nombre" />
+                                 alt="@localizer["Producto"] @producto.nombre" />
 
                             <div class="card-body text-center">
                                 <h6 class="mb-1">@producto.nombre</h6>
@@ -94,20 +114,19 @@
         {
             <div class="col-12">
                 <p class="text-muted">
-                    Este artesano aún no tiene productos publicados.
+                    @localizer["SinProductos"]
                 </p>
             </div>
         }
     </div>
 
-    <!-- COMENTARIOS DEL ARTESANO -->
-    
+    <!-- COMENTARIOS -->
     <hr class="my-4" />
 
-    <h4 class="mb-3">Comentarios</h4>
+    <h4 class="mb-3">@localizer["Comentarios"]</h4>
 
-    @if (Model.Artesano.comentarios != null && Model.Artesano.comentarios.Any())
-    {
+@if (Model.Artesano.comentarios != null && Model.Artesano.comentarios.Any())
+{
         <div class="list-group mb-4">
             @foreach (var comentario in Model.Artesano.comentarios)
             {
@@ -123,16 +142,19 @@
                 </div>
             }
         </div>
-    }
-    else
-    {
+}
+else
+{
         <p class="text-muted">
-            Este artesano aún no tiene comentarios.
+            @localizer["SinComentarios"]
         </p>
-    }
+}
 
+    <!-- COMENTAR -->
     <div class="mb-4">
-        <h6 class="fw-semibold">Dejar un comentario</h6>
+        <h6 class="fw-semibold">
+            @localizer["DejarComentario"]
+        </h6>
 
         <form asp-controller="Usuario"
               asp-action="ComentarArtesano"
@@ -146,24 +168,25 @@
                 <textarea asp-for="Comentario.contenido"
                           class="form-control"
                           rows="3"
-                          placeholder="Escriba su comentario"></textarea>
+                          placeholder="@localizer["PlaceholderComentario"]"></textarea>
 
                 <span asp-validation-for="Comentario.contenido"
                       class="text-danger small"></span>
             </div>
 
             <button type="submit" class="btn btn-sm btn-primary">
-                💬 Enviar comentario
+                💬 @localizer["EnviarComentario"]
             </button>
         </form>
     </div>
-    
 
-    <!-- FORMULARIO DE REPORTE DEL ARTESANO -->
+    <!-- REPORTE -->
     <hr class="my-4" />
 
     <div class="mt-3">
-        <h6 class="fw-semibold text-danger">Reportar a este artesano</h6>
+        <h6 class="fw-semibold text-danger">
+            @localizer["ReportarArtesano"]
+        </h6>
 
         <form asp-controller="Usuario"
               asp-action="ReportarArtesano"
@@ -178,7 +201,7 @@
                 <textarea asp-for="Reporte.razon"
                           class="form-control form-control-sm"
                           rows="3"
-                          placeholder="Describa el motivo del reporte"></textarea>
+                          placeholder="@localizer["PlaceholderReporte"]"></textarea>
 
                 <span asp-validation-for="Reporte.razon"
                       class="text-danger small"></span>
@@ -186,7 +209,7 @@
 
             <button type="submit"
                     class="btn btn-sm btn-outline-danger">
-                🚩 Reportar artesano
+                🚩 @localizer["Reportar"]
             </button>
         </form>
     </div>
@@ -199,34 +222,49 @@
 
     <script>
 
-        document.querySelectorAll(".star-artesano").forEach(star => {
+               document.querySelectorAll(".rating-artesano").forEach(container => {
 
-            star.addEventListener("click", function () {
+            const artesanoId = container.dataset.artesano;
 
-                const puntaje = this.getAttribute("data-value");
-                const container = this.closest(".rating-artesano");
-                const artesanoId = container.getAttribute("data-artesano");
+            container.querySelectorAll(".star-artesano").forEach(star => {
 
-                fetch('/Usuario/Calificar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken':
-                            document.querySelector('input[name="__RequestVerificationToken"]').value
-                    },
-                    body: JSON.stringify({
-                        artesanoId: parseInt(artesanoId),
-                        puntaje: parseInt(puntaje)
+                star.addEventListener("click", function () {
+
+                    const puntaje = this.dataset.value;
+
+                    fetch('/Usuario/Calificar', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken':
+                                document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: JSON.stringify({
+                            arteId: parseInt(artesanoId),
+                            puntaje: parseInt(puntaje)
+                        })
                     })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        pintarEstrellas(container, puntaje);
-                        alert("Gracias por calificar ⭐");
-                    }
-                    else {
-                        alert("No se pudo registrar la calificación");
-                    }
+                    .then(response => {
+                        if (response.ok) {
+
+                            container.querySelectorAll(".star-artesano").forEach(s => {
+                                if (s.dataset.value <= puntaje) {
+                                    s.classList.remove("bi-star");
+                                    s.classList.add("bi-star-fill");
+                                } else {
+                                    s.classList.remove("bi-star-fill");
+                                    s.classList.add("bi-star");
+                                }
+                            });
+
+                                    alert("Gracias por calificar ⭐");
+                                    location.reload();
+
+                        } else {
+                            alert("No se pudo calificar.");
+                        }
+                    });
+
                 });
 
             });

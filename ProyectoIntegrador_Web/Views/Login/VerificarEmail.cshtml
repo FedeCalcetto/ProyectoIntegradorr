@@ -1,5 +1,9 @@
-﻿@{
-    ViewBag.Title = "Verificar Email";
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewBag.Title = localizer["VerificarEmail"];
 }
 
 <div class="d-flex justify-content-center mt-5">
@@ -7,7 +11,7 @@
 
         <div class="text-center mb-3">
             <i class="bi bi-shield-lock-fill text-primary" style="font-size: 3rem;"></i>
-            <h3 class="mt-2">Verificación de correo</h3>
+            <h3 class="mt-2">@localizer["VerificacionCorreo"]</h3>
         </div>
 
         @* MENSAJE DE ÉXITO *@
@@ -29,23 +33,29 @@
         @* FORMULARIO SOLO SI NO ESTÁ VERIFICADO *@
         @if (ViewBag.Mensaje == null)
         {
-            <p class="text-muted text-center">Ingresá el código que enviamos a tu email</p>
+            <p class="text-muted text-center">
+                @localizer["IngresarCodigoEmail"]
+            </p>
 
             <form method="post" action="/Login/VerificarEmail">
                 <input type="hidden" name="email" value="@ViewBag.Email" />
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Código de verificación</label>
+                    <label class="form-label fw-bold">
+                        @localizer["CodigoVerificacion"]
+                    </label>
+
                     <input type="text"
                            name="codigo"
                            class="form-control form-control-lg text-center"
-                           placeholder="Ej: 123456"
+                           placeholder="@localizer["EjemploCodigo"]"
                            maxlength="6"
                            required />
                 </div>
 
                 <button class="btn btn-primary w-100 btn-lg mb-2">
-                    <i class="bi bi-unlock-fill"></i> Verificar código
+                    <i class="bi bi-unlock-fill"></i>
+                    @localizer["VerificarCodigo"]
                 </button>
             </form>
 
@@ -53,13 +63,14 @@
                 <input type="hidden" name="email" value="@ViewBag.Email" />
 
                 <button class="btn btn-outline-warning w-100 mt-2">
-                    <i class="bi bi-arrow-repeat"></i> Reenviar código
+                    <i class="bi bi-arrow-repeat"></i>
+                    @localizer["ReenviarCodigo"]
                 </button>
             </form>
 
             <div class="text-center mt-3">
                 <small class="text-muted">
-                    ¿No ves el correo? Revisá la carpeta de <strong>spam</strong>.
+                    @localizer["NoVesCorreo"] <strong>@localizer["Spam"]</strong>.
                 </small>
             </div>
         }

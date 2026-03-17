@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 {
-    public class CalificacionEFRepositorio : ICalificarProductoRepositorio
+    public class CalificacionEFRepositorio : ICalificarProducto2Repositorio
     {
         private readonly ProyectoDBContext _contexto;
 

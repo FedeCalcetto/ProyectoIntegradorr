@@ -1168,7 +1168,7 @@ namespace PruebasUnitarias
             public void ObtenerPromedioPorArtesano_RetornaValorDelRepositorio()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
                 int artesanoId = 5;
                 decimal promedioEsperado = 4.5m;
 
@@ -1189,11 +1189,11 @@ namespace PruebasUnitarias
             public void ObtenerTotalCalificacionesArtesano_RetornaValorDelRepositorio()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
                 int artesanoId = 5;
                 int totalEsperado = 10;
 
-                repo.Setup(r => r.ObtenerTotalCalificacionesArtesano(artesanoId))
+                repo.Setup(r => r.ObtenerTotalCalificaciones(artesanoId))
                     .Returns(totalEsperado);
 
                 var caso = new ObtenerCalificacionArtesanoCasoDeUso(repo.Object);
@@ -1203,7 +1203,7 @@ namespace PruebasUnitarias
 
                 // Assert
                 Assert.AreEqual(totalEsperado, resultado);
-                repo.Verify(r => r.ObtenerTotalCalificacionesArtesano(artesanoId), Times.Once);
+                repo.Verify(r => r.ObtenerTotalCalificaciones(artesanoId), Times.Once);
             }
         }
 
@@ -1214,7 +1214,7 @@ namespace PruebasUnitarias
             public async Task Ejecutar_PuntajeInvalido_LanzaExcepcion()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
                 var caso = new CalificarArtesanoCasoDeUso(repo.Object);
 
                 // Act + Assert
@@ -1227,10 +1227,10 @@ namespace PruebasUnitarias
             public async Task Ejecutar_CalificacionExistente_ActualizaPuntaje()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
 
                 var calificacionExistente =
-                    Calificación.ParaArtesano(1, 10, 3);
+                    CalificacionArtesano.ParaArtesano(1, 10, 3);
 
                 repo.Setup(r =>
                     r.ObtenerPorUsuarioYArtesano(10, 1)
@@ -1246,7 +1246,7 @@ namespace PruebasUnitarias
 
                 repo.Verify(r => r.Actualizar(calificacionExistente), Times.Once);
                 repo.Verify(r =>
-                    r.AgregarParaArtesano(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<decimal>()),
+                    r.Agregar(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<decimal>()),
                     Times.Never
                 );
             }
@@ -1255,11 +1255,11 @@ namespace PruebasUnitarias
             public async Task Ejecutar_SinCalificacionPrevia_AgregaNueva()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
 
                 repo.Setup(r =>
                     r.ObtenerPorUsuarioYArtesano(It.IsAny<int>(), It.IsAny<int>())
-                ).ReturnsAsync((Calificación)null);
+                ).ReturnsAsync((CalificacionArtesano)null);
 
                 var caso = new CalificarArtesanoCasoDeUso(repo.Object);
 
@@ -1268,12 +1268,12 @@ namespace PruebasUnitarias
 
                 // Assert
                 repo.Verify(r =>
-                    r.AgregarParaArtesano(2, 20, 4),
+                    r.Agregar(2, 20, 4),
                     Times.Once
                 );
 
                 repo.Verify(r =>
-                    r.Actualizar(It.IsAny<Calificación>()),
+                    r.Actualizar(It.IsAny<CalificacionArtesano>()),
                     Times.Never
                 );
             }

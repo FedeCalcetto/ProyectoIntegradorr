@@ -25,6 +25,9 @@ namespace ProyectoIntegrador.EntityFrameWork
         public DbSet<CarritoItem> CarritoItems { get; set; }
         public DbSet<Orden> Ordenes { get; set; }
         public DbSet<Calificación> Calificaciones { get; set; }
+        public DbSet<CalificacionProducto> CalificacionesProducto { get; set; }
+        public DbSet<CalificacionArtesano> CalificacionesArtesano { get; set; }
+
         public ProyectoDBContext(DbContextOptions<ProyectoDBContext> options) : base(options)
         {
         }
@@ -156,17 +159,40 @@ namespace ProyectoIntegrador.EntityFrameWork
               .OnDelete(DeleteBehavior.NoAction)
     );
 
-            modelBuilder.Entity<Calificación>()
-                .HasOne<Producto>()
-                .WithMany(p => p.Calificaciones)
-                .HasForeignKey(c => c.productoId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<CalificacionProducto>()
+                 .HasOne<Producto>()
+                 .WithMany(p => p.Calificaciones)
+                 .HasForeignKey(c => c.productoId)
+                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Calificación>()
+            modelBuilder.Entity<CalificacionProducto>()
                 .HasOne<Usuario>()
                 .WithMany()
                 .HasForeignKey(c => c.usuarioId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<CalificacionProducto>()
+            .HasIndex(c => new { c.usuarioId, c.productoId })
+    .       IsUnique(); //esto evita que un usuario califique dos veces el mismo producto
+
+
+            modelBuilder.Entity<CalificacionArtesano>()
+                 .HasOne<Artesano>()
+                 .WithMany(a => a.Calificaciones)
+                 .HasForeignKey(c => c.artesanoId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CalificacionArtesano>()
+                .HasOne<Usuario>()
+                .WithMany()
+                .HasForeignKey(c => c.usuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CalificacionArtesano>()
+                .HasIndex(c => new { c.usuarioId, c.artesanoId })
+                .IsUnique();
+
 
             // 🧪 Seed principal (TPH + owned types)
             modelBuilder.Entity<Usuario>().HasData(
@@ -283,39 +309,49 @@ namespace ProyectoIntegrador.EntityFrameWork
     new { Id = 9, ProductoId = 9, UrlImagen = "taza-ceramica.jpg" },
     new { Id = 10, ProductoId = 10, UrlImagen = "taza-ceramica.jpg" }
 );
+            modelBuilder.Entity<CalificacionProducto>().HasData(
 
-            modelBuilder.Entity<Calificación>().HasData(
+       new
+       {
+           id = 1,
+           productoId = 1,
+           usuarioId = 2,
+           puntaje = 5m,
+           fecha = new DateTime(2026, 1, 10)
+       },
+
+       new
+       {
+           id = 2,
+           productoId = 1,
+           usuarioId = 3,   // usuario distinto
+           puntaje = 4m,
+           fecha = new DateTime(2026, 1, 12)
+       },
+
+       new
+       {
+           id = 3,
+           productoId = 2,
+           usuarioId = 2,
+           puntaje = 3m,
+           fecha = new DateTime(2026, 1, 15)
+       }
+
+   );
+
+            modelBuilder.Entity<CalificacionArtesano>().HasData(
 
                 new
                 {
                     id = 1,
-                    productoId = 1,   // producto existente
-                    usuarioId = 2,    // Juan Cliente
+                    artesanoId = 3,
+                    usuarioId = 2,
                     puntaje = 5m,
-                    fecha = new DateTime(2026, 1, 10)
-                },
-
-                new
-                {
-                    id = 2,
-                    productoId = 1,
-                    usuarioId = 2,
-                    puntaje = 4m,
-                    fecha = new DateTime(2026, 1, 12)
-                },
-
-                new
-                {
-                    id = 3,
-                    productoId = 2,
-                    usuarioId = 2,
-                    puntaje = 3m,
-                    fecha = new DateTime(2026, 1, 15)
+                    fecha = new DateTime(2026, 1, 20)
                 }
 
             );
-
-
 
 
 

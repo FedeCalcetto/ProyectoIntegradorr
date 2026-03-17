@@ -1,15 +1,18 @@
 ﻿@model CarritoViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
 @{
-    ViewData["Title"] = "Mi Carrito";
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = localizer["MiCarrito"];
 }
 
 <div class="container mt-4">
 
     <div class="row align-items-start">
-        <h3 class="text-center text-muted mb-4">Mi carrito</h3>
+        <h3 class="text-center text-muted mb-4">@localizer["MiCarrito"]</h3>
 
-        <!--        COLUMNA IZQUIERDA     -->
+        <!-- COLUMNA IZQUIERDA -->
         <div class="col-lg-8">
 
             @foreach (var item in Model.ItemsCarrito)
@@ -19,30 +22,26 @@
 
                         <div class="d-flex align-items-center">
 
-                            <!-- Imagen Producto -->
                             <img src="~/images/productos/@item.producto.imagen"
                                  style="width: 90px; height: 90px; object-fit: contain;"
                                  class="me-3" />
 
-                            <!-- Datos -->
                             <div class="flex-grow-1">
-
 
                                 <h5 class="fw-semibold mb-1 ps-0" style="font-size: 1.15rem;">
                                     @item.producto.nombre
                                 </h5>
 
                                 <p class="mb-0 ps-0">
-                                    <span class="fw-medium">Cantidad:</span> @item.cantidad
+                                    <span class="fw-medium">@localizer["Cantidad"]:</span> @item.cantidad
                                 </p>
-                                    
 
                             </div>
 
                             <div class="d-flex flex-column justify-content-center align-items-end">
 
                                 <p class="fw-semibold fs-5 mb-2">
-                                    Subtotal: $@(item.cantidad* item.producto.precio)
+                                    @localizer["Subtotal"]: $@(item.cantidad* item.producto.precio)
                                 </p>
 
                                 <button type="button"
@@ -52,7 +51,7 @@
                                         data-item-id="@item.id"
                                         data-max="@item.cantidad"
                                         data-producto="@item.producto.nombre">
-                                    Eliminar
+                                    @localizer["Eliminar"]
                                 </button>
 
                             </div>
@@ -62,23 +61,22 @@
                     </div>
                 </div>
             }
-            
+
         </div>
 
-        <!--         COLUMNA DERECHA     -->
+        <!-- COLUMNA DERECHA -->
         <div class="col-lg-4">
 
             <div class="card shadow-sm" style="border: 1px solid #e0e0e0;">
                 <div class="card-body">
 
-                    <h5 class="fw-bold mb-3">Detalles de la compra</h5>
+                    <h5 class="fw-bold mb-3">@localizer["DetallesCompra"]</h5>
 
                     <div class="d-flex justify-content-between mb-2">
-
-                        Cantidad de productos: @Model.ItemsCarrito.Sum(i => i.cantidad)
+                        @localizer["CantidadProductos"]: @Model.ItemsCarrito.Sum(i => i.cantidad)
 
                         <span class="fw-bold">
-                            Total: $@Model.ItemsCarrito.Sum(i => i.cantidad * i.producto.precio)
+                            @localizer["Total"]: $@Model.ItemsCarrito.Sum(i => i.cantidad * i.producto.precio)
                         </span>
                     </div>
 
@@ -88,15 +86,15 @@
 
                         <button type="submit"
                                 class="btn btn-primary w-100 btn-lg mt-3">
-                            Continuar compra
+                            @localizer["ContinuarCompra"]
                         </button>
                     </form>
 
-
-                    <a id="btnVolverATienda" asp-controller="Usuario"
+                    <a id="btnVolverATienda"
+                       asp-controller="Usuario"
                        asp-action="Catalogo"
                        class="btn btn-primary w-100 mt-3">
-                        Volver a la tienda
+                        @localizer["VolverTienda"]
                     </a>
 
                 </div>
@@ -108,19 +106,18 @@
 
 </div>
 
-
 <div class="row mt-4">
     <hr id="hrCarrito" class="my-5">
     <div class="col-12">
-        <h5 class="text-muted mb-3">También te puede interesar</h5>
+        <h5 class="text-muted mb-3">@localizer["TambienInteresa"]</h5>
 
         <div class="interes-slider-container">
-            @if (Model.ProductosDeInteres.Count > 0){
-            <!-- Flecha izquierda -->
-               <button class="slider-btn prev-btn">&#10094;</button>
+            @if (Model.ProductosDeInteres.Count > 0)
+            {
+                <button class="slider-btn prev-btn">&#10094;</button>
 
                 <div class="interes-slider-wrapper">
-                <div id="interes-slider"
+                    <div id="interes-slider"
                          class="interes-product-slider">
 
                         @foreach (var producto in Model.ProductosDeInteres)
@@ -145,25 +142,20 @@
                             </a>
                         }
 
-
+                    </div>
                 </div>
-            </div>
 
-            <!-- Flecha derecha -->
-            <button class="slider-btn next-btn">&#10095;</button>
-            }else{
-
-            <h5 class="modal-title">No hay productos para mostrar</h5>
-
+                <button class="slider-btn next-btn">&#10095;</button>
             }
-
+            else
+            {
+                <h5 class="modal-title">@localizer["NoHayProductos"]</h5>
+            }
         </div>
     </div>
 </div>
 
-
-
-<!--         MODAL ELIMINAR     -->
+<!-- MODAL ELIMINAR -->
 <div class="modal fade" id="modalEliminar" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -173,7 +165,7 @@
                   method="post">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Eliminar producto</h5>
+                    <h5 class="modal-title">@localizer["EliminarProducto"]</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
@@ -182,7 +174,7 @@
 
                     <input type="hidden" name="idItemCarrito" id="idItemCarrito" />
 
-                    <label class="form-label">Cantidad a eliminar</label>
+                    <label class="form-label">@localizer["CantidadEliminar"]</label>
                     <input type="number"
                            name="cantidadABorrar"
                            id="cantidadABorrar"
@@ -192,10 +184,10 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Cancelar
+                        @localizer["Cancelar"]
                     </button>
                     <button type="submit" class="btn btn-danger">
-                        Eliminar
+                        @localizer["Eliminar"]
                     </button>
                 </div>
 
@@ -204,7 +196,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     const modalEliminar = document.getElementById('modalEliminar');
@@ -223,7 +214,6 @@
             `Producto: ${producto} (máx: ${max})`;
     });
 </script>
-
 
 <script>
     const slider = document.getElementById("interes-slider");

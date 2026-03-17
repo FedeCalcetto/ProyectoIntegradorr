@@ -9,13 +9,11 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
     public class Calificación
     {
         public int id { get; set; }
-        public int productoId { get; set; }
+        public int? productoId { get; set; }
         public int usuarioId { get; set; }
         public decimal puntaje { get; set; } 
         public DateTime fecha { get; set; } = DateTime.Now;
-        public int artesanoId { get; set; }
-
-
+        public int? artesanoId { get; set; }
 
         private Calificación() { }
         public static Calificación ParaProducto(int productoId, int usuarioId, decimal puntaje)

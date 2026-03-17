@@ -1,4 +1,11 @@
 ﻿@using System.Globalization
+
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,8 +30,8 @@
 
         <div class="loader-box text-center">
             <div class="spinner-border" role="status"></div>
-            <div id="loaderMessage" class="mt-2 fw-semibold">Procesando...</div>
-            <div class="small text-muted">Por favor esperá</div>
+            <div id="loaderMessage" class="mt-2 fw-semibold">@localizer["Procesando"]</div>
+            <div class="small text-muted">@localizer["PorFavorEspera"]</div>
         </div>
     </div>
 
@@ -55,13 +62,24 @@
 
                         @if (rol == null || rol != null)
                         {
-                            <form method="get">
+                           <form method="get">
                                 <select name="culture" onchange="this.form.submit()">
-                                    <option value="es" selected="@(CultureInfo.CurrentUICulture.Name.StartsWith("es"))">Español</option>
-                                    <option value="en-US" selected="@(CultureInfo.CurrentUICulture.Name == "en-US")">English</option>
+
+                                    <option value="es"
+                                            selected="@(CultureInfo.CurrentUICulture.Name.StartsWith("es"))">
+                                        @localizer["Espanol"]
+                                    </option>
+
+                                    <option value="en-US"
+                                            selected="@(CultureInfo.CurrentUICulture.Name == "en-US")">
+                                        @localizer["Ingles"]
+                                    </option>
+
                                 </select>
-                            </form>
-                            <p>@System.Globalization.CultureInfo.CurrentUICulture</p>
+                           </form> 
+
+                           <p>@System.Globalization.CultureInfo.CurrentUICulture</p>
+
                         }
 
                         <!-- NO LOGUEADO -->
@@ -71,7 +89,7 @@
                                 <a class="btn btn-success"
                                 asp-controller="Login"
                                 asp-action="Login">
-                                    Iniciar sesión
+                                    @localizer["IniciarSesion"]
                                 </a>
                             </li>
 
@@ -90,7 +108,7 @@
                                    asp-controller="Usuario"
                                    asp-action="Catalogo">
                                     <i class="bi bi-grid-3x3-gap me-2"></i>
-                                    Ver catálogo
+                                        @localizer["VerCatalogo"]
                                 </a>
                             </li>
                           
@@ -98,8 +116,8 @@
                                 <a class="dropdown-item dropdown-item-catalogo"
                                    asp-controller="PedidoPersonalizado"
                                    asp-action="Crear">
-                                    Hacer pedido personalizado
-                                </a>
+                                        @localizer["PedidoPersonalizado"]
+                                    </a>
                             </li>
                             }
 
@@ -109,7 +127,7 @@
                                     <a class="dropdown-item dropdown-item-catalogo"
                                        asp-controller="Producto"
                                        asp-action="AltaProducto">
-                                        Agregar producto
+                                        @localizer["AgregarProducto"]
                                     </a>
                                 </li>
 
@@ -117,7 +135,7 @@
                                     <a class="dropdown-item dropdown-item-catalogo"
                                        asp-controller="Artesano"
                                        asp-action="ProductosDelArtesano">
-                                        Tus productos
+                                        @localizer["TusProductos"]
                                     </a>
                                 </li>
 
@@ -125,14 +143,14 @@
                                     <a class="dropdown-item dropdown-item-catalogo"
                                        asp-controller="Artesano"
                                        asp-action="Dashboard">
-                                        Tus ventas
+                                        @localizer["TusVentas"]
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item dropdown-item-catalogo"
                                     asp-controller="PedidoPersonalizado"
                                        asp-action="PedidosPersonalizados">
-                                        Pedidos personalizados
+                                        @localizer["PedidosPersonalizados"]
                                     </a>
                                 </li>
 
@@ -152,7 +170,7 @@
                                             <a class="dropdown-item"
                                                asp-controller="Usuario"
                                                asp-action="BusquedaDeUsuarios">
-                                                Usuarios
+                                                @localizer["Usuarios"]
                                             </a>
                                         </li>
 
@@ -163,7 +181,7 @@
                                                 <a class="dropdown-item"
                                                    asp-controller="Producto"
                                                    asp-action="ProductosFiltrados">
-                                                    Productos
+                                                    @localizer["Productos"]
                                                 </a>
                                             </li>
                                            
@@ -193,7 +211,7 @@
                                             <a class="dropdown-item"
                                                asp-controller="Cliente"
                                                asp-action="Perfil">
-                                                Perfil
+                                                @localizer["Perfil"]
                                             </a>
                                         </li>
 
@@ -201,7 +219,7 @@
                                             <a class="dropdown-item"
                                                asp-controller="Cliente"
                                                asp-action="ProductosFavoritos">
-                                                Favoritos
+                                                @localizer["Favoritos"]
                                             </a>
                                         </li>
                                        @*  <li>
@@ -223,14 +241,14 @@
                                             <a class="dropdown-item"
                                                asp-controller="FacturaNoFiscal"
                                                asp-action="FacturasDelCliente">
-                                                Compras
+                                                @localizer["Compras"]
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item text-danger fw-semibold"
                                                asp-controller="Cliente"
                                                asp-action="Logout">
-                                                Cerrar sesión
+                                                @localizer["CerrarSesion"]
                                             </a>
                                         </li>
                                        
@@ -243,14 +261,14 @@
                                             <a class="dropdown-item"
                                                asp-controller="Artesano"
                                                asp-action="PerfilArtesano">
-                                                Perfil
+                                                @localizer["Perfil"]
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="FacturaNoFiscal"
                                                asp-action="FacturasArtesano">
-                                                Historial de facturas
+                                                @localizer["HistorialFacturas"]
                                             </a>
                                         </li>
                                       
@@ -266,7 +284,7 @@
                                             <a class="dropdown-item"
                                                asp-controller="PedidoPersonalizado"
                                                asp-action="MisEncargos">
-                                                Mis encargos
+                                                @localizer["MisEncargos"]
                                             </a>
                                         </li>
                                         @* <li>
@@ -294,7 +312,7 @@
                                             <a class="dropdown-item text-danger fw-semibold"
                                                asp-controller="Artesano"
                                                asp-action="Logout">
-                                                Cerrar sesión
+                                                @localizer["CerrarSesion"]
                                             </a>
                                         </li>
                                     }
@@ -306,7 +324,7 @@
                                             <a class="dropdown-item text-danger fw-semibold"
                                                asp-controller="Admin"
                                                asp-action="Logout">
-                                                Cerrar sesión
+                                                @localizer["CerrarSesion"]
                                             </a>
                                         </li>
                                     }
@@ -322,7 +340,7 @@
                                    asp-action="Index">
 
                                     <img src="~/images/carrito/carrito.png"
-                                         alt="Carrito"
+                                         alt="@localizer["Carrito"]"
                                          style="width:28px; height:28px;" />
 
                                     @await Component.InvokeAsync("CarritoCantidad")
@@ -376,16 +394,16 @@
 
                 <!-- INFO -->
                 <div class="col-md-4 mb-2">
-                    <h6 class="fw-bold mb-1">Proyecto Integrador</h6>
+                    <h6 class="fw-bold mb-1">@localizer["ProyectoIntegrador"]</h6>
 
                     <p class="small mb-0">
-                        Plataforma académica de artesanos y clientes 💙
+                        @localizer["PlataformaDescripcion"] 💙
                     </p>
                 </div>
 
                 <!-- SOPORTE -->
                 <div class="col-md-4 mb-2">
-                    <h6 class="fw-bold mb-1">Soporte</h6>
+                    <h6 class="fw-bold mb-1">@localizer["Soporte"]</h6>
 
                     <a href="mailto:soporte@proyectointegrador.com"
                        class="text-decoration-none text-info small">
@@ -396,11 +414,11 @@
 
                 <!-- INSTITUCIONAL -->
                 <div class="col-md-4 mb-2">
-                    <h6 class="fw-bold mb-1">Institucional</h6>
+                    <h6 class="fw-bold mb-1">@localizer["Institucional"]</h6>
 
                     <p class="small mb-0">
-                        📚 Proyecto académico<br />
-                        ORT Uruguay — Ingeniería
+                        📚 @localizer["ProyectoAcademico"]<br />
+                        @localizer["Ingenieria"]
                     </p>
                 </div>
 
@@ -453,7 +471,8 @@
 
             const customMessage = form.getAttribute("data-loader-text");
 
-            showLoader(customMessage || "Procesando...");
+                 showLoader(customMessage || "Procesando...");
+        → showLoader(customMessage || '@localizer["Procesando"]');
 
             const btns = form.querySelectorAll("button[type='submit'], input[type='submit']");
             btns.forEach(b => b.disabled = true);

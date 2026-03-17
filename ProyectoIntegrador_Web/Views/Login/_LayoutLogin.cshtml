@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -47,8 +53,12 @@
 
         <div class="loader-box text-center">
             <div class="spinner-border text-dark" role="status"></div>
-            <div id="loaderMessage" class="mt-2 fw-semibold">Procesando...</div>
-            <div class="small text-muted">Por favor esperá</div>
+            <div id="loaderMessage" class="mt-2 fw-semibold">
+                @localizer["Procesando"]
+            </div>
+            <div class="small text-muted">
+                @localizer["PorFavorEspera"]
+            </div>
         </div>
     </div>
 
@@ -63,15 +73,19 @@
 
                 <!-- INFO -->
                 <div class="col-md-4 mb-1">
-                    <strong class="small">Proyecto Integrador</strong>
+                    <strong class="small">
+                        @localizer["ProyectoIntegrador"]
+                    </strong>
                     <div class="small">
-                        Plataforma académica de artesanos y clientes 💙
+                        @localizer["DescripcionProyecto"]
                     </div>
                 </div>
 
                 <!-- SOPORTE -->
                 <div class="col-md-4 mb-1">
-                    <strong class="small">Soporte</strong><br />
+                    <strong class="small">
+                        @localizer["Soporte"]
+                    </strong><br />
                     <a href="mailto:soporte@proyectointegrador.com"
                        class="text-decoration-none text-info small">
                         soporte@proyectointegrador.com
@@ -80,7 +94,9 @@
 
                 <!-- INSTITUCIONAL -->
                 <div class="col-md-4 mb-1">
-                    <strong class="small">Institucional</strong>
+                    <strong class="small">
+                        @localizer["Institucional"]
+                    </strong>
                     <div class="small">
                         ORT Uruguay — Ingeniería
                     </div>
@@ -91,7 +107,7 @@
             <hr class="border-secondary my-1" />
 
             <div class="text-center small">
-                &copy; @DateTime.Now.Year — Proyecto Integrador
+                &copy; @DateTime.Now.Year — @localizer["ProyectoIntegrador"]
             </div>
 
         </div>
@@ -133,7 +149,7 @@
 
             const customMessage = form.getAttribute("data-loader-text");
 
-            showLoader(customMessage || "Procesando...");
+            showLoader(customMessage || "@localizer["Procesando"]");
 
             const btns = form.querySelectorAll("button[type='submit'], input[type='submit']");
             btns.forEach(b => b.disabled = true);
@@ -141,7 +157,6 @@
 
         window.addEventListener("pageshow", hideLoader);
     </script>
-
 
 </body>
 </html>

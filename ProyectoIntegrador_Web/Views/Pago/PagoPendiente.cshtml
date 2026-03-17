@@ -1,15 +1,20 @@
-﻿<h2>⏳ Pago en proceso</h2>
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
+<h2>⏳ @localizer["PagoEnProceso"]</h2>
 
 <p>
-    Tu pago está siendo validado por Mercado Pago.
+    @localizer["PagoEnProcesoDescripcion"]
 </p>
 
 <p>
-    <strong>Orden:</strong> @Model.Id <br />
-    <strong>Estado:</strong> Pendiente
+    <strong>@localizer["Orden"]:</strong> @Model.Id <br />
+    <strong>@localizer["Estado"]:</strong> @localizer["Pendiente"]
 </p>
 
 <p>
-    Te notificaremos cuando el pago sea confirmado.
+    @localizer["NotificacionPago"]
 </p>
-

@@ -1,6 +1,21 @@
-﻿<h2 class="text-center text-success mt-5">Cuenta eliminada ✔️</h2>
-<p class="text-center">Tu cuenta fue eliminada correctamente.</p>
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = Localizer["DashboardArtesano"];
+}
+
+<h2 class="text-center text-success mt-5">
+    @localizer["CuentaEliminada"] ✔️
+</h2>
+
+<p class="text-center">
+    @localizer["CuentaEliminadaCorrectamente"]
+</p>
 
 <div class="text-center mt-3">
-    <a href="/Home/Index" class="btn btn-primary">Volver al inicio</a>
+    <a href="/Home/Index" class="btn btn-primary">
+        @localizer["VolverInicio"]
+    </a>
 </div>

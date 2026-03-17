@@ -31,7 +31,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
        
 
 
-        public List<Calificación> Calificaciones { get; set; } = new();
+        public List<CalificacionProducto> Calificaciones { get; set; } = new();
 
 
         public void Validar()

@@ -1,15 +1,13 @@
 ﻿@using Microsoft.Extensions.Localization
-@using ProyectoIntegrador_Web.Resources
-@inject IStringLocalizer<SharedResource> Localizer
+@inject IStringLocalizerFactory factory
 @model DashboardViewModel
 
 @{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
     ViewData["Title"] = Localizer["DashboardArtesano"];
 }
 
-<h2 class="mb-4">📊 @Localizer["Dashboard"]</h2>
-<p>@System.Globalization.CultureInfo.CurrentUICulture</p>
-@Localizer["TotalVentas"].ResourceNotFound
+<h2 class="mb-4">📊 @localizer["Dashboard"]</h2>
 <!-- ===================== -->
 <!-- KPIs -->
 <!-- ===================== -->
@@ -17,7 +15,7 @@
     <div class="col-md-3">
         <div class="card text-center shadow-sm">
             <div class="card-body">
-                <h6>@Localizer["TotalVentas"]</h6>
+                <h6>@localizer["TotalVentas"]</h6>
                 <h3>@Model.CantidadVentasTotal</h3>
             </div>
         </div>
@@ -26,7 +24,7 @@
     <div class="col-md-3">
         <div class="card text-center shadow-sm">
             <div class="card-body">
-                <h6>@Localizer["VentasMes"]</h6>
+                <h6>@localizer["VentasMes"]</h6>
                 <h3>@Model.CantidadVentasMesActual</h3>
             </div>
         </div>
@@ -35,7 +33,7 @@
     <div class="col-md-3">
         <div class="card text-center shadow-sm">
             <div class="card-body">
-                <h6>@Localizer["VentasAño"]</h6>
+                <h6>@localizer["VentasAño"]</h6>
                 <h3>@Model.CantidadVentasAnoActual</h3>
             </div>
         </div>
@@ -44,7 +42,7 @@
     <div class="col-md-3">
         <div class="card text-center shadow-sm">
             <div class="card-body">
-                <h6>@Localizer["VariaciónMensual"]</h6>
+                <h6>@localizer["VariacionMensual"]</h6>
                 <h3 class="@(Model.VariacionVentasMensual >= 0 ? "text-success" : "text-danger")">
                     @Model.VariacionVentasMensual.ToString("0.##") %
                 </h3>
@@ -58,15 +56,15 @@
 <!-- ===================== -->
 <div class="row mb-4">
     <div class="col-md-6">
-        <h4>🔥 @Localizer["ProductosMásVendidos"]</h4>
+        <h4>🔥 @localizer["ProductosMásVendidos"]</h4>
 
         @if (Model.TopProductosVentas.Any())
         {
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>@Localizer["Producto"]</th>
-                        <th>@Localizer["CantidadVendida"]</th>
+                        <th>@localizer["Producto"]</th>
+                        <th>@localizer["CantidadVendida"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,7 +80,7 @@
         }
         else
         {
-            <p class="text-muted">@Localizer["NoVentasRegistradas"]</p>
+            <p class="text-muted">@localizer["NoVentasRegistradas"]</p>
         }
     </div>
 </div>
@@ -92,7 +90,7 @@
 <!-- ===================== -->
 <div class="row">
     <div class="col-md-12">
-        <h4>📈 @Localizer["VentasPorMes"]</h4>
+        <h4>📈 @localizer["VentasPorMes"]</h4>
         <canvas id="ventasPorMesChart" height="100"></canvas>
     </div>
 </div>
@@ -131,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
         data: {
             labels: labels,
             datasets: [{
-    label: '@Localizer["Ventas"]',
+    label: '@localizer["Ventas"]',
     data: data,
                 tension: 0.3,
                 fill: false

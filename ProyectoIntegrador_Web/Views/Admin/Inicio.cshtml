@@ -1,10 +1,13 @@
 ﻿@model ListadoDeReportesViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
 @{
-    ViewData["Title"] = "Reportes";
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = localizer["Reportes"];
 }
 
-<h1 class="mb-4">Reportes</h1>
+<h1 class="mb-4">@localizer["Reportes"]</h1>
 
 @if (Model.Reportes != null && Model.Reportes.Any())
 {
@@ -24,13 +27,15 @@
                         </h5>
 
                         <p class="mb-2">
-                            <strong>Cliente:</strong>
-                            @(reporte.cliente != null ? reporte.cliente.nombre : "Sin cliente")
-                        </p>
+                            <strong>@Localizer["Cliente"]:</strong>
+                            @(reporte.cliente != null
+                                                ? reporte.cliente.nombre
+                                                : localizer["SinCliente"])
+                </p>
 
                         <div class="mb-3">
                             @* Reporte a producto *@
-                            @if (reporte.artesano == null && reporte.producto != null)
+                    @if (reporte.artesano == null && reporte.producto != null)
                             {
                                 <img src="~/images/productos/@reporte.producto.imagen"
                                      class="img-fluid rounded"
@@ -42,12 +47,13 @@
                             {
                                 <div class="d-flex align-items-center gap-2">
                                     <img src="@reporte.artesano.foto"
-                                    class="rounded-circle"
-                                    style="width:50px;height:50px;object-fit:cover;"
-                                    alt="Artesano" />
+                                         class="rounded-circle"
+                                         style="width:50px;height:50px;object-fit:cover;"
+                                         alt="Artesano" />
 
                                     <span class="badge bg-secondary p-2">
-                                        Artesano reportado: @reporte.artesano.nombre
+                                        @localizer["ArtesanoReportado"]:
+                                        @reporte.artesano.nombre
                                     </span>
                                 </div>
                             }
@@ -60,7 +66,7 @@
 
                                 <button type="submit"
                                         class="btn btn-outline-danger btn-sm">
-                                    Eliminar
+                                    @localizer["Eliminar"]
                                 </button>
                             </form>
 
@@ -70,7 +76,7 @@
 
                                 <button type="submit"
                                         class="btn btn-primary btn-sm">
-                                    Aceptar
+                                    @localizer["Aceptar"]
                                 </button>
                             </form>
                         </div>
@@ -84,6 +90,6 @@
 else
 {
     <div class="alert alert-secondary text-center">
-        No hay reportes pendientes.
+        @localizer["NoHayReportes"]
     </div>
 }

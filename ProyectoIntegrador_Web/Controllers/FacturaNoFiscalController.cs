@@ -15,11 +15,11 @@ namespace ProyectoIntegrador_Web.Controllers
         private readonly IObtenerFacturaCliente _obtenerFacturCliente;
         private readonly IObtenerUsuario _obtenerUsuario;
         private readonly PdfClienteService _pdf;
-        private readonly ICalificarProductoRepositorio _calificacionRepo;
+        private readonly ICalificarProducto2Repositorio _calificacionRepo;
 
         public FacturaNoFiscalController(PdfClienteService pdf, IObtenerFacturaClientePorOrden obtenerFacturaClientePorOrden, 
             IObtenerFacturasDeUnCliente obtenerFacturasDeUnCliente, IObtenerFacturaArtesano obtenerFacturaArtesano, IObtenerFacturaCliente obtenerFacturCliente, 
-            IObtenerUsuario obtenerUsuario, ICalificarProductoRepositorio calificacionRepo)
+            IObtenerUsuario obtenerUsuario, ICalificarProducto2Repositorio calificacionRepo)
         {
             _pdf = pdf;
             _obtenerFacturaClientePorOrden = obtenerFacturaClientePorOrden;

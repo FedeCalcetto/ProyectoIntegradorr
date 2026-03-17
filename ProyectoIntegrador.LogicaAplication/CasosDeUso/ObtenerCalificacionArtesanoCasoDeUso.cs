@@ -10,9 +10,9 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 {
     public class ObtenerCalificacionArtesanoCasoDeUso : IObtenerPromedioCalificacionArtesano
     {
-        private readonly ICalificarProductoRepositorio _calificarRepo;
+        private readonly ICalificarArtesanoRepositorio _calificarRepo;
 
-        public ObtenerCalificacionArtesanoCasoDeUso(ICalificarProductoRepositorio calificarRepo)
+        public ObtenerCalificacionArtesanoCasoDeUso(ICalificarArtesanoRepositorio calificarRepo)
         {
             _calificarRepo = calificarRepo;
         }
@@ -23,7 +23,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
 
         public int ObtenerTotalCalificacionesArtesano(int arteId)
         {
-            return _calificarRepo.ObtenerTotalCalificacionesArtesano(arteId);
+            return _calificarRepo.ObtenerTotalCalificaciones(arteId);
         }
     }
 }

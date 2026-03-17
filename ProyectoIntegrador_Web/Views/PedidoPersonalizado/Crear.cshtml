@@ -1,18 +1,25 @@
 ﻿@model CrearPedidoPersonalizadoViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    }
 <div class="container mt-4">
-    <h2 class="mb-4 text-center fw-bold">Crear pedido personalizado</h2>
+    <h2 class="mb-4 text-center fw-bold">
+        @localizer["CrearPedidoPersonalizado"]
+    </h2>
 
     <form asp-action="Crear" method="post" class="card shadow-sm p-4">
 
         <div class="mb-3">
-            <label class="form-label">Título</label>
+            <label class="form-label">@localizer["Titulo"]</label>
             <input asp-for="Titulo" class="form-control" />
             <span asp-validation-for="Titulo" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Descripción</label>
+            <label class="form-label">@localizer["Descripcion"]</label>
             <textarea asp-for="Descripcion"
                       class="form-control"
                       rows="4"></textarea>
@@ -21,7 +28,7 @@
 
         <div class="text-center">
             <button class="btn btn-primary px-4">
-                Enviar pedido
+                @localizer["EnviarPedido"]
             </button>
         </div>
     </form>

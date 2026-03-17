@@ -8,11 +8,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class favoritos2 : Migration
+    public partial class calificarMejorado : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Calificaciones",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    productoId = table.Column<int>(type: "int", nullable: true),
+                    usuarioId = table.Column<int>(type: "int", nullable: false),
+                    puntaje = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    artesanoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Calificaciones", x => x.id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Carritos",
                 columns: table => new
@@ -52,6 +69,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     rol = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CodigoVerificacion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Verificado = table.Column<bool>(type: "bit", nullable: false),
+                    TokenResetPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TokenResetPasswordExpira = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TokenVerificacionEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TokenVerificacionEmailExpira = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
@@ -94,6 +113,34 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         principalTable: "Categorias",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CalificacionesArtesano",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    usuarioId = table.Column<int>(type: "int", nullable: false),
+                    puntaje = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    artesanoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CalificacionesArtesano", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_CalificacionesArtesano_Usuarios_artesanoId",
+                        column: x => x.artesanoId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CalificacionesArtesano_Usuarios_usuarioId",
+                        column: x => x.usuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -275,27 +322,27 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Calificaciones",
+                name: "CalificacionesProducto",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    productoId = table.Column<int>(type: "int", nullable: false),
                     usuarioId = table.Column<int>(type: "int", nullable: false),
                     puntaje = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    productoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Calificaciones", x => x.id);
+                    table.PrimaryKey("PK_CalificacionesProducto", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Calificaciones_Productos_productoId",
+                        name: "FK_CalificacionesProducto_Productos_productoId",
                         column: x => x.productoId,
                         principalTable: "Productos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Calificaciones_Usuarios_usuarioId",
+                        name: "FK_CalificacionesProducto_Usuarios_usuarioId",
                         column: x => x.usuarioId,
                         principalTable: "Usuarios",
                         principalColumn: "id",
@@ -444,22 +491,27 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 1, null, "ADMIN", null, null, true, "Principal", "Administrador", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ADMIN", "admin@proyecto.com" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenResetPassword", "TokenResetPasswordExpira", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
+                values: new object[] { 1, null, "ADMIN", null, null, null, null, true, "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
-                values: new object[] { 2, null, "CLIENTE", null, null, true, "Cliente", "Juan", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenResetPassword", "TokenResetPasswordExpira", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
+                values: new object[] { 2, null, "CLIENTE", null, null, null, null, true, "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenResetPassword", "TokenResetPasswordExpira", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
                 values: new object[,]
                 {
-                    { 3, null, "ARTESANO", null, null, true, "Artesana", "Maria", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ARTESANO", "artesano@proyecto.com" },
-                    { 4, null, "ARTESANO", null, null, true, "Artesana", "Ana", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ARTESANO", "artesano2@proyecto.com" }
+                    { 3, null, "ARTESANO", null, null, null, null, true, "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" },
+                    { 4, null, "ARTESANO", null, null, null, null, true, "Artesana", "Ana", "Artesano123456", "ARTESANO", "artesano2@proyecto.com" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "CalificacionesArtesano",
+                columns: new[] { "id", "artesanoId", "fecha", "puntaje", "usuarioId" },
+                values: new object[] { 1, 3, new DateTime(2026, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 5m, 2 });
 
             migrationBuilder.InsertData(
                 table: "SubCategorias",
@@ -501,12 +553,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Calificaciones",
+                table: "CalificacionesProducto",
                 columns: new[] { "id", "fecha", "productoId", "puntaje", "usuarioId" },
                 values: new object[,]
                 {
                     { 1, new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 5m, 2 },
-                    { 2, new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 4m, 2 },
+                    { 2, new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 4m, 3 },
                     { 3, new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3m, 2 }
                 });
 
@@ -528,14 +580,26 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Calificaciones_productoId",
-                table: "Calificaciones",
+                name: "IX_CalificacionesArtesano_artesanoId",
+                table: "CalificacionesArtesano",
+                column: "artesanoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CalificacionesArtesano_usuarioId_artesanoId",
+                table: "CalificacionesArtesano",
+                columns: new[] { "usuarioId", "artesanoId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CalificacionesProducto_productoId",
+                table: "CalificacionesProducto",
                 column: "productoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Calificaciones_usuarioId",
-                table: "Calificaciones",
-                column: "usuarioId");
+                name: "IX_CalificacionesProducto_usuarioId_productoId",
+                table: "CalificacionesProducto",
+                columns: new[] { "usuarioId", "productoId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarritoItems_carritoId",
@@ -653,6 +717,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Calificaciones");
+
+            migrationBuilder.DropTable(
+                name: "CalificacionesArtesano");
+
+            migrationBuilder.DropTable(
+                name: "CalificacionesProducto");
 
             migrationBuilder.DropTable(
                 name: "CarritoItems");
