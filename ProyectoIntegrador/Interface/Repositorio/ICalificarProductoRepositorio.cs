@@ -9,24 +9,16 @@ namespace ProyectoIntegrador.LogicaNegocio.Interface.Repositorio
 {
     public interface ICalificarProductoRepositorio
     {
-        Task<Calificación?> ObtenerPorUsuarioYProducto(int usuarioId, int productoId);
-
-        Task<Calificación?> ObtenerPorUsuarioYArtesano(int usuarioId, int arteId);
-
         void Agregar(int productoId, int usuarioId, decimal puntaje);
 
-        void AgregarParaArtesano(int arteId, int usuarioId, decimal puntaje);
+        void Actualizar(CalificacionProducto calificacion);
 
-        void Actualizar(Calificación calificacion);
+        Task<CalificacionProducto?> ObtenerPorUsuarioYProducto(int usuarioId, int productoId);
 
         decimal ObtenerPromedioPorProducto(int productoId);
 
-        decimal ObtenerPromedioPorArtesano(int arteId);
+        int ObtenerTotalCalificaciones(int productoId);
 
-        int  ObtenerTotalCalificaciones(int productoId);
-
-        int ObtenerTotalCalificacionesArtesano(int arteId);
-
-
+        void EliminarParaProducto(int productoId);
     }
 }

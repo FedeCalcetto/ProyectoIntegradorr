@@ -1,30 +1,37 @@
 ﻿@model ProyectoIntegrador_Web.Models.EditarClienteViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
 @{
-    ViewData["Title"] = "Perfil";
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = localizer["Perfil"];
 }
 
 <div class="container py-5">
 
+    <h2 class="text-center mb-3 fw-semibold" style="color: black;">
+        @localizer["MiPerfil"]
+    </h2>
 
-    <h2 class="text-center mb-3 fw-semibold" style="color: black;">Mi Perfil</h2>
-    <p class="text-center text-muted mb-4">Actualiza tus datos personales</p>
+    <p class="text-center text-muted mb-4">
+        @localizer["ActualizarDatosPersonales"]
+    </p>
 
-    @if (TempData["Mensaje"] != null)
-    {
+@if (TempData["Mensaje"] != null)
+{
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             @TempData["Mensaje"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    }
+}
 
-    @if (TempData["Error"] != null)
-    {
+@if (TempData["Error"] != null)
+{
         <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
             @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    }
+}
 
     <form asp-action="Perfil" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
@@ -34,14 +41,14 @@
         <div class="d-flex justify-content-center mb-2">
             <img id="fotoPerfilCliente"
                  src="@(string.IsNullOrEmpty(Model.Foto)
-                                                              ? "/images/usuarios/default-image.jpg"
-                                                              : Model.Foto)"
+                                          ? "/images/usuarios/default-image.jpg"
+                                          : Model.Foto)"
                  class="img-thumbnail shadow foto-perfil">
         </div>
 
         <div class="text-center mb-3">
             <label class="btn btn-outline-secondary">
-                Seleccionar foto
+                @localizer["SeleccionarFoto"]
                 <input id="archivoFotoCliente" type="file" name="archivoFotoCliente" accept="image/*" hidden />
             </label>
 
@@ -51,82 +58,75 @@
         <!-- CAMPOS -->
         <input type="hidden" asp-for="Foto" />
 
-                        <!-- NOMBRE -->
-                        <div class="mb-3">
-                            <label asp-for="Nombre" class="form-label fw-semibold"></label>
-                            <input asp-for="Nombre" class="form-control" placeholder="Tu nombre" />
-                            <span asp-validation-for="Nombre" class="text-danger small"></span>
-                        </div>
+        <!-- NOMBRE -->
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label fw-semibold"></label>
+            <input asp-for="Nombre" class="form-control" placeholder="@localizer["TuNombre"]" />
+            <span asp-validation-for="Nombre" class="text-danger small"></span>
+        </div>
 
-                        <!-- APELLIDO -->
-                        <div class="mb-3">
-                            <label asp-for="Apellido" class="form-label fw-semibold"></label>
-                            <input asp-for="Apellido" class="form-control" placeholder="Tu apellido" />
-                            <span asp-validation-for="Apellido" class="text-danger small"></span>
-                        </div>
+        <!-- APELLIDO -->
+        <div class="mb-3">
+            <label asp-for="Apellido" class="form-label fw-semibold"></label>
+            <input asp-for="Apellido" class="form-control" placeholder="@localizer["TuApellido"]" />
+            <span asp-validation-for="Apellido" class="text-danger small"></span>
+        </div>
 
-                        <!-- EMAIL -->
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold"></label>
-                            <input asp-for="Email" class="form-control bg-light" readonly />
-                        </div>
+        <!-- EMAIL -->
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label fw-semibold"></label>
+            <input asp-for="Email" class="form-control bg-light" readonly />
+        </div>
 
+        <!-- DIRECCIÓN -->
+        <h5 class="mt-4 text-secondary fw-semibold border-bottom pb-1">
+            @localizer["Direccion"]
+        </h5>
 
+        <!-- DOMICILIO -->
+        <div class="mb-3 mt-2">
+            <label asp-for="Domicilio" class="form-label fw-semibold"></label>
+            <input asp-for="Domicilio" class="form-control" placeholder="@localizer["CalleNumero"]" />
+            <span asp-validation-for="Domicilio" class="text-danger small"></span>
+        </div>
 
-                        <!-- DIRECCIÓN -->
-                        <h5 class="mt-4 text-secondary fw-semibold border-bottom pb-1">Dirección</h5>
+        <!-- DEPARTAMENTO -->
+        <div class="mb-3">
+            <label asp-for="Departamento" class="form-label fw-semibold"></label>
+            <select asp-for="Departamento"
+                    class="form-select"
+                    asp-items="@(new SelectList(Model.DepartamentosOpciones))">
+            </select>
+            <span asp-validation-for="Departamento" class="text-danger small"></span>
+        </div>
 
-                        <!-- DOMICILIO -->
-                        <div class="mb-3 mt-2">
-                            <label asp-for="Domicilio" class="form-label fw-semibold"></label>
-                            <input asp-for="Domicilio" class="form-control" placeholder="Calle y número" />
-                            <span asp-validation-for="Domicilio" class="text-danger small"></span>
-                        </div>
+        <!-- BARRIO -->
+        <div class="mb-4">
+            <label asp-for="Barrio" class="form-label fw-semibold"></label>
+            <input asp-for="Barrio" class="form-control" placeholder="@localizer["BarrioZona"]" />
+            <span asp-validation-for="Barrio" class="text-danger small"></span>
+        </div>
 
-                        <!-- DEPARTAMENTO -->
-                        <div class="mb-3">
-                            <label asp-for="Departamento" class="form-label fw-semibold"></label>
-                            <select asp-for="Departamento"
-                                    class="form-select"
-                                    asp-items="@(new SelectList(Model.DepartamentosOpciones))">
-                            </select>
-                            <span asp-validation-for="Departamento" class="text-danger small"></span>
-                        </div>
+        <div class="d-flex justify-content-between">
+            <a asp-action="Inicio" class="btn btn-outline-secondary">
+                @localizer["Volver"]
+            </a>
 
-                        <!-- BARRIO -->
-                        <div class="mb-4">
-                            <label asp-for="Barrio" class="form-label fw-semibold"></label>
-                            <input asp-for="Barrio" class="form-control" placeholder="Barrio o zona" />
-                            <span asp-validation-for="Barrio" class="text-danger small"></span>
-                        </div>
+            <button type="submit" class="btn btn-primary">
+                @localizer["GuardarCambios"]
+            </button>
+        </div>
 
-                       
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Inicio" class="btn btn-outline-secondary">Volver</a>
-                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                        </div>
-
-                        <div>
-
-                        <div class="d-flex justify-content-left">
-                            <a id="nuevaP"
-                               asp-controller="Usuario"
-                               asp-action="CambioContra"
-                               asp-route-returnUrl="/Cliente/Perfil"
-                               class="btn btn-outline-secondary">
-                                Nueva contraseña
-                            </a>
-                        </div>
-
-                        </div>
-                    </form>
-
-
-    <!--  <div class="d-flex justify-content-center mt-4">
-        <a asp-controller="Usuario"asp-action="ConfirmarEliminacion"class="btn btn-danger">
-            Eliminar Cuenta
-        </a>
-    </div>-->
+        <div class="d-flex justify-content-left mt-3">
+            <a id="nuevaP"
+               asp-controller="Usuario"
+               asp-action="CambioContra"
+               asp-route-returnUrl="/Cliente/Perfil"
+               class="btn btn-outline-secondary">
+                @localizer["NuevaContrasena"]
+            </a>
+        </div>
+    </form>
 
     <div class="d-flex justify-content-center mt-4">
         <button type="button"
@@ -134,13 +134,15 @@
                 data-bs-toggle="modal"
                 data-bs-target="#modalEliminarCuenta"
                 onclick="pedirCodigoEliminar()">
-            Eliminar Cuenta
+            @localizer["EliminarCuenta"]
         </button>
     </div>
 
     <hr class="my-5" />
 
-    <h4 class="mb-4 fw-semibold text-center">Artesanos que seguís</h4>
+    <h4 class="mb-4 fw-semibold text-center">
+        @localizer["ArtesanosSeguidos"]
+    </h4>
 
 @if (Model.ListaSeguidores?.listaDeArtesanos.Any() == true)
 {
@@ -152,8 +154,8 @@
                         <div class="card-body text-center">
 
                             <img src="@(string.IsNullOrEmpty(artesano.foto)
-                                                                         ? "/images/usuarios/default-image.jpg"
-                                                                         : artesano.foto)"
+                                                                      ? "/images/usuarios/default-image.jpg"
+                                                                      : artesano.foto)"
                          class="rounded-circle mb-3"
                          style="width:100px;height:100px;object-fit:cover;" />
 
@@ -161,22 +163,20 @@
 
                             <div class="d-flex justify-content-center gap-2 mt-3">
 
-                                <!-- VER PERFIL -->
                                 <a asp-controller="Usuario"
                                    asp-action="PerfilPublico"
                                    asp-route-id="@artesano.id"
                                    class="btn btn-outline-primary btn-sm">
-                                    Ver perfil
+                                    @localizer["VerPerfil"]
                                 </a>
 
-                                <!-- DEJAR DE SEGUIR -->
                                 <form asp-controller="Cliente"
                                       asp-action="DejarDeSeguir"
                                       method="post"
                                       class="d-inline">
                                     <input type="hidden" name="artesanoId" value="@artesano.id" />
                                     <button type="submit" class="btn btn-danger btn-sm">
-                                        Dejar de seguir
+                                        @localizer["DejarDeSeguir"]
                                     </button>
                                 </form>
 
@@ -190,14 +190,13 @@
 else
 {
         <p class="text-center text-muted">
-            Aún no seguís a ningún artesano.
+            @localizer["NoSigueArtesanos"]
         </p>
 }
-    @await Html.PartialAsync("_ModalEliminarCuenta",Model.EliminarCuenta )
-    
+
+@await Html.PartialAsync("_ModalEliminarCuenta", Model.EliminarCuenta)
 
     <script>
-        // esto llama al post en ClientController --> PedirCodigoEliminar
         function pedirCodigoEliminar() {
             fetch('/Cliente/PedirCodigoEliminar', {
                 method: 'POST',
@@ -225,20 +224,15 @@ else
             }
         });
     </script>
-         
 
-
-<!-- SI HUBO ERROR EN EL MODAL, SE REABRE -->
 @if (TempData["ErrorEliminar"] != null)
 {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const modal = new bootstrap.Modal(
-                document.getElementById("modalEliminarCuenta")
-            );
-            modal.show();
-        });
-    </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const modal = new bootstrap.Modal(
+                    document.getElementById("modalEliminarCuenta")
+                );
+                modal.show();
+            });
+        </script>
 }
-
-

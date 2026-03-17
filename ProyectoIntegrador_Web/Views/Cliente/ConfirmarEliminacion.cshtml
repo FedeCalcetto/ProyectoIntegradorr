@@ -1,7 +1,17 @@
 ﻿@model ProyectoIntegrador_Web.Models.EliminarCuentaViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
-<h2 class="text-center text-danger mt-4">Eliminar cuenta</h2>
-<p class="text-center">Ingresá el código que enviamos a tu correo para confirmar.</p>
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
+<h2 class="text-center text-danger mt-4">
+    @localizer["EliminarCuenta"]
+</h2>
+
+<p class="text-center">
+    @localizer["IngresarCodigoConfirmacion"]
+</p>
 
 @if (TempData["Mensaje"] != null)
 {
@@ -12,9 +22,13 @@
     <input type="hidden" name="Email" value="@Model.Email" />
 
     <div class="mb-3">
-        <label class="form-label">Código de verificación</label>
+        <label class="form-label">
+            @localizer["CodigoVerificacion"]
+        </label>
         <input type="text" name="Codigo" class="form-control" required />
     </div>
 
-    <button class="btn btn-danger mt-2">Confirmar eliminación</button>
+    <button class="btn btn-danger mt-2">
+        @localizer["ConfirmarEliminacion"]
+    </button>
 </form>

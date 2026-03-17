@@ -1,39 +1,40 @@
-﻿@{
-    ViewData["Title"] = "Catálogo";
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+
+    ViewData["Title"] = localizer["Catalogo"];
 }
 
-<!-- HEADER NEGRO FULL WIDTH -->
+<!-- HEADER -->
 <div class="container-fluid px-0">
     <div class="catalog-header">
         <div class="container">
-          
-
             <div class="w-100">
                 <partial name="_Buscador" model="Model.Buscador" />
             </div>
         </div>
     </div>
-    
 </div>
 
-<!-- CONTENIDO DEL CATÁLOGO -->
+<!-- CONTENIDO -->
 <div class="container-fluid catalogo-container">
 
     <h3 class="text-center mb-3">
-        Catálogo de productos
-        
+        @localizer["CatalogoProductos"]
     </h3>
 
     <p class="text-muted medium mb-4 text-center">
-        <strong>Productos hechos a mano por artesanos locales</strong>
+        <strong>@localizer["ProductosArtesanos"]</strong>
     </p>
 
-    <!-- AGREGADOS RECIENTEMENTE (FONDO VERDE FULL WIDTH) -->
+    <!-- RECIENTES -->
     <div class="productosRecientes">
         <div class="container align-content-center">
 
             <h4 class="mb-3 mt-3 text-success fw-semibold">
-                Agregados recientemente
+                @localizer["AgregadosRecientemente"]
             </h4>
 
             <div class="slider-container">
@@ -94,7 +95,6 @@
     ▲
 </button>
 
-
 <script>
     function actualizarFlechas(sliderContainer) {
         const slider = sliderContainer.querySelector('.slider');
@@ -102,13 +102,14 @@
         const btnRight = sliderContainer.querySelector('.slider-btn.right');
 
         btnLeft.style.display = slider.scrollLeft <= 0 ? 'none' : 'block';
-          const item = slider.querySelector('.slider-item');
-    const anchoItem = item ? item.offsetWidth : 0;
 
-    btnRight.style.display =
-        slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - anchoItem / 2
-            ? 'none'
-            : 'block';
+        const item = slider.querySelector('.slider-item');
+        const anchoItem = item ? item.offsetWidth : 0;
+
+        btnRight.style.display =
+            slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - anchoItem / 2
+                ? 'none'
+                : 'block';
     }
 
     function mover(boton, direccion) {
@@ -126,11 +127,9 @@
             behavior: 'smooth'
         });
 
-        // Esperamos a que termine el scroll
         setTimeout(() => actualizarFlechas(sliderContainer), 300);
     }
 
-    // Inicializa flechas al cargar
     document.querySelectorAll('.slider-container').forEach(sc => {
         actualizarFlechas(sc);
 
@@ -139,21 +138,6 @@
     });
 </script>
 
-  @*   <!--Oculta header -->
-    <script>
-
-        const btnToggleHeader = document.getElementById('btnToggleHeader');
-        const catalogHeader = document.querySelector('.catalog-header');
-
-        btnToggleHeader.addEventListener('click', () => {
-            catalogHeader.classList.toggle('collapsed');
-        });
-    </script>
-
-    
- *@
-
-<!-- esto se encarga que al darle click suba -->
 <script>
     const botonSubir = document.getElementById("btnSubir");
 
@@ -161,7 +145,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // esto detecta cuando se escrolleo mas de 200 en valor y muestra el boton
     window.addEventListener("scroll", () => {
         botonSubir.style.display = window.scrollY > 200 ? "block" : "none";
     });

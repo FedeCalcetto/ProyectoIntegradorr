@@ -1,35 +1,43 @@
 ﻿ @using ProyectoIntegrador.LogicaNegocio.Entidades
 @model FacturaNoFiscalCliente
+
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
+
 @Html.AntiForgeryToken()
 
 @if (Model == null)
 {
-    <h3>No se encontró la factura.</h3>
+    <h3>@localizer["FacturaNoEncontrada"]</h3>
     return;
 }
-<h2>Factura no fiscal</h2>
+
+<h2>@localizer["FacturaNoFiscal"]</h2>
 
 <p>
-    Esta factura muestra únicamente datos relacionados a su compra.
-    Es realizada a modo de prueba.
+    @localizer["DescripcionFacturaCliente"]
 </p>
 
 <div class="card mb-3">
     <div class="card-body">
-        <h5>Cliente: @Model.Cliente?.nombre</h5>
+        <h5>@localizer["Cliente"]: @Model.Cliente?.nombre</h5>
 
-        <h5 class="mt-4">Detalle de la compra</h5>
+        <h5 class="mt-4">@localizer["DetalleCompra"]</h5>
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
                     <tr>
-                        <th>Producto</th>
-                        <th>Artesano</th>
-                        <th>Precio unitario</th>
-                        <th>Cantidad</th>
-                        <th>Subtotal</th>
-                        <th>Calificar</th>
+                        <th>@localizer["Producto"]</th>
+                        <th>@localizer["Artesano"]</th>
+                        <th>@localizer["PrecioUnitario"]</th>
+                        <th>@localizer["Cantidad"]</th>
+                        <th>@localizer["Subtotal"]</th>
+                        <th>@localizer["Calificar"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,8 +75,8 @@
                     else
                     {
                         <tr>
-                            <td colspan="5" class="text-center">
-                                Esta factura no tiene ítems.
+                            <td colspan="6" class="text-center">
+                                @localizer["FacturaSinItems"]
                             </td>
                         </tr>
                     }
@@ -77,14 +85,17 @@
         </div>
 
         <div class="text-end mt-3">
-            <h5>Total pagado: <strong>$@Model.Total</strong></h5>
-            <p>Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</p>
+            <h5>
+                @localizer["TotalPagado"]:
+                <strong>$@Model.Total</strong>
+            </h5>
+            <p>@localizer["Fecha"]: @Model.Fecha.ToString("dd/MM/yyyy")</p>
         </div>
 
         <a class="btn btn-primary mt-3"
            asp-action="PDFCliente"
            asp-route-id="@Model.Id">
-            Descargar PDF
+            @localizer["DescargarPDF"]
         </a>
     </div>
 </div>
@@ -113,9 +124,9 @@
             .then(response => {
                 if (response.ok) {
                     pintarEstrellas(container, puntaje);
-                    alert("Gracias por calificar ⭐");
+                    alert("@localizer["GraciasCalificar"] ⭐");
                 } else {
-                    alert("No se pudo calificar.");
+                    alert("@localizer["ErrorCalificar"]");
                 }
             });
         });

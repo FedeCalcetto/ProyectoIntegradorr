@@ -1,50 +1,48 @@
 ﻿@model ProyectoIntegrador_Web.Models.EditarArtesanoViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
 @{
-    ViewData["Title"] = "Perfil";
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = localizer["Perfil"];
 }
 
 <div class="layout">
 
     <div class="barraLateral">
         <div class="sidebar">
-            <p>Otras opciones...</p>
+            <p>@localizer["OtrasOpciones"]</p>
+
             <div class="mb-3 d-flex justify-content-left">
-            <a asp-controller="Usuario"
-               asp-action="CambioContra"
-               asp-route-returnUrl="/Artesano/PerfilArtesano"
-               class="btn btn-outline-secondary">
-                Nueva contraseña
-            </a>
-        </div>
+                <a asp-controller="Usuario"
+                   asp-action="CambioContra"
+                   asp-route-returnUrl="/Artesano/PerfilArtesano"
+                   class="btn btn-outline-secondary">
+                    @localizer["NuevaContrasena"]
+                </a>
+            </div>
 
-       @*  <div class="mb-3 d-flex justify-content-left">
-            <a  class="btn btn-outline-secondary"
-                   asp-controller="MercadoPagoOAuth"
-                   asp-action="Conectar">
-                Conectar con MP
-            </a>
-        </div> *@
-
-        <div class="d-flex justify-content-left mt-4">
-            <button type="button"
-                    class="btn btn-danger"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalEliminarCuenta"
-                    onclick="pedirCodigoEliminarArtesano()">
-                Eliminar Cuenta
-            </button>
-        </div>
+            <div class="d-flex justify-content-left mt-4">
+                <button type="button"
+                        class="btn btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalEliminarCuenta"
+                        onclick="pedirCodigoEliminarArtesano()">
+                    @localizer["EliminarCuenta"]
+                </button>
+            </div>
         </div>
     </div>
 
-    
-    
-
     <div class="contenido py-5">
 
-        <h2 class="text-center mb-3 fw-semibold" style="color: black;">Mi Perfil</h2>
-        <p class="text-center text-muted mb-4">Actualiza tus datos personales</p>
+        <h2 class="text-center mb-3 fw-semibold" style="color: black;">
+            @localizer["MiPerfil"]
+        </h2>
+
+        <p class="text-center text-muted mb-4">
+            @localizer["ActualizarDatosPersonales"]
+        </p>
 
         @if (TempData["Mensaje"] != null)
         {
@@ -62,7 +60,6 @@
             </div>
         }
 
-        <!-- ÚNICO FORMULARIO -->
         <form asp-action="PerfilArtesano" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
@@ -71,14 +68,14 @@
             <div class="d-flex justify-content-center mb-2">
                 <img id="fotoPerfil"
                      src="@(string.IsNullOrEmpty(Model.Foto)
-                                             ? "/images/usuarios/default-image.jpg"
-                                             : Model.Foto)"
+                                                                  ? "/images/usuarios/default-image.jpg"
+                                                                  : Model.Foto)"
                      class="img-thumbnail shadow foto-perfil">
             </div>
 
             <div class="text-center mb-3">
                 <label class="btn btn-outline-secondary">
-                    Seleccionar foto
+                    @localizer["SeleccionarFoto"]
                     <input id="archivoFoto" type="file" name="archivoFoto" accept="image/*" hidden />
                 </label>
 
@@ -119,41 +116,27 @@
 
             <input type="hidden" asp-for="Password" />
 
-          @*   <div class="mb-3">
-                <a asp-controller="Usuario"
-                   asp-action="CambioContra"
-                   asp-route-returnUrl="/Artesano/PerfilArtesano"
-                   class="btn btn-outline-secondary">
-                    Nueva contraseña
-                </a>
-            </div> *@
-
             <!-- BOTONES -->
             <div class="d-flex justify-content-between">
-                <a asp-action="FacturasArtesano" asp-controller="FacturaNoFiscal" class="btn btn-outline-secondary">Volver</a>
-                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                <a asp-action="FacturasArtesano"
+                   asp-controller="FacturaNoFiscal"
+                   class="btn btn-outline-secondary">
+                    @localizer["Volver"]
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    @localizer["GuardarCambios"]
+                </button>
             </div>
 
         </form>
-
-       @*  <div class="d-flex justify-content-center mt-4">
-            <button type="button"
-                    class="btn btn-danger"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalEliminarCuenta"
-                    onclick="pedirCodigoEliminarArtesano()">
-                Eliminar Cuenta
-            </button>
-        </div> *@
 
         @if (Model.EliminarCuenta != null)
         {
             @await Html.PartialAsync("_ModalEliminarCuenta", Model.EliminarCuenta)
         }
 
-
         <script>
-            //llama al controller del artesano a PedirCodigoEliminar
             function pedirCodigoEliminarArtesano() {
                 fetch('/Artesano/PedirCodigoEliminar', {
                     method: 'POST',
@@ -165,7 +148,6 @@
             }
         </script>
 
-        <!-- PREVISUALIZACIÓN -->
         <script>
             const input = document.getElementById("archivoFoto");
             const preview = document.getElementById("fotoPerfil");
@@ -183,7 +165,6 @@
             });
         </script>
 
-
         @if (TempData["ErrorEliminar"] != null)
         {
             <script>
@@ -195,7 +176,6 @@
                 });
             </script>
         }
-
 
     </div>
 </div>

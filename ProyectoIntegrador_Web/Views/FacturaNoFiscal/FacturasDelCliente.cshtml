@@ -1,7 +1,12 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @model IEnumerable<FacturaNoFiscalCliente>
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
-<h2>Mis compras</h2>
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
+<h2>@localizer["MisCompras"]</h2>
 
 <div class="row">
     @foreach (var factura in Model)
@@ -10,18 +15,18 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">
-                        Resumen de compra
+                        @localizer["ResumenCompra"]
                     </h5>
 
                     <p class="card-text">
-                        <strong>Fecha:</strong> @factura.Fecha.ToString("dd/MM/yyyy") <br />
-                        <strong>Total:</strong> $@factura.Total
+                        <strong>@localizer["Fecha"]:</strong> @factura.Fecha.ToString("dd/MM/yyyy") <br />
+                        <strong>@localizer["Total"]:</strong> $@factura.Total
                     </p>
 
                     <a class="btn btn-outline-primary"
                        asp-action="FacturaPorOrden"
                        asp-route-ordenId="@factura.OrdenId">
-                        Ver detalle
+                        @localizer["VerDetalle"]
                     </a>
                 </div>
             </div>

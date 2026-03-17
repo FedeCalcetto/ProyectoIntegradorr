@@ -1,5 +1,10 @@
 ﻿@model ProyectoIntegrador_Web.Models.ProductosFiltradosViewModel
-
+@using Microsoft.Extensions.Localization
+@using System.Text.Json
+@inject IStringLocalizerFactory factory
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
 <nav class="navbar mb-4">
     <div class="container-fluid ">
 
@@ -12,11 +17,13 @@
                     style="width:150px"
                     id="modoBusqueda"
                     name="ModoBusqueda">
+
                 <option value="productos" selected="@(Model.ModoBusqueda == "productos")">
-                    Productos
+                    @localizer["Productos"]
                 </option>
+
                 <option value="usuarios" selected="@(Model.ModoBusqueda == "usuarios")">
-                    Usuarios
+                    @localizer["Usuarios"]
                 </option>
             </select>
 
@@ -26,31 +33,32 @@
                    id="inputBusqueda"
                    class="form-control"
                    value="@Model.Filtro"
-                   placeholder="Buscar..."
+                   placeholder="@localizer["Buscar"]"
                    style="min-width:260px" />
 
-            <!-- FILTROS PRODUCTOS -->
+            <!-- FILTROS -->
             <div id="filtrosProductos" class="d-flex gap-2">
 
                 <input type="number"
                        name="PrecioMin"
                        class="form-control"
                        value="@Model.PrecioMin"
-                       placeholder="Precio mín."
+                       placeholder="@localizer["PrecioMin"]"
                        style="width:140px" />
 
                 <input type="number"
                        name="PrecioMax"
                        class="form-control"
                        value="@Model.PrecioMax"
-                       placeholder="Precio máx."
+                       placeholder="@localizer["PrecioMax"]"
                        style="width:140px" />
 
                 <select id="categoriaSelect"
                         name="CategoriaId"
                         class="form-select"
                         style="width:180px">
-                    <option value="">Categorías</option>
+                    <option value="">@localizer["Categorias"]</option>
+
                     @foreach (var c in Model.Categorias ?? Enumerable.Empty<ProyectoIntegrador.LogicaNegocio.Entidades.Categoria>())
                     {
                         <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">
@@ -64,7 +72,9 @@
                         class="form-select"
                         style="width:200px"
                         @(Model.CategoriaId == null ? "disabled" : "")>
-                    <option value="">Subcategorías</option>
+
+                    <option value="">@localizer["Subcategorias"]</option>
+
                     @foreach (var s in Model.SubCategorias ?? Enumerable.Empty<ProyectoIntegrador.LogicaNegocio.Entidades.SubCategoria>())
                     {
                         <option value="@s.Id" selected="@(Model.SubCategoriaId == s.Id)">
@@ -76,15 +86,13 @@
 
             <!-- BOTÓN -->
             <button class="btn btn-primary px-4">
-                Buscar
+                @localizer["Buscar"]
             </button>
 
         </form>
     </div>
 </nav>
-
-
- <script>
+<script>
     document.addEventListener('DOMContentLoaded', function () {
 
         const form = document.getElementById('formBusqueda');
@@ -92,17 +100,23 @@
         const filtros = document.getElementById('filtrosProductos');
         const input = document.getElementById('inputBusqueda');
 
+        const placeholderUsuarios = @Html.Raw(JsonSerializer.Serialize(localizer["BuscarUsuarios"].Value));
+        const placeholderProductos = @Html.Raw(JsonSerializer.Serialize(localizer["BuscarProductos"].Value));
+
+        const urlUsuarios = '@Url.Action("BusquedaDeUsuarios", "Usuario")';
+        const urlProductos = '@Url.Action("ProductosFiltrados", "Producto")';
+
         function actualizarModo() {
             if (modo.value === 'usuarios') {
                 filtros.classList.add('d-none');
                 filtros.classList.remove('d-flex');
-                form.action = '/Usuario/BusquedaDeUsuarios';
-                input.placeholder = 'Buscar usuarios...';
+                form.action = urlUsuarios;
+                input.placeholder = placeholderUsuarios;
             } else {
                 filtros.classList.remove('d-none');
                 filtros.classList.add('d-flex');
-                form.action = '/Producto/ProductosFiltrados';
-                input.placeholder = 'Buscar productos...';
+                form.action = urlProductos;
+                input.placeholder = placeholderProductos;
             }
         }
 
@@ -116,7 +130,9 @@
             categoriaSelect.addEventListener("change", function () {
                 const categoriaId = this.value;
 
-                subcategoriaSelect.innerHTML = '<option value="">Subcategorías</option>';
+                subcategoriaSelect.innerHTML =
+                    `<option value="">${@Html.Raw(JsonSerializer.Serialize(localizer["Subcategorias"].Value))}</option>`;
+
                 subcategoriaSelect.disabled = true;
 
                 if (!categoriaId) return;
@@ -135,4 +151,4 @@
             });
         }
     });
-</script> 
+</script>

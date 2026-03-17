@@ -38,7 +38,9 @@ namespace ProyectoIntegrador_Web
             builder.Services.AddScoped<IOrdenRepositorio, OrdenEFRepositorio>();
             builder.Services.AddScoped<IFacturaRepositorio, FacturaEFRepsoitorio>();
             builder.Services.AddScoped<IPedidoPersonalizadoRepsoitorio, PedidoPersonalizadoEFRepositorio>();
-            builder.Services.AddScoped<ICalificarProductoRepositorio, CalificacionEFRepositorio>();
+            builder.Services.AddScoped<ICalificarProducto2Repositorio, CalificacionEFRepositorio>();
+            builder.Services.AddScoped<ICalificarProductoRepositorio, CalificacionProductoEFRepositorio>();
+            builder.Services.AddScoped<ICalificarArtesanoRepositorio, CalificacionArtesanoEFRepositorio>();
 
             builder.Services.AddScoped<IComentarioRepositorio, ComentarioEFRepositorio>();
             //Casos de uso
@@ -129,13 +131,6 @@ namespace ProyectoIntegrador_Web
              );
 
 
-
-            builder.Services.AddLocalization(options =>
-            {
-                options.ResourcesPath = "Lenguajes"; 
-            });
-
-
             var supportedCultures = new[]
             {
                 new CultureInfo("es"),
@@ -153,7 +148,7 @@ namespace ProyectoIntegrador_Web
 
                 options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
             });
-
+           
             var app = builder.Build();
 
 

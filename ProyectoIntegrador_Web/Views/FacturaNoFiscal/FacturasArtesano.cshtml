@@ -1,8 +1,16 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @model VentaViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center fw-bold">Mis ventas</h2>
+    <h2 class="mb-4 text-center fw-bold">
+        @localizer["MisVentas"]
+    </h2>
 
     @if (Model.Ventas.Any())
     {
@@ -10,11 +18,11 @@
             <table class="table table-hover align-middle">
                 <thead class="thead-negro">
                     <tr>
-                        <th>Fecha</th>
-                        <th>Artículos</th>
-                        <th>Tipo</th>
-                        <th>Total</th>
-                        <th class="text-center">Detalle</th>
+                        <th>@localizer["Fecha"]</th>
+                        <th>@localizer["Articulos"]</th>
+                        <th>@localizer["Tipo"]</th>
+                        <th>@localizer["Total"]</th>
+                        <th class="text-center">@localizer["Detalle"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,11 +34,11 @@
                             </td>
 
                             <td>
-                                @factura.itemsFactura.Count item(s)
+                                @factura.itemsFactura.Count @localizer["Items"]
                             </td>
 
                             <td>
-                                Venta
+                                @localizer["Venta"]
                             </td>
 
                             <td>
@@ -42,7 +50,7 @@
                                    asp-controller="FacturaNoFiscal"
                                    asp-action="ArtesanoFacturaNoFiscal"
                                    asp-route-facturaId="@factura.Id">
-                                    Ver detalle
+                                    @localizer["VerDetalle"]
                                 </a>
                             </td>
                         </tr>
@@ -54,7 +62,7 @@
     else
     {
         <p class="text-center text-muted">
-            No tenés ventas registradas todavía.
+            @localizer["SinVentas"]
         </p>
     }
 
@@ -67,7 +75,7 @@
                     <a class="page-link"
                        asp-action="Inicio"
                        asp-route-pagina="@(Model.PaginaActual - 1)">
-                        Anterior
+                        @localizer["Anterior"]
                     </a>
                 </li>
 
@@ -86,7 +94,7 @@
                     <a class="page-link"
                        asp-action="Inicio"
                        asp-route-pagina="@(Model.PaginaActual + 1)">
-                        Siguiente
+                        @localizer["Siguiente"]
                     </a>
                 </li>
 

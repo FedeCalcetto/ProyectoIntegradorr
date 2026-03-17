@@ -1,41 +1,53 @@
 ﻿@model ProyectoIntegrador_Web.Models.AltaProductoViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h4 class="mb-0"><i class="bi bi-box-seam me-2"></i>Alta de Producto</h4>
+            <h4 class="mb-0">
+                <i class="bi bi-box-seam me-2"></i>
+                @localizer["AltaProducto"]
+            </h4>
         </div>
+
         <div class="card-body">
 
-           @*  @if (TempData["Mensaje"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i>@TempData["Mensaje"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            } *@
-
-            <!-- 🔥 SOLO MUESTRA ERRORES DEL SERVIDOR (NO VALIDACIONES DE CAMPOS ANTES DE ENVIAR) -->
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            <form asp-controller="Producto" asp-action="AltaProducto" method="post" enctype="multipart/form-data">
+            <form asp-controller="Producto"
+                  asp-action="AltaProducto"
+                  method="post"
+                  enctype="multipart/form-data">
+
                 <div class="row g-3">
 
                     <div class="col-md-6">
                         <label asp-for="nombre" class="form-label"></label>
-                        <input asp-for="nombre" class="form-control" placeholder="Ej: Mate de madera" />
+                        <input asp-for="nombre"
+                               class="form-control"
+                               placeholder="@localizer["PlaceholderNombreProducto"]" />
                         <span asp-validation-for="nombre" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-6">
                         <label asp-for="precio" class="form-label"></label>
-                        <input asp-for="precio" class="form-control" placeholder="Ej: 350.00" />
+                        <input asp-for="precio"
+                               class="form-control"
+                               placeholder="@localizer["PlaceholderPrecio"]" />
                         <span asp-validation-for="precio" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-12">
                         <label asp-for="descripcion" class="form-label"></label>
-                        <textarea asp-for="descripcion" class="form-control" rows="3" placeholder="Describe el producto..."></textarea>
+                        <textarea asp-for="descripcion"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="@localizer["PlaceholderDescripcionProducto"]">
+                        </textarea>
                         <span asp-validation-for="descripcion" class="text-danger small"></span>
                     </div>
 
@@ -46,49 +58,78 @@
                     </div>
 
                     <div class="col-md-8">
-                        <label class="form-label">Imagen del producto (principal)</label>
-                        <input asp-for="ArchivoImagen" type="file" class="form-control" accept="image/*" />
+                        <label class="form-label">
+                            @localizer["ImagenPrincipal"]
+                        </label>
+                        <input asp-for="ArchivoImagen"
+                               type="file"
+                               class="form-control"
+                               accept="image/*" />
                         <span asp-validation-for="ArchivoImagen" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-12 mt-3">
-                        <label class="form-label">Fotos adicionales (opcional)</label>
-                        <input asp-for="Fotos" type="file" class="form-control" multiple="multiple" accept="image/*" name="Fotos" />
+                        <label class="form-label">
+                            @localizer["FotosAdicionales"]
+                        </label>
+                        <input asp-for="Fotos"
+                               type="file"
+                               class="form-control"
+                               multiple="multiple"
+                               accept="image/*"
+                               name="Fotos" />
                         <span asp-validation-for="Fotos" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-6">
                         <label asp-for="CategoriaId" class="form-label"></label>
-                        <select asp-for="CategoriaId" class="form-select" id="categoriaSelect">
-                            <option value="">Seleccione una categoría</option>
+                        <select asp-for="CategoriaId"
+                                class="form-select"
+                                id="categoriaSelect">
+
+                            <option value="">
+                                @localizer["SeleccionarCategoria"]
+                            </option>
+
                             @foreach (var c in Model.Categorias)
                             {
                                 <option value="@c.Id">@c.Nombre</option>
                             }
                         </select>
+
                         <span asp-validation-for="CategoriaId" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-6">
                         <label asp-for="SubCategoriaId" class="form-label"></label>
-                        <select asp-for="SubCategoriaId" class="form-select" id="subcategoriaSelect">
-                            <option value="">Seleccione una subcategoría</option>
+                        <select asp-for="SubCategoriaId"
+                                class="form-select"
+                                id="subcategoriaSelect">
+
+                            <option value="">
+                                @localizer["SeleccionarSubcategoria"]
+                            </option>
+
                         </select>
+
                         <span asp-validation-for="SubCategoriaId" class="text-danger small"></span>
                     </div>
-                    <br />
+
                 </div>
 
-                <div class="d-flex justify-content-between">
-                    <a asp-action="ProductosDelArtesano" class="btn btn-outline-secondary w-25 text-center">
-                    Volver
+                <div class="d-flex justify-content-between mt-3">
+                    <a asp-action="ProductosDelArtesano"
+                       class="btn btn-outline-secondary w-25 text-center">
+                        @localizer["Volver"]
                     </a>
-                    <button type="submit" class="btn btn-success w-25">
-                        <i class="bi bi-save me-1"></i>Guardar producto
+
+                    <button type="submit"
+                            class="btn btn-success w-25">
+                        <i class="bi bi-save me-1"></i>
+                        @localizer["GuardarProducto"]
                     </button>
                 </div>
 
-                
             </form>
         </div>
     </div>
@@ -98,16 +139,23 @@
     <script>
         $("#categoriaSelect").change(function () {
             let categoriaId = $(this).val();
-            $("#subcategoriaSelect").empty().append(`<option value="">Cargando...</option>`);
+
+            $("#subcategoriaSelect")
+                .empty()
+                .append(`<option value="">@Localizer["Cargando"]...</option>`);
 
             $.getJSON('/Producto/GetSubcategorias?categoriaId=' + categoriaId, function (data) {
-                $("#subcategoriaSelect").empty().append(`<option value="">Seleccione una subcategoría</option>`);
+
+                $("#subcategoriaSelect")
+                    .empty()
+                    .append(`<option value="">@Localizer["SeleccionarSubcategoria"]</option>`);
+
                 data.forEach(function (sub) {
-                    $("#subcategoriaSelect").append(`<option value="${sub.id}">${sub.nombre}</option>`);
+                    $("#subcategoriaSelect")
+                        .append(`<option value="${sub.id}">${sub.nombre}</option>`);
                 });
             });
         });
     </script>
 }
-
 

@@ -1,20 +1,28 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @model FacturaNoFiscalArtesano
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
 
 <div class="text-center">
-<h2>Resumen informativo de ventas</h2>
-<p>
-    Este apartado muestra únicamente datos relacionados a sus ventas.
-</p>
+    <h2>@localizer["ResumenVentas"]</h2>
+    <p>
+        @localizer["DescripcionResumenVentas"]
+    </p>
 </div>
-
 
 <div class="card mb-4 shadow-sm">
     <div class="card-body">
-        <h4 class="mb-3">Para el artesano - @Model.Artesano.nombre</h4>
+        <h4 class="mb-3">
+            @localizer["ParaArtesano"] - @Model.Artesano.nombre
+        </h4>
 
-        <h5 class="mb-3">Por la venta de:</h5>
+        <h5 class="mb-3">
+            @localizer["PorLaVentaDe"]
+        </h5>
 
         <div class="row">
             @foreach (var lineaFactura in Model.itemsFactura)
@@ -27,15 +35,15 @@
                             </h6>
 
                             <p class="mb-1">
-                                <strong>Precio:</strong> $@lineaFactura.precioUnitario
+                                <strong>@localizer["Precio"]:</strong> $@lineaFactura.precioUnitario
                             </p>
 
                             <p class="mb-1">
-                                <strong>Cantidad:</strong> @lineaFactura.cantidad
+                                <strong>@localizer["Cantidad"]:</strong> @lineaFactura.cantidad
                             </p>
 
                             <p class="mb-0">
-                                <strong>Subtotal:</strong>
+                                <strong>@localizer["Subtotal"]:</strong>
                                 $@(lineaFactura.precioUnitario* lineaFactura.cantidad)
                             </p>
                         </div>
@@ -48,10 +56,10 @@
 
         <div class="d-flex justify-content-between">
             <p class="mb-0">
-                <strong>Total vendido:</strong> $@Model.Total
+                <strong>@localizer["TotalVendido"]:</strong> $@Model.Total
             </p>
             <p class="mb-0">
-                <strong>Fecha:</strong> @Model.Fecha.ToString("dd/MM/yyyy")
+                <strong>@localizer["Fecha"]:</strong> @Model.Fecha.ToString("dd/MM/yyyy")
             </p>
         </div>
     </div>

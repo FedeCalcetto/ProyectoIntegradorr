@@ -11,9 +11,9 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
     public class CalificarArtesanoCasoDeUso : ICalificarArtesano
     {
 
-        private readonly ICalificarProductoRepositorio _calificarRepo;
+        private readonly ICalificarArtesanoRepositorio _calificarRepo;
 
-        public CalificarArtesanoCasoDeUso(ICalificarProductoRepositorio calificarRepo)
+        public CalificarArtesanoCasoDeUso(ICalificarArtesanoRepositorio calificarRepo)
         {
             _calificarRepo = calificarRepo;
         }
@@ -32,7 +32,7 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                 _calificarRepo.Actualizar(existente);
             }
             else
-                _calificarRepo.AgregarParaArtesano(arteId, usuarioId, puntaje);
+                _calificarRepo.Agregar(arteId, usuarioId, puntaje);
         }
     }
 }
