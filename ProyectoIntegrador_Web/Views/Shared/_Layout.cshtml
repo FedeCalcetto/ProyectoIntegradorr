@@ -53,17 +53,27 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav w-100 align-items-center">
 
-                        @{
-                            var rol = Context.Session.GetString("Rol")?.ToUpper();
-                            var email = Context.Session.GetString("loginUsuario");
-                        }
+                    @{
+                        var rol = Context.Session.GetString("Rol")?.ToUpper();
+                        var email = Context.Session.GetString("loginUsuario");
+                    }
 
-                        @if (rol == null || rol != null)
-                        {
-                           <form method="get">
-                                <select name="culture" onchange="this.form.submit()">
+                    <!-- IZQUIERDA -->
+                    <ul class="navbar-nav me-auto align-items-center gap-2">
+
+                        <!-- IDIOMA -->
+                        <li class="nav-item">
+                            <form asp-controller="Home"
+                                  asp-action="CambiarIdioma"
+                                  method="post"
+                                  class="d-flex">
+
+                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+
+                                <select name="culture"
+                                        onchange="this.form.submit()"
+                                        class="form-select form-select-sm">
 
                                     <option value="es"
                                             selected="@(CultureInfo.CurrentUICulture.Name.StartsWith("es"))">
@@ -76,135 +86,100 @@
                                     </option>
 
                                 </select>
-                           </form> 
+                            </form>
+                        </li>
 
-                           <p>@System.Globalization.CultureInfo.CurrentUICulture</p>
-
-                        }
-
-                        <!-- NO LOGUEADO -->
-                        @if (rol == null)
+                        <!-- OPCIONES SEGÚN ROL -->
+                        @if (rol == "CLIENTE")
                         {
-                            <li class="nav-item ms-auto">
-                                <a class="btn btn-success"
-                                asp-controller="Login"
-                                asp-action="Login">
-                                    @localizer["IniciarSesion"]
-                                </a>
-                            </li>
-
-
-
-                        }
-
-                   
-
-                        <!-- LOGUEADO -->
-                        @if (rol != null)
-                        {
-                            @if (rol == "CLIENTE"){
-                            <li>
-                                <a class="dropdown-item dropdown-item-catalogo"
+                            <li class="nav-item">
+                                <a class="nav-link"
                                    asp-controller="Usuario"
                                    asp-action="Catalogo">
-                                    <i class="bi bi-grid-3x3-gap me-2"></i>
-                                        @localizer["VerCatalogo"]
+                                    @localizer["VerCatalogo"]
                                 </a>
                             </li>
-                          
-                            <li>
-                                <a class="dropdown-item dropdown-item-catalogo"
+
+                            <li class="nav-item">
+                                <a class="nav-link"
                                    asp-controller="PedidoPersonalizado"
                                    asp-action="Crear">
-                                        @localizer["PedidoPersonalizado"]
-                                    </a>
+                                    @localizer["PedidoPersonalizado"]
+                                </a>
                             </li>
-                            }
+                        }
 
-                            @if (rol == "ARTESANO")
-                            {
-                                <li>
-                                    <a class="dropdown-item dropdown-item-catalogo"
-                                       asp-controller="Producto"
-                                       asp-action="AltaProducto">
-                                        @localizer["AgregarProducto"]
-                                    </a>
-                                </li>
+                        @if (rol == "ARTESANO")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Producto"
+                                   asp-action="AltaProducto">
+                                    @localizer["AgregarProducto"]
+                                </a>
+                            </li>
 
-                                <li>
-                                    <a class="dropdown-item dropdown-item-catalogo"
-                                       asp-controller="Artesano"
-                                       asp-action="ProductosDelArtesano">
-                                        @localizer["TusProductos"]
-                                    </a>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Artesano"
+                                   asp-action="ProductosDelArtesano">
+                                    @localizer["TusProductos"]
+                                </a>
+                            </li>
 
-                                <li>
-                                    <a class="dropdown-item dropdown-item-catalogo"
-                                       asp-controller="Artesano"
-                                       asp-action="Dashboard">
-                                        @localizer["TusVentas"]
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item dropdown-item-catalogo"
-                                    asp-controller="PedidoPersonalizado"
-                                       asp-action="PedidosPersonalizados">
-                                        @localizer["PedidosPersonalizados"]
-                                    </a>
-                                </li>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Artesano"
+                                   asp-action="Dashboard">
+                                    @localizer["TusVentas"]
+                                </a>
+                            </li>
+                        }
 
-                            }
-                            <!-- BARRA DE BÚSQUEDA -->
-                            @if (rol == "CLIENTE" || rol == "ARTESANO" || rol == "ADMIN")
-                            {
-                                <li class="nav-item dropdown">
-                               @*      <button class="nav-link dropdown-toggle"
-                                            type="button"
-                                            data-bs-toggle="dropdown">
-                                        Barra de búsqueda
-                                    </button> *@
+                    </ul>
 
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="Usuario"
-                                               asp-action="BusquedaDeUsuarios">
-                                                @localizer["Usuarios"]
-                                            </a>
-                                        </li>
+                    <!-- DERECHA -->
+                    <ul class="navbar-nav ms-auto align-items-center gap-2">
 
-                                        @* SOLO CLIENTE *@
-                                        @if (rol == "CLIENTE" || rol == "ADMIN")
-                                        {
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   asp-controller="Producto"
-                                                   asp-action="ProductosFiltrados">
-                                                    @localizer["Productos"]
-                                                </a>
-                                            </li>
-                                           
+                        <!-- LOGIN -->
+                        @if (string.IsNullOrEmpty(email))
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-success"
+                                   asp-controller="Login"
+                                   asp-action="Login">
+                                    Iniciar sesión
+                                </a>
+                            </li>
+                        }
 
-                                        }
-                                    </ul>
-                                </li>
-                            }
+                        <!-- CARRITO -->
+                        @if (rol == "CLIENTE")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link position-relative"
+                                   asp-controller="Carrito"
+                                   asp-action="Index">
 
-                          
+                                    <img src="~/images/carrito/carrito.png"
+                                         style="width:28px;" />
 
+                                    @await Component.InvokeAsync("CarritoCantidad")
+                                </a>
+                            </li>
+                        }
 
-                            <!-- PERFIL A LA DERECHA -->
-                            <li class="nav-item dropdown ms-auto">
+                        <!-- PERFIL -->
+                        @if (!string.IsNullOrEmpty(email))
+                        {
+                            <li class="nav-item dropdown">
                                 <button class="nav-link dropdown-toggle"
-                                        type="button"
                                         data-bs-toggle="dropdown">
                                     @email
                                 </button>
 
                                 <ul class="dropdown-menu dropdown-menu-end">
 
-                                    @* CLIENTE *@
                                     @if (rol == "CLIENTE")
                                     {
                                         <li>
@@ -222,21 +197,7 @@
                                                 @localizer["Favoritos"]
                                             </a>
                                         </li>
-                                       @*  <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="PedidoPersonalizado"
-                                               asp-action="Crear">
-                                                Hacer pedido personalizado
-                                            </a>
-                                        </li> *@
-                                       
-                                       @*  <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="Carrito"
-                                               asp-action="Index">
-                                                Ver mi carrito
-                                            </a>
-                                        </li> *@
+
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="FacturaNoFiscal"
@@ -244,17 +205,16 @@
                                                 @localizer["Compras"]
                                             </a>
                                         </li>
+
                                         <li>
-                                            <a class="dropdown-item text-danger fw-semibold"
+                                            <a class="dropdown-item text-danger"
                                                asp-controller="Cliente"
                                                asp-action="Logout">
                                                 @localizer["CerrarSesion"]
                                             </a>
                                         </li>
-                                       
                                     }
 
-                                    @* ARTESANO *@
                                     @if (rol == "ARTESANO")
                                     {
                                         <li>
@@ -264,6 +224,7 @@
                                                 @localizer["Perfil"]
                                             </a>
                                         </li>
+
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="FacturaNoFiscal"
@@ -271,15 +232,7 @@
                                                 @localizer["HistorialFacturas"]
                                             </a>
                                         </li>
-                                      
 
-                                       @*  <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="PedidoPersonalizado"
-                                               asp-action="PedidosPersonalizados">
-                                                Pedidos personalizados
-                                            </a>
-                                        </li> *@
                                         <li>
                                             <a class="dropdown-item"
                                                asp-controller="PedidoPersonalizado"
@@ -287,29 +240,9 @@
                                                 @localizer["MisEncargos"]
                                             </a>
                                         </li>
-                                        @* <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="Artesano"
-                                               asp-action="Dashboard">
-                                                Tus ventas
-                                            </a>
-                                        </li> *@
-                                        @* <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="Producto"
-                                               asp-action="AltaProducto">
-                                                Agregar producto
-                                            </a>
-                                        </li> *@
-                                        @* <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="Artesano"
-                                               asp-action="ProductosDelArtesano">
-                                                Tus productos
-                                            </a>
-                                        </li> *@
+
                                         <li>
-                                            <a class="dropdown-item text-danger fw-semibold"
+                                            <a class="dropdown-item text-danger"
                                                asp-controller="Artesano"
                                                asp-action="Logout">
                                                 @localizer["CerrarSesion"]
@@ -317,11 +250,10 @@
                                         </li>
                                     }
 
-                                    @* ADMIN *@
                                     @if (rol == "ADMIN")
                                     {
                                         <li>
-                                            <a class="dropdown-item text-danger fw-semibold"
+                                            <a class="dropdown-item text-danger"
                                                asp-controller="Admin"
                                                asp-action="Logout">
                                                 @localizer["CerrarSesion"]
@@ -331,28 +263,10 @@
 
                                 </ul>
                             </li>
-
-                            <!--CARRITO-->
-                            @if(rol == "CLIENTE")
-                            {
-                                <a class="nav-link position-relative d-flex align-items-center justify-content-center carrito"
-                                   asp-controller="Carrito"
-                                   asp-action="Index">
-
-                                    <img src="~/images/carrito/carrito.png"
-                                         alt="@localizer["Carrito"]"
-                                         style="width:28px; height:28px;" />
-
-                                    @await Component.InvokeAsync("CarritoCantidad")
-
-                                </a>
-                            }
-
-
                         }
-                        
 
                     </ul>
+
                 </div>
             </div>
         </nav>
@@ -480,7 +394,6 @@
 
         window.addEventListener("pageshow", hideLoader);
     </script>
-
 
 
     <form id="antiForgeryForm" style="display:none;">

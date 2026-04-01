@@ -8,32 +8,53 @@
 }
 
 <!-- HEADER -->
-<div class="container-fluid px-0">
-    <div class="catalog-header">
-        <div class="container">
-            <div class="w-100">
-                <partial name="_Buscador" model="Model.Buscador" />
-            </div>
+
+<div class="catalog-hero">
+    <div class="hero-overlay">
+        <div class="container hero-content">
+
+            <h1 class="text-white fw-bold">
+                @localizer["DescubreProductosUnicos"]
+            </h1>
+
+            <p class="text-light">
+                @localizer["HechosPorArtesanos"]
+            </p>
+            <partial name="_Buscador" model="Model.Buscador" />
         </div>
     </div>
-</div>
+</div>@* 
+<div class="container-fluid px-0">
+    <div class="catalog-header">
+
+        <!-- IMAGEN DE FONDO -->
+        <div class="catalog-hero">
+            <div class="overlay">
+                <div class="container">
+                    <partial name="_Buscador" model="Model.Buscador" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div> *@
 
 <!-- CONTENIDO -->
-<div class="container-fluid catalogo-container">
+<div class="container-fluid catalogo-container mt-5">
 
-    <h3 class="text-center mb-3">
+    @* <h3 class="text-center mb-3">
         @localizer["CatalogoProductos"]
     </h3>
 
     <p class="text-muted medium mb-4 text-center">
         <strong>@localizer["ProductosArtesanos"]</strong>
-    </p>
+    </p> *@
 
     <!-- RECIENTES -->
     <div class="productosRecientes">
         <div class="container align-content-center">
 
-            <h4 class="mb-3 mt-3 text-success fw-semibold">
+            <h4 class="mb-3 text-success fw-semibold">
                 @localizer["AgregadosRecientemente"]
             </h4>
 
@@ -151,3 +172,25 @@
 </script>
 
 
+<script>
+    const hero = document.querySelector('.hero-content');
+
+    // Animación al cargar
+    window.addEventListener('load', () => {
+        hero.classList.add('visible');
+    });
+
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.scrollY;
+
+        if (currentScroll > 100) {
+            hero.classList.add('fade-out');
+        } else {
+            hero.classList.remove('fade-out');
+        }
+
+        lastScroll = currentScroll;
+    });
+</script>
