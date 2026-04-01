@@ -670,7 +670,7 @@
     <value>There are no registered products yet.</value>
   </data>
   <data name="BuscarProductos" xml:space="preserve">
-    <value>Search products</value>
+    <value>Advanced search</value>
   </data>
   <data name="Foto" xml:space="preserve">
     <value>Photo</value>
@@ -823,9 +823,15 @@
     <value>Upload</value>
   </data>
   <data name="Espanol" xml:space="preserve">
-    <value>Spanish</value>
+    <value>ESP</value>
   </data>
   <data name="Ingles" xml:space="preserve">
-    <value>English</value>
+    <value>ENG</value>
+  </data>
+  <data name="DescubreProductosUnicos" xml:space="preserve">
+    <value>Discover unique products</value>
+  </data>
+  <data name="HechosPorArtesanos" xml:space="preserve">
+    <value>Made by artisans</value>
   </data>
 </root>

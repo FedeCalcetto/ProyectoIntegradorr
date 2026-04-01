@@ -670,7 +670,7 @@
     <value>No hay productos registrados aún.</value>
   </data>
   <data name="BuscarProductos" xml:space="preserve">
-    <value>Buscar productos</value>
+    <value>Búsqueda avanzada</value>
   </data>
   <data name="Foto" xml:space="preserve">
     <value>Foto</value>
@@ -823,9 +823,15 @@
     <value>Subir</value>
   </data>
   <data name="Espanol" xml:space="preserve">
-    <value>Español</value>
+    <value>ESP</value>
   </data>
   <data name="Ingles" xml:space="preserve">
-    <value>Inglés</value>
+    <value>ENG</value>
+  </data>
+  <data name="DescubreProductosUnicos" xml:space="preserve">
+    <value>Descubre productos únicos</value>
+  </data>
+  <data name="HechosPorArtesanos" xml:space="preserve">
+    <value>Hechos por artesanos</value>
   </data>
 </root>

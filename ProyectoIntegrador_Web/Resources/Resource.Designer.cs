@@ -277,7 +277,7 @@ namespace ProyectoIntegrador_Web.Resources {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Buscar productos.
+        ///   Busca una cadena traducida similar a Búsqueda avanzada.
         /// </summary>
         public static string BuscarProductos {
             get {
@@ -691,6 +691,15 @@ namespace ProyectoIntegrador_Web.Resources {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Descubre productos únicos.
+        /// </summary>
+        public static string DescubreProductosUnicos {
+            get {
+                return ResourceManager.GetString("DescubreProductosUnicos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Detalle.
         /// </summary>
         public static string Detalle {
@@ -844,7 +853,7 @@ namespace ProyectoIntegrador_Web.Resources {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Español.
+        ///   Busca una cadena traducida similar a ESP.
         /// </summary>
         public static string Espanol {
             get {
@@ -979,6 +988,15 @@ namespace ProyectoIntegrador_Web.Resources {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Hechos por artesanos.
+        /// </summary>
+        public static string HechosPorArtesanos {
+            get {
+                return ResourceManager.GetString("HechosPorArtesanos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Historial de facturas.
         /// </summary>
         public static string HistorialFacturas {
@@ -1015,7 +1033,7 @@ namespace ProyectoIntegrador_Web.Resources {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Inglés.
+        ///   Busca una cadena traducida similar a ENG.
         /// </summary>
         public static string Ingles {
             get {

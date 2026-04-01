@@ -10,11 +10,10 @@
 
         <form method="get"
               id="formBusqueda"
-              class="d-flex align-items-center gap-2 mt-3 flex-nowrap w-100">
-
+              class="busqueda-form d-flex align-items-center gap-2 mt-3 w-100 flex-wrap"
+        >
             <!-- MODO -->
             <select class="form-select"
-                    style="width:150px"
                     id="modoBusqueda"
                     name="ModoBusqueda">
 
@@ -34,7 +33,8 @@
                    class="form-control"
                    value="@Model.Filtro"
                    placeholder="@localizer["Buscar"]"
-                   style="min-width:260px" />
+                   
+                   />
 
             <!-- FILTROS -->
             <div id="filtrosProductos" class="d-flex gap-2">
@@ -44,19 +44,19 @@
                        class="form-control"
                        value="@Model.PrecioMin"
                        placeholder="@localizer["PrecioMin"]"
-                       style="width:140px" />
+                        />
 
                 <input type="number"
                        name="PrecioMax"
                        class="form-control"
                        value="@Model.PrecioMax"
                        placeholder="@localizer["PrecioMax"]"
-                       style="width:140px" />
+                        />
 
                 <select id="categoriaSelect"
                         name="CategoriaId"
                         class="form-select"
-                        style="width:180px">
+                        >
                     <option value="">@localizer["Categorias"]</option>
 
                     @foreach (var c in Model.Categorias ?? Enumerable.Empty<ProyectoIntegrador.LogicaNegocio.Entidades.Categoria>())
@@ -70,7 +70,7 @@
                 <select id="subcategoriaSelect"
                         name="SubCategoriaId"
                         class="form-select"
-                        style="width:200px"
+                        
                         @(Model.CategoriaId == null ? "disabled" : "")>
 
                     <option value="">@localizer["Subcategorias"]</option>
@@ -85,7 +85,7 @@
             </div>
 
             <!-- BOTÓN -->
-            <button class="btn btn-primary px-4">
+            <button id="botonBuscar"  class="btn btn-primary px-4">
                 @localizer["Buscar"]
             </button>
 

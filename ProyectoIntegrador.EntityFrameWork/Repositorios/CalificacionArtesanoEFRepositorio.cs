@@ -39,19 +39,29 @@ namespace ProyectoIntegrador.EntityFrameWork.Repositorios
 
         public decimal ObtenerPromedioPorArtesano(int artesanoId)
         {
-            var query = _contexto.CalificacionesArtesano
-                .Where(c => c.artesanoId == artesanoId);
+            var productosIds = _contexto.Productos
+                .Where(p => p.ArtesanoId == artesanoId)
+                .Select(p => p.id)
+                .ToList();
 
-            if (!query.Any())
+            var calificaciones = _contexto.CalificacionesProducto
+                .Where(c => productosIds.Contains(c.productoId));
+
+            if (!calificaciones.Any())
                 return 0;
 
-            return query.Average(c => c.puntaje);
+            return calificaciones.Average(c => c.puntaje);
         }
 
         public int ObtenerTotalCalificaciones(int artesanoId)
         {
-            return _contexto.CalificacionesArtesano
-                .Count(c => c.artesanoId == artesanoId);
+                    var productosIds = _contexto.Productos
+                 .Where(p => p.ArtesanoId == artesanoId)
+                 .Select(p => p.id)
+                 .ToList();
+
+            return _contexto.CalificacionesProducto
+                .Count(c => productosIds.Contains(c.productoId));
         }
 
         public void EliminarParaArtesano(int artesanoId)
