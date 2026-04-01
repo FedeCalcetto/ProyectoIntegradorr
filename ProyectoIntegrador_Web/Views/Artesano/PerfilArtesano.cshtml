@@ -7,176 +7,193 @@
     ViewData["Title"] = localizer["Perfil"];
 }
 
-<div class="layout">
+<div class="container py-5">
 
-    <div class="barraLateral">
-        <div class="sidebar">
-            <p>@localizer["OtrasOpciones"]</p>
+    <div class="text-center mb-4">
+        <h2 class="fw-bold mb-1">Mi Perfil de Artesano</h2>
+        <p class="text-muted mb-0">Actualizá tu información pública y datos de contacto</p>
+    </div>
 
-            <div class="mb-3 d-flex justify-content-left">
-                <a asp-controller="Usuario"
-                   asp-action="CambioContra"
-                   asp-route-returnUrl="/Artesano/PerfilArtesano"
-                   class="btn btn-outline-secondary">
-                    @localizer["NuevaContrasena"]
-                </a>
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            @TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="PerfilArtesano" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="row g-4">
+
+            <!-- COLUMNA IZQUIERDA -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body text-center p-4">
+
+                        <img id="fotoPerfil"
+                             src="@(string.IsNullOrEmpty(Model.Foto)
+                                                              ? "/images/usuarios/default-image.jpg"
+                                                              : Model.Foto)"
+                             class="img-thumbnail shadow-sm mb-3 foto-perfil" />
+
+                        <h5 class="fw-semibold mb-1">@Model.Nombre @Model.Apellido</h5>
+                        <p class="text-muted small mb-3">@Model.Email</p>
+
+                        <label class="btn btn-outline-secondary btn-sm">
+                            Seleccionar foto
+                            <input id="archivoFoto" type="file" name="archivoFoto" accept="image/*" hidden />
+                        </label>
+
+                        <div id="archivoSeleccionado" class="mt-2 text-muted small"></div>
+
+                        <input type="hidden" asp-for="Foto" />
+                        <input type="hidden" asp-for="Password" />
+
+                        <hr class="my-4" />
+
+                        <div class="d-grid gap-2">
+                            <a asp-controller="FacturaNoFiscal"
+                               asp-action="FacturasArtesano"
+                               class="btn btn-outline-secondary">
+                                Volver
+                            </a>
+
+                            <a asp-controller="Usuario"
+                               asp-action="CambioContra"
+                               asp-route-returnUrl="/Artesano/PerfilArtesano"
+                               class="btn btn-outline-dark">
+                                Nueva contraseña
+                            </a>
+
+                            <button type="button"
+                                    class="btn btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEliminarCuenta"
+                                    onclick="pedirCodigoEliminarArtesano()">
+                                Eliminar cuenta
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="d-flex justify-content-left mt-4">
-                <button type="button"
-                        class="btn btn-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalEliminarCuenta"
-                        onclick="pedirCodigoEliminarArtesano()">
-                    @localizer["EliminarCuenta"]
-                </button>
+            <!-- COLUMNA DERECHA -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4">
+
+                        <h4 class="fw-semibold mb-4">Información del perfil</h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="Nombre" class="form-label fw-semibold"></label>
+                                <input asp-for="Nombre" class="form-control" placeholder="Tu nombre" />
+                                <span asp-validation-for="Nombre" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Apellido" class="form-label fw-semibold"></label>
+                                <input asp-for="Apellido" class="form-control" placeholder="Tu apellido" />
+                                <span asp-validation-for="Apellido" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Telefono" class="form-label fw-semibold"></label>
+                                <input asp-for="Telefono" class="form-control" placeholder="Tu teléfono de contacto" />
+                                <span asp-validation-for="Telefono" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-semibold"></label>
+                                <input asp-for="Email" class="form-control bg-light" readonly />
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Descripcion" class="form-label fw-semibold"></label>
+                                <textarea asp-for="Descripcion"
+                                          class="form-control"
+                                          rows="6"
+                                          placeholder="Contale a los usuarios sobre vos, tu estilo y tus productos"></textarea>
+                                <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-primary px-4">
+                                Guardar cambios
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- CARD EXTRA OPCIONAL -->
+                <div class="card shadow-sm border-0 rounded-4 mt-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-2">Consejo para tu perfil</h5>
+                        <p class="text-muted mb-0">
+                            Un perfil con foto, descripción clara y teléfono actualizado genera más confianza y facilita el contacto con los clientes.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 
-    <div class="contenido py-5">
+    @if (Model.EliminarCuenta != null)
+    {
+        @await Html.PartialAsync("_ModalEliminarCuenta", Model.EliminarCuenta)
+    }
 
-        <h2 class="text-center mb-3 fw-semibold" style="color: black;">
-            @localizer["MiPerfil"]
-        </h2>
-
-        <p class="text-center text-muted mb-4">
-            @localizer["ActualizarDatosPersonales"]
-        </p>
-
-        @if (TempData["Mensaje"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @TempData["Mensaje"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                @TempData["Error"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-
-        <form asp-action="PerfilArtesano" method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-            <!-- FOTO -->
-            <div class="d-flex justify-content-center mb-2">
-                <img id="fotoPerfil"
-                     src="@(string.IsNullOrEmpty(Model.Foto)
-                                                                  ? "/images/usuarios/default-image.jpg"
-                                                                  : Model.Foto)"
-                     class="img-thumbnail shadow foto-perfil">
-            </div>
-
-            <div class="text-center mb-3">
-                <label class="btn btn-outline-secondary">
-                    @localizer["SeleccionarFoto"]
-                    <input id="archivoFoto" type="file" name="archivoFoto" accept="image/*" hidden />
-                </label>
-
-                <div id="archivoSeleccionado" class="mt-2 text-muted"></div>
-            </div>
-
-            <!-- CAMPOS -->
-            <input type="hidden" asp-for="Foto" />
-
-            <div class="mb-3">
-                <label asp-for="Nombre" class="form-label fw-semibold"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Apellido" class="form-label fw-semibold"></label>
-                <input asp-for="Apellido" class="form-control" />
-                <span asp-validation-for="Apellido" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Descripcion" class="form-label fw-semibold"></label>
-                <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
-                <span asp-validation-for="Descripcion" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Telefono" class="form-label fw-semibold"></label>
-                <input asp-for="Telefono" class="form-control" />
-                <span asp-validation-for="Telefono" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label fw-semibold"></label>
-                <input asp-for="Email" class="form-control bg-light" readonly />
-            </div>
-
-            <input type="hidden" asp-for="Password" />
-
-            <!-- BOTONES -->
-            <div class="d-flex justify-content-between">
-                <a asp-action="FacturasArtesano"
-                   asp-controller="FacturaNoFiscal"
-                   class="btn btn-outline-secondary">
-                    @localizer["Volver"]
-                </a>
-
-                <button type="submit" class="btn btn-primary">
-                    @localizer["GuardarCambios"]
-                </button>
-            </div>
-
-        </form>
-
-        @if (Model.EliminarCuenta != null)
-        {
-            @await Html.PartialAsync("_ModalEliminarCuenta", Model.EliminarCuenta)
-        }
-
-        <script>
-            function pedirCodigoEliminarArtesano() {
-                fetch('/Artesano/PedirCodigoEliminar', {
-                    method: 'POST',
-                    headers: {
-                        'RequestVerificationToken':
-                            document.querySelector('input[name="__RequestVerificationToken"]').value
-                    }
-                });
-            }
-        </script>
-
-        <script>
-            const input = document.getElementById("archivoFoto");
-            const preview = document.getElementById("fotoPerfil");
-            const archivoLabel = document.getElementById("archivoSeleccionado");
-
-            input.addEventListener("change", function () {
-                if (this.files && this.files[0]) {
-                    const archivo = this.files[0];
-                    archivoLabel.innerHTML = `<strong>${archivo.name}</strong>`;
-
-                    const reader = new FileReader();
-                    reader.onload = e => preview.src = e.target.result;
-                    reader.readAsDataURL(archivo);
+    <script>
+        function pedirCodigoEliminarArtesano() {
+            fetch('/Artesano/PedirCodigoEliminar', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken':
+                        document.querySelector('input[name="__RequestVerificationToken"]').value
                 }
             });
-        </script>
-
-        @if (TempData["ErrorEliminar"] != null)
-        {
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const modal = new bootstrap.Modal(
-                        document.getElementById("modalEliminarCuenta")
-                    );
-                    modal.show();
-                });
-            </script>
         }
+    </script>
 
-    </div>
+    <script>
+        const input = document.getElementById("archivoFoto");
+        const preview = document.getElementById("fotoPerfil");
+        const archivoLabel = document.getElementById("archivoSeleccionado");
+
+        input.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                const archivo = this.files[0];
+                archivoLabel.innerHTML = `<strong>${archivo.name}</strong>`;
+
+                const reader = new FileReader();
+                reader.onload = e => preview.src = e.target.result;
+                reader.readAsDataURL(archivo);
+            }
+        });
+    </script>
+
+    @if (TempData["ErrorEliminar"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const modal = new bootstrap.Modal(
+                    document.getElementById("modalEliminarCuenta")
+                );
+                modal.show();
+            });
+        </script>
+    }
 </div>
-

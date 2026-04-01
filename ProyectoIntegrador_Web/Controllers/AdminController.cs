@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProyectoIntegrador.LogicaAplication.Interface;
 using ProyectoIntegrador.LogicaNegocio.Interface.Repositorio;
 using ProyectoIntegrador_Web.Models;
+using ProyectoIntegrador_Web.Services;
+
 
 namespace ProyectoIntegrador_Web.Controllers
 {
@@ -14,7 +16,8 @@ namespace ProyectoIntegrador_Web.Controllers
         public readonly IObtenerReporte _obtenerReporte;
         public readonly IArtesanoRepositorio _artesanoRepositorio;
         public readonly IBloquearArtesano _bloquearArtesano;
-        public AdminController(IListadoDeReportes listadoDeReportes, IEliminarReporte eliminarReporte, IEliminarProducto eliminarProducto, IObtenerReporte obtenerReporte, IArtesanoRepositorio eliminarArtesano, IBloquearArtesano bloquearArtesano)
+        private readonly EmailService _email;
+        public AdminController(IListadoDeReportes listadoDeReportes, IEliminarReporte eliminarReporte, IEliminarProducto eliminarProducto, IObtenerReporte obtenerReporte, IArtesanoRepositorio eliminarArtesano, IBloquearArtesano bloquearArtesano, EmailService email)
         {
             _listadoDeReportes = listadoDeReportes;
             _eliminarReporte = eliminarReporte;
@@ -22,6 +25,7 @@ namespace ProyectoIntegrador_Web.Controllers
             _obtenerReporte = obtenerReporte;
             _artesanoRepositorio = eliminarArtesano;
             _bloquearArtesano = bloquearArtesano;
+            _email = email;
         }
 
 
@@ -53,28 +57,50 @@ namespace ProyectoIntegrador_Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AceptarReporte(int id)
+        public async Task<IActionResult> AceptarReporte(int id)
         {
-
+            // Obtener el reporte
             var reporte = _obtenerReporte.Ejecutar(id);
+
+            if (reporte == null)
+            {
+                TempData["Error"] = "No se encontró el reporte.";
+                return RedirectToAction("Inicio");
+            }
 
             var artesanoId = reporte.artesano?.id;
             var productoId = reporte.producto?.id;
 
+            // Si el reporte es para un producto
             if (artesanoId == null && productoId != null)
             {
+                // Guardar datos antes de eliminar por seguridad
+                var usuarioEmail = reporte.producto?.artesano?.email?.ToString();
+                var nombreProducto = reporte.producto?.nombre;
+
+                // Eliminar el producto
                 _eliminarProducto.Ejecutar(productoId.Value);
-                //_eliminarReporte.Ejecutar(id);
+
+                // Enviar correo al usuario informando de la eliminación del producto
+                if (!string.IsNullOrEmpty(usuarioEmail) && !string.IsNullOrEmpty(nombreProducto))
+                {
+                    await _email.EnviarAvisoProductoEliminadoAsync(usuarioEmail, nombreProducto);
+                }
+
+                // Si también querés eliminar el reporte
+                // _eliminarReporte.Ejecutar(id);
             }
+            // Si el reporte es para un artesano
             else if (artesanoId != null && productoId == null)
             {
+                // Eliminar el reporte
                 _eliminarReporte.Ejecutar(id);
-                //_artesanoRepositorio.Eliminar(artesanoId.Value);
+
+                // Bloquear al artesano
                 _bloquearArtesano.bloquearArtesano(artesanoId.Value);
             }
 
             return RedirectToAction("Inicio");
-
         }
         // GET: AdminController/Details/5
         public ActionResult Details(int id)

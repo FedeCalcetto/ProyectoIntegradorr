@@ -373,7 +373,7 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 300px; /* ajustá según te guste */
+    height: 300px; /* ajustÃ¡ segÃºn te guste */
     display: flex;
     align-items: center;
 }
@@ -507,6 +507,10 @@ body.login-body {
     overflow: hidden;
 }
 
+.login-layout {
+    overflow: visible; /* para la card en la vista ResetPassword la sombra no se vea cortada */
+}
+
 .login-wrapper {
     width: 100%;
     display: flex;
@@ -567,14 +571,16 @@ body.login-body {
 
 /*AREGISTRO*/
 
+
 .registro-card.single {
     background: white;
     width: 420px;
-    height: 520px;
+    height: auto;
     border-radius: 20px;
     text-align: center;
     align-items: center;
     padding: 10px;
+    box-shadow: 0 22px 45px rgba(0, 0, 0, 0.14);
 }
 
 .registro-check {
@@ -648,7 +654,7 @@ body.login-body {
     border: none;
     border-top: 1px solid rgba(255,255,255,0.08);
     color: white; 
-    font-size: 20px;*/ /* tamaño del ícono */
+    font-size: 20px;*/ /* tamaÃ±o del Ã­cono */
     /*cursor: pointer;
     transition: background 0.25s ease, color 0.25s ease;
 }
@@ -658,7 +664,7 @@ body.login-body {
         color: black;
     }*/
 
-/* Rotación SOLO del ícono */
+/* RotaciÃ³n SOLO del Ã­cono */
 /*.catalog-header:not(.collapsed) + .toggle-header
 #btnToggleHeader i {
     transform: rotate(180deg);
@@ -738,10 +744,10 @@ body.login-body {
 
 .producto-card-fav {
     position: relative;
-    /*overflow: hidden; /* evita que el botón "genere espacio" */
+    /*overflow: hidden; /* evita que el botÃ³n "genere espacio" */
 }
 
-    /* Contenedor del botón (form) */
+    /* Contenedor del botÃ³n (form) */
     .producto-card-fav .fav-btn-form {
         position: absolute;
         top: 8px;
@@ -757,12 +763,12 @@ body.login-body {
         opacity: 1;
     }
 
-    /* El overlay del stretched-link siempre por debajo del botón */
+    /* El overlay del stretched-link siempre por debajo del botÃ³n */
     .producto-card-fav .stretched-link::after {
         z-index: 1 !important;
     }
 
-    /* Botón */
+    /* BotÃ³n */
     .producto-card-fav .fav-btn {
         border: 0;
         background: rgba(255,255,255,.95);
@@ -807,7 +813,7 @@ body.login-body {
 }
 
 .login-alert{
-    width: 900px;      /* mismo “ancho visual” que tu login-card */
+    width: 900px;      /* mismo Â“ancho visualÂ” que tu login-card */
     max-width: 95%;
 }
 
@@ -816,7 +822,108 @@ body.login-body {
 }
 /*//////////////////////////////////////////////*/
 
-    /* Select más limpio */
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.progress-bar {
+        transition: width 1s ease, background-color 0.5s linear;
+}
+
+/*.compra-card {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+    .compra-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.10) !important;
+    }
+    */
+
+
+/* ?? cards */
+.compra-card {
+    transition: all 0.2s ease;
+}
+
+    .compra-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.12) !important;
+    }
+
+/* ?? resumen */
+.resumen-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.resumen-icon {
+    font-size: 26px;
+}
+
+/* ?? info lÃ­neas */
+.info-line {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+    color: #555;
+}
+
+/* ?? badge */
+.estado-badge {
+    background: #e6f7ec;
+    color: #198754;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 10px;
+}
+
+/* ?? empty */
+.empty-box {
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.empty-icon {
+    font-size: 40px;
+}
+
+.factura-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-factura {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+}
+
+    .item-factura:last-child {
+        border-bottom: none;
+    }
+
+.star-click {
+    cursor: pointer;
+    font-size: 1.4rem;
+    margin-right: 4px;
+    color: #ccc;
+    transition: 0.2s;
+}
+
+    .star-click:hover {
+        transform: scale(1.2);
+    }
+    /* Select mÃ¡s limpio */
     .language-switcher select {
         border-radius: 0; /* rectangular */
         font-size: 0.9rem;
@@ -950,7 +1057,7 @@ body.login-body {
             min-width: 120px;
         }
 
-    /* BOTÓN */
+    /* BOTÃ“N */
     #botonBuscar {
         width: auto;
         white-space: nowrap;

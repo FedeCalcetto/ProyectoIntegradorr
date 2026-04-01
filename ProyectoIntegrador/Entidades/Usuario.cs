@@ -39,7 +39,7 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
         public void Validar()
         {
             validarNombres();
-            //validarContraUsuario();
+           // validarContraUsuario();
         }
         public void validarContraUsuario()
         {
@@ -48,6 +48,18 @@ namespace ProyectoIntegrador.LogicaNegocio.Entidades
                 throw new passwordUsuarioException();
             }
             if (!password.Any(char.IsUpper) || !password.Any(char.IsLower))
+            {
+                throw new MayusculaPasswordException();
+            }
+        }
+
+        public void validarContraUsuarioTESTEO(string contraseñaTESTEO)
+        {
+            if (contraseñaTESTEO.Length < 10 || contraseñaTESTEO.Length > 30)
+            {
+                throw new passwordUsuarioException();
+            }
+            if (!contraseñaTESTEO.Any(char.IsUpper) || !contraseñaTESTEO.Any(char.IsLower))
             {
                 throw new MayusculaPasswordException();
             }

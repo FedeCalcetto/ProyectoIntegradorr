@@ -4,13 +4,35 @@
 @inject IStringLocalizerFactory factory
 
 @{
-    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
-}
-<h2>@localizer["MisCompras"]</h2>
+    ViewData["Title"] = "Mis compras";
 
-<div class="row">
-    @foreach (var factura in Model)
+    var lista = Model?.OrderByDescending(f => f.Fecha).ToList() ?? new List<FacturaNoFiscalCliente>();
+    var cantidad = lista.Count;
+    var totalGastado = lista.Sum(f => f.Total);
+}
+
+<div class="container py-5">
+
+    <!-- 🔹 HEADER -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold mb-2">Mis compras</h2>
+        <p class="text-muted mb-0">
+            Historial de tus pedidos realizados 🛍️
+        </p>
+    </div>
+
+    <!-- 🔹 RESUMEN -->
+    @if (cantidad > 0)
     {
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-6">
+                <div class="resumen-box">
+                    <div class="resumen-icon">📦</div>
+                    <div>
+                        <div class="small text-muted">Compras realizadas</div>
+                        <div class="fw-bold fs-4">@cantidad</div>
+                    </div>
         <div class="col-md-4 mb-3">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -30,10 +52,98 @@
                     </a>
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="resumen-box">
+                    <div class="resumen-icon">💰</div>
+                    <div>
+                        <div class="small text-muted">Total gastado</div>
+                        <div class="fw-bold fs-4">$@totalGastado</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     }
+
+    <!-- 🔹 LISTA -->
+    @if (cantidad > 0)
+    {
+        <div class="row g-4">
+            @foreach (var factura in lista)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card compra-card border-0 shadow-sm rounded-4 h-100">
+
+                        <div class="card-body p-4 d-flex flex-column">
+
+                            <!-- HEADER CARD -->
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="fw-semibold mb-1">
+                                        Compra #@factura.Id
+                                    </h5>
+                                    <small class="text-muted">
+                                        Orden: @factura.OrdenId.ToString().Substring(0, 8)
+                                    </small>
+                                </div>
+
+                                <span class="badge estado-badge">
+                                    ✔ Pagada
+                                </span>
+                            </div>
+
+                            <!-- INFO -->
+                            <div class="mb-3">
+                                <div class="info-line">
+                                    <span>Fecha de compra</span>
+                                   </div>
+                                <div class="info-line">
+                                    
+                                    <span>@factura.Fecha.ToString("dd/MM/yyyy")</span>
+                                </div>
+
+                                <div class="info-line">
+                                    <span>Total Pagado</span>
+                                    
+                                </div>
+                                <div class="info-line">
+                                    
+                                    <span class="fw-bold">$@factura.Total</span>
+                                </div>
+                            </div>
+
+                            <!-- BOTÓN -->
+                            <div class="mt-auto">
+                                <a class="btn btn-outline-primary w-100"
+                                   asp-action="FacturaPorOrden"
+                                   asp-route-ordenId="@factura.OrdenId">
+                                    Ver detalle
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- 🔹 EMPTY STATE -->
+        <div class="empty-box text-center">
+            <div class="empty-icon">🛍️</div>
+            <h5 class="fw-semibold mt-3">Todavía no tenés compras</h5>
+            <p class="text-muted">
+                Cuando compres algo, lo vas a ver acá 💙
+            </p>
+
+            <a asp-controller="Usuario"
+               asp-action="Catalogo"
+               class="btn btn-primary mt-2">
+                Explorar catálogo
+            </a>
+        </div>
+    }
+
 </div>
-
-
-
-

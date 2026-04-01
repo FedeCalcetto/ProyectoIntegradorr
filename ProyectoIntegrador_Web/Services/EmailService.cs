@@ -197,5 +197,42 @@ namespace ProyectoIntegrador_Web.Services
 
             await smtp.SendMailAsync(mensaje);
         }
+
+
+        public async Task EnviarAvisoProductoEliminadoAsync(string destino, string nombreProducto)
+        {
+            var from = _config["EmailSettings:From"];
+            var password = _config["EmailSettings:Password"];
+            var host = _config["EmailSettings:Host"] ?? "smtp.gmail.com";
+            var port = int.TryParse(_config["EmailSettings:Port"], out var p) ? p : 587;
+
+            using var smtp = new SmtpClient(host, port);
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = new NetworkCredential(from, password);
+
+            var asunto = "Producto Eliminado de la Plataforma";
+            var cuerpo = $@"
+        Hola,
+
+        Lamentablemente, el producto '{nombreProducto}' ha sido eliminado de la plataforma debido a una acción de moderación.
+
+        Si tienes alguna pregunta o deseas más información sobre esta acción, no dudes en ponerte en contacto con nuestro equipo.
+
+        Gracias por tu comprensión.
+
+        Saludos,
+        El equipo de soporte de nuestra plataforma
+        ";
+
+            var mensaje = new MailMessage();
+            mensaje.From = new MailAddress(from);
+            mensaje.To.Add(destino);
+            mensaje.Subject = asunto;
+            mensaje.Body = cuerpo;
+            mensaje.IsBodyHtml = false;
+
+            await smtp.SendMailAsync(mensaje);
+        }
     }
 }

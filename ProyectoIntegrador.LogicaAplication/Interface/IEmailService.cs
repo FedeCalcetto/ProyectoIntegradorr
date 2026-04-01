@@ -25,5 +25,10 @@ namespace ProyectoIntegrador.LogicaAplication.Interface
         Task EnviarResetPasswordAsync(
         string destino,
         string link);
+
+        Task EnviarAvisoProductoEliminadoAsync(
+        string destino,
+        string nombreProducto);
+        
     }
 }

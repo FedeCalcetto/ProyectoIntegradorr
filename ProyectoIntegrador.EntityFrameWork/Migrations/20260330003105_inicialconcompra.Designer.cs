@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoIntegrador.EntityFrameWork;
 
@@ -11,9 +12,11 @@ using ProyectoIntegrador.EntityFrameWork;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     [DbContext(typeof(ProyectoDBContext))]
-    partial class ProyectoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260330003105_inicialconcompra")]
+    partial class inicialconcompra
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,47 +40,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.ToTable("ClienteProductoFavorito");
                 });
 
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.CalificacionArtesano", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<int>("artesanoId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("puntaje")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("usuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("artesanoId");
-
-                    b.HasIndex("usuarioId", "artesanoId")
-                        .IsUnique();
-
-                    b.ToTable("CalificacionesArtesano");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1,
-                            artesanoId = 3,
-                            fecha = new DateTime(2026, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            puntaje = 5m,
-                            usuarioId = 2
-                        });
-                });
-
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.CalificacionProducto", b =>
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Calificación", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -106,10 +69,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     b.HasIndex("productoId");
 
-                    b.HasIndex("usuarioId", "productoId")
-                        .IsUnique();
+                    b.HasIndex("usuarioId");
 
-                    b.ToTable("CalificacionesProducto");
+                    b.ToTable("Calificaciones");
 
                     b.HasData(
                         new
@@ -126,7 +88,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             fecha = new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             productoId = 1,
                             puntaje = 4m,
-                            usuarioId = 3
+                            usuarioId = 2
                         },
                         new
                         {
@@ -136,34 +98,6 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                             puntaje = 3m,
                             usuarioId = 2
                         });
-                });
-
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Calificación", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<int?>("artesanoId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("productoId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("puntaje")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("usuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Calificaciones");
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Carrito", b =>
@@ -1088,22 +1022,7 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.CalificacionArtesano", b =>
-                {
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", null)
-                        .WithMany("Calificaciones")
-                        .HasForeignKey("artesanoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("usuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.CalificacionProducto", b =>
+            modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Calificación", b =>
                 {
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", null)
                         .WithMany("Calificaciones")
