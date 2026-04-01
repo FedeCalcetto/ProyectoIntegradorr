@@ -467,6 +467,10 @@ body.login-body {
     overflow: hidden;
 }
 
+.login-layout {
+    overflow: visible; /* para la card en la vista ResetPassword la sombra no se vea cortada */
+}
+
 .login-wrapper {
     width: 100%;
     display: flex;
@@ -527,14 +531,16 @@ body.login-body {
 
 /*AREGISTRO*/
 
+
 .registro-card.single {
     background: white;
     width: 420px;
-    height: 520px;
+    height: auto;
     border-radius: 20px;
     text-align: center;
     align-items: center;
     padding: 10px;
+    box-shadow: 0 22px 45px rgba(0, 0, 0, 0.14);
 }
 
 .registro-check {
@@ -776,3 +782,104 @@ body.login-body {
 }
 /*//////////////////////////////////////////////*/
 
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.progress-bar {
+        transition: width 1s ease, background-color 0.5s linear;
+}
+
+/*.compra-card {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+    .compra-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.10) !important;
+    }
+    */
+
+
+/* ?? cards */
+.compra-card {
+    transition: all 0.2s ease;
+}
+
+    .compra-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.12) !important;
+    }
+
+/* ?? resumen */
+.resumen-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.resumen-icon {
+    font-size: 26px;
+}
+
+/* ?? info líneas */
+.info-line {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+    color: #555;
+}
+
+/* ?? badge */
+.estado-badge {
+    background: #e6f7ec;
+    color: #198754;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 10px;
+}
+
+/* ?? empty */
+.empty-box {
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.empty-icon {
+    font-size: 40px;
+}
+
+.factura-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-factura {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+}
+
+    .item-factura:last-child {
+        border-bottom: none;
+    }
+
+.star-click {
+    cursor: pointer;
+    font-size: 1.4rem;
+    margin-right: 4px;
+    color: #ccc;
+    transition: 0.2s;
+}
+
+    .star-click:hover {
+        transform: scale(1.2);
+    }

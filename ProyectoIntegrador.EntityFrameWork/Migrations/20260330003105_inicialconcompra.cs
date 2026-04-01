@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoIntegrador.EntityFrameWork.Migrations
 {
     /// <inheritdoc />
-    public partial class favoritos2 : Migration
+    public partial class inicialconcompra : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     rol = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CodigoVerificacion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Verificado = table.Column<bool>(type: "bit", nullable: false),
+                    TokenResetPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TokenResetPasswordExpira = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TokenVerificacionEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TokenVerificacionEmailExpira = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TipoUsuario = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
@@ -283,7 +285,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     productoId = table.Column<int>(type: "int", nullable: false),
                     usuarioId = table.Column<int>(type: "int", nullable: false),
                     puntaje = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    artesanoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -294,6 +297,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         principalTable: "Productos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Calificaciones_Usuarios_artesanoId",
+                        column: x => x.artesanoId,
+                        principalTable: "Usuarios",
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_Calificaciones_Usuarios_usuarioId",
                         column: x => x.usuarioId,
@@ -444,22 +452,27 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
-                values: new object[] { 1, null, "ADMIN", null, null, true, "Principal", "Administrador", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ADMIN", "admin@proyecto.com" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenResetPassword", "TokenResetPasswordExpira", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
+                values: new object[] { 1, null, "ADMIN", null, null, null, null, true, "Principal", "Administrador", "Admin123456", "ADMIN", "admin@proyecto.com" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
-                values: new object[] { 2, null, "CLIENTE", null, null, true, "Cliente", "Juan", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenResetPassword", "TokenResetPasswordExpira", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email", "direccion_barrio", "direccion_departamento", "direccion_domicilio" },
+                values: new object[] { 2, null, "CLIENTE", null, null, null, null, true, "Cliente", "Juan", "Cliente123456", "CLIENTE", "cliente@proyecto.com", "Centro", "Montevideo", "Calle 123" });
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
+                columns: new[] { "id", "CodigoVerificacion", "TipoUsuario", "TokenResetPassword", "TokenResetPasswordExpira", "TokenVerificacionEmail", "TokenVerificacionEmailExpira", "Verificado", "apellido", "nombre", "password", "rol", "email_email" },
                 values: new object[,]
                 {
-                    { 3, null, "ARTESANO", null, null, true, "Artesana", "Maria", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ARTESANO", "artesano@proyecto.com" },
-                    { 4, null, "ARTESANO", null, null, true, "Artesana", "Ana", "$2a$11$Cgqe5bl7fnmT8OtVgJ3yCeT4LVXVGn/TLhLVICQZlgejqY1xrozfe", "ARTESANO", "artesano2@proyecto.com" }
+                    { 3, null, "ARTESANO", null, null, null, null, true, "Artesana", "Maria", "Artesano123456", "ARTESANO", "artesano@proyecto.com" },
+                    { 4, null, "ARTESANO", null, null, null, null, true, "Artesana", "Ana", "Artesano123456", "ARTESANO", "artesano2@proyecto.com" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Ordenes",
+                columns: new[] { "Id", "ClienteId", "Estado", "FechaCreacion", "FechaPago", "MercadoPagoPaymentId", "PreferenceId", "Total" },
+                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), 2, 2, new DateTime(2026, 3, 18, 14, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 3, 18, 14, 10, 0, 0, DateTimeKind.Utc), 1234567890L, "PREF-DEMO-001", 2500m });
 
             migrationBuilder.InsertData(
                 table: "SubCategorias",
@@ -484,6 +497,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Facturas",
+                columns: new[] { "Id", "ClienteId", "Fecha", "OrdenId", "TipoFactura", "Total" },
+                values: new object[] { 1, 2, new DateTime(2026, 3, 18, 14, 15, 0, 0, DateTimeKind.Unspecified), new Guid("11111111-1111-1111-1111-111111111111"), "CLIENTE", 2500m });
+
+            migrationBuilder.InsertData(
                 table: "Productos",
                 columns: new[] { "id", "ArtesanoId", "SubCategoriaId", "descripcion", "imagen", "nombre", "precio", "stock" },
                 values: new object[,]
@@ -502,12 +520,21 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             migrationBuilder.InsertData(
                 table: "Calificaciones",
-                columns: new[] { "id", "fecha", "productoId", "puntaje", "usuarioId" },
+                columns: new[] { "id", "artesanoId", "fecha", "productoId", "puntaje", "usuarioId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 5m, 2 },
-                    { 2, new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 4m, 2 },
-                    { 3, new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3m, 2 }
+                    { 1, null, new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 5m, 2 },
+                    { 2, null, new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 4m, 2 },
+                    { 3, null, new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3m, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LineasFactura",
+                columns: new[] { "Id", "NombreArtesano", "NombreProducto", "artesanoId", "cantidad", "idFactura", "idProducto", "precioUnitario" },
+                values: new object[,]
+                {
+                    { 1, "Maria Artesana", "Taza artesanal azul", 3, 1, 1, 1, 1500 },
+                    { 2, "Maria Artesana", "Plato decorativo", 3, 2, 1, 2, 500 }
                 });
 
             migrationBuilder.InsertData(
@@ -526,6 +553,11 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     { 9, 9, "taza-ceramica.jpg" },
                     { 10, 10, "taza-ceramica.jpg" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Calificaciones_artesanoId",
+                table: "Calificaciones",
+                column: "artesanoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Calificaciones_productoId",

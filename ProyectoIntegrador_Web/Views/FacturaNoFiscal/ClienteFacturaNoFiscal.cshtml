@@ -1,92 +1,125 @@
-﻿ @using ProyectoIntegrador.LogicaNegocio.Entidades
+﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @model FacturaNoFiscalCliente
 @Html.AntiForgeryToken()
 
 @if (Model == null)
 {
-    <h3>No se encontró la factura.</h3>
+    <div class="container py-5 text-center">
+        <h4>No se encontró la factura 😢</h4>
+    </div>
     return;
 }
-<h2>Factura no fiscal</h2>
 
-<p>
-    Esta factura muestra únicamente datos relacionados a su compra.
-    Es realizada a modo de prueba.
-</p>
+<div class="container py-5">
 
-<div class="card mb-3">
-    <div class="card-body">
-        <h5>Cliente: @Model.Cliente?.nombre</h5>
-
-        <h5 class="mt-4">Detalle de la compra</h5>
-
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Producto</th>
-                        <th>Artesano</th>
-                        <th>Precio unitario</th>
-                        <th>Cantidad</th>
-                        <th>Subtotal</th>
-                        <th>Calificar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.itemsFactura != null && Model.itemsFactura.Any())
-                    {
-                        foreach (var grupo in Model.itemsFactura
-                        .GroupBy(i => new { i.NombreProducto, i.precioUnitario, i.NombreArtesano }))
-                        {
-                            var item = grupo.First();
-                            var cantidadTotal = grupo.Sum(i => i.cantidad);
-                            var subtotal = cantidadTotal * item.precioUnitario;
-
-                            <tr>
-                                <td>@item.NombreProducto</td>
-                                <td>@item.NombreArtesano</td>
-                                <td>$@item.precioUnitario</td>
-                                <td>@cantidadTotal</td>
-                                <td>$@subtotal</td>
-                                <td>
-                                    <div class="rating"
-                                         data-producto="@item.idProducto">
-
-                                        @for (int i = 1; i <= 5; i++)
-                                        {
-                                            <i class="bi bi-star star-click"
-                                               data-value="@i"
-                                               style="cursor:pointer; font-size:1.3rem;"></i>
-                                        }
-
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center">
-                                Esta factura no tiene ítems.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+    <!-- 🔹 HEADER -->
+    <div class="factura-header mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Factura de compra</h2>
+            <small class="text-muted">
+                Orden: @Model.OrdenId.ToString().Substring(0, 8)
+            </small>
         </div>
 
-        <div class="text-end mt-3">
-            <h5>Total pagado: <strong>$@Model.Total</strong></h5>
-            <p>Fecha: @Model.Fecha.ToString("dd/MM/yyyy")</p>
+        <div class="text-end">
+            <div class="badge bg-success px-3 py-2">
+                Pagada
+            </div>
         </div>
+    </div>
 
-        <a class="btn btn-primary mt-3"
+    <!-- 🔹 INFO CLIENTE -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body">
+            <h6 class="text-muted mb-1">Cliente</h6>
+            <h5 class="fw-semibold mb-0">
+                @Model.Cliente?.nombre
+            </h5>
+        </div>
+    </div>
+
+    <!-- 🔹 ITEMS -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body">
+
+            <h5 class="fw-semibold mb-4">Detalle de la compra</h5>
+
+            @if (Model.itemsFactura != null && Model.itemsFactura.Any())
+            {
+                foreach (var grupo in Model.itemsFactura
+                .GroupBy(i => new { i.NombreProducto, i.precioUnitario, i.NombreArtesano }))
+                {
+                    var item = grupo.First();
+                    var cantidadTotal = grupo.Sum(i => i.cantidad);
+                    var subtotal = cantidadTotal * item.precioUnitario;
+
+                    <div class="item-factura mb-4">
+
+                        <div class="d-flex justify-content-between flex-wrap gap-2">
+
+                            <div>
+                                <h6 class="fw-semibold mb-1">@item.NombreProducto</h6>
+                                <small class="text-muted">Por @item.NombreArtesano</small>
+                            </div>
+
+                            <div class="text-end">
+                                <div class="fw-bold">$@subtotal</div>
+                                <small class="text-muted">
+                                    @cantidadTotal x $@item.precioUnitario
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <!-- ⭐ RATING -->
+                        <div class="rating mt-2"
+                             data-producto="@item.idProducto">
+
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="bi bi-star star-click"
+                                   data-value="@i"></i>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">Esta factura no tiene ítems.</p>
+            }
+
+        </div>
+    </div>
+
+    <!-- 🔹 TOTAL -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+
+            <div>
+                <div class="text-muted small">Fecha</div>
+                <div class="fw-semibold">@Model.Fecha.ToString("dd/MM/yyyy")</div>
+            </div>
+
+            <div class="text-end">
+                <div class="text-muted small">Total pagado</div>
+                <div class="fs-4 fw-bold">$@Model.Total</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 🔹 ACCIONES -->
+    <div class="text-end">
+        <a class="btn btn-outline-primary px-4"
            asp-action="PDFCliente"
            asp-route-id="@Model.Id">
-            Descargar PDF
+            📄 Descargar PDF
         </a>
     </div>
+
 </div>
 
 <script>
@@ -113,7 +146,7 @@
             .then(response => {
                 if (response.ok) {
                     pintarEstrellas(container, puntaje);
-                    alert("Gracias por calificar ⭐");
+                    mostrarToast("Gracias por calificar ⭐");
                 } else {
                     alert("No se pudo calificar.");
                 }
@@ -137,4 +170,29 @@
 
         });
     }
+
+
+    
+    function mostrarToast(texto) {
+    const toast = document.createElement("div");
+    toast.textContent = texto;
+    toast.style.position = "fixed";
+
+        toast.style.top = "10%";
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.bottom = "auto";
+    toast.style.right = "auto"; 
+
+    toast.style.background = "#212529";
+    toast.style.color = "white";
+    toast.style.padding = "10px 14px";
+    toast.style.borderRadius = "8px";
+    toast.style.zIndex = "9999";
+
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+}
+
+
 </script>

@@ -29,22 +29,19 @@
                         </p>
 
                         <div class="mb-3">
-                            @* Reporte a producto *@
                             @if (reporte.artesano == null && reporte.producto != null)
                             {
                                 <img src="~/images/productos/@reporte.producto.imagen"
                                      class="img-fluid rounded"
                                      alt="Producto" />
                             }
-
-                            @* Reporte a artesano *@
                             else if (reporte.producto == null && reporte.artesano != null)
                             {
                                 <div class="d-flex align-items-center gap-2">
                                     <img src="@reporte.artesano.foto"
-                                    class="rounded-circle"
-                                    style="width:50px;height:50px;object-fit:cover;"
-                                    alt="Artesano" />
+                                         class="rounded-circle"
+                                         style="width:50px;height:50px;object-fit:cover;"
+                                         alt="Artesano" />
 
                                     <span class="badge bg-secondary p-2">
                                         Artesano reportado: @reporte.artesano.nombre
@@ -54,22 +51,20 @@
                         </div>
 
                         <div class="mt-auto d-flex justify-content-end gap-2">
-                            <form asp-action="EliminarReporte" method="post">
+                            <form id="formEliminar_@reporte.id" asp-action="EliminarReporte" method="post" onsubmit="return false;">
                                 <input type="hidden" name="id" value="@reporte.id" />
                                 @Html.AntiForgeryToken()
 
-                                <button type="submit"
-                                        class="btn btn-outline-danger btn-sm">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmarAccion('Eliminar', '@reporte.id')">
                                     Eliminar
                                 </button>
                             </form>
 
-                            <form asp-action="AceptarReporte" method="post">
+                            <form id="formAceptar_@reporte.id" asp-action="AceptarReporte" method="post" onsubmit="return false;">
                                 <input type="hidden" name="id" value="@reporte.id" />
                                 @Html.AntiForgeryToken()
 
-                                <button type="submit"
-                                        class="btn btn-primary btn-sm">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="confirmarAccion('Aceptar', '@reporte.id')">
                                     Aceptar
                                 </button>
                             </form>
@@ -87,3 +82,47 @@ else
         No hay reportes pendientes.
     </div>
 }
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">¿Estás seguro de que quieres realizar esta acción?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmButton">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let formToSubmit = null;
+
+    function confirmarAccion(accion, id) {
+        const mensaje = (accion === 'Eliminar')
+            ? '¿Estás seguro de que quieres eliminar este reporte?'
+            : '¿Estás seguro de que quieres aceptar este reporte?';
+
+        document.getElementById("modalMessage").textContent = mensaje;
+
+        // Guardamos el formulario que se enviará al confirmar
+        formToSubmit = document.getElementById(`form${accion}_${id}`);
+
+        // Mostramos el modal
+        let modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        modal.show();
+    }
+
+    document.getElementById("confirmButton").onclick = function () {
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
+    };
+</script>

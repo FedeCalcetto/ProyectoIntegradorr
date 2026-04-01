@@ -45,6 +45,9 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<int?>("artesanoId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("fecha")
                         .HasColumnType("datetime2");
 
@@ -58,6 +61,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("id");
+
+                    b.HasIndex("artesanoId");
 
                     b.HasIndex("productoId");
 
@@ -274,6 +279,30 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("idFactura");
 
                     b.ToTable("LineasFactura");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NombreArtesano = "Maria Artesana",
+                            NombreProducto = "Taza artesanal azul",
+                            artesanoId = 3,
+                            cantidad = 1,
+                            idFactura = 1,
+                            idProducto = 1,
+                            precioUnitario = 1500
+                        },
+                        new
+                        {
+                            Id = 2,
+                            NombreArtesano = "Maria Artesana",
+                            NombreProducto = "Plato decorativo",
+                            artesanoId = 3,
+                            cantidad = 2,
+                            idFactura = 1,
+                            idProducto = 2,
+                            precioUnitario = 500
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Orden", b =>
@@ -308,6 +337,19 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("ClienteId");
 
                     b.ToTable("Ordenes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            ClienteId = 2,
+                            Estado = 2,
+                            FechaCreacion = new DateTime(2026, 3, 18, 14, 0, 0, 0, DateTimeKind.Utc),
+                            FechaPago = new DateTime(2026, 3, 18, 14, 10, 0, 0, DateTimeKind.Utc),
+                            MercadoPagoPaymentId = 1234567890L,
+                            PreferenceId = "PREF-DEMO-001",
+                            Total = 2500m
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.OrdenItem", b =>
@@ -789,6 +831,12 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
 
+                    b.Property<string>("TokenResetPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TokenResetPasswordExpira")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("TokenVerificacionEmail")
                         .HasColumnType("nvarchar(max)");
 
@@ -888,6 +936,16 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
                     b.HasIndex("ClienteId");
 
                     b.HasDiscriminator().HasValue("CLIENTE");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Fecha = new DateTime(2026, 3, 18, 14, 15, 0, 0, DateTimeKind.Unspecified),
+                            OrdenId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Total = 2500m,
+                            ClienteId = 2
+                        });
                 });
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Admin", b =>
@@ -963,6 +1021,10 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Calificación", b =>
                 {
+                    b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", null)
+                        .WithMany("Calificaciones")
+                        .HasForeignKey("artesanoId");
+
                     b.HasOne("ProyectoIntegrador.LogicaNegocio.Entidades.Producto", null)
                         .WithMany("Calificaciones")
                         .HasForeignKey("productoId")
@@ -1294,6 +1356,8 @@ namespace ProyectoIntegrador.EntityFrameWork.Migrations
 
             modelBuilder.Entity("ProyectoIntegrador.LogicaNegocio.Entidades.Artesano", b =>
                 {
+                    b.Navigation("Calificaciones");
+
                     b.Navigation("comentarios");
 
                     b.Navigation("productos");

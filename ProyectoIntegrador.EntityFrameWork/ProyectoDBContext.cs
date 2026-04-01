@@ -344,6 +344,63 @@ namespace ProyectoIntegrador.EntityFrameWork
               .HasForeignKey(o => o.ClienteId)
               .OnDelete(DeleteBehavior.Restrict);
 
+            // =========================
+            // Seed compra demo
+            // =========================
+            var clienteId = 2; // Juan Cliente ya existe en tu seed
+            var facturaId = 1;
+            var ordenId = new Guid("11111111-1111-1111-1111-111111111111");
+
+            modelBuilder.Entity<Orden>().HasData(
+                new
+                {
+                    Id = ordenId,
+                    ClienteId = clienteId,
+                    FechaCreacion = new DateTime(2026, 3, 18, 14, 0, 0, DateTimeKind.Utc),
+                    FechaPago = new DateTime(2026, 3, 18, 14, 10, 0, DateTimeKind.Utc),
+                    MercadoPagoPaymentId = 1234567890L,
+                    Estado = EstadoOrden.Pagada,
+                    Total = 2500m,
+                    PreferenceId = "PREF-DEMO-001"
+                }
+            );
+
+            modelBuilder.Entity<FacturaNoFiscalCliente>().HasData(
+                new
+                {
+                    Id = facturaId,
+                    ClienteId = clienteId,
+                    Fecha = new DateTime(2026, 3, 18, 14, 15, 0),
+                    Total = 2500m,
+                    OrdenId = ordenId
+                }
+            );
+
+            modelBuilder.Entity<LineaFactura>().HasData(
+                new
+                {
+                    Id = 1,
+                    idProducto = 1,
+                    NombreProducto = "Taza artesanal azul",
+                    idFactura = facturaId,
+                    artesanoId = 3,
+                    NombreArtesano = "Maria Artesana",
+                    precioUnitario = 1500,
+                    cantidad = 1
+                },
+                new
+                {
+                    Id = 2,
+                    idProducto = 2,
+                    NombreProducto = "Plato decorativo",
+                    idFactura = facturaId,
+                    artesanoId = 3,
+                    NombreArtesano = "Maria Artesana",
+                    precioUnitario = 500,
+                    cantidad = 2
+                }
+            );
+
         }
 
 

@@ -51,6 +51,8 @@ namespace ProyectoIntegrador.LogicaAplication.CasosDeUso
                 };
             }
 
+            entidad.validarContraUsuarioTESTEO(dto.Password);
+
             entidad.SetPasswordInicial(dto.Password); //hash del password, sea cliente o artesano se setea el password hasheado en la entidad usuario.
             _usuarioRepositorio.Agregar(entidad);
             return entidad;

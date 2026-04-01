@@ -1,30 +1,51 @@
 ﻿@model CrearPedidoPersonalizadoViewModel
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-center fw-bold">Crear pedido personalizado</h2>
+@{
+    ViewData["Title"] = "Crear pedido personalizado";
+}
 
-    <form asp-action="Crear" method="post" class="card shadow-sm p-4">
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold mb-2">Crear pedido personalizado</h2>
+        <p class="text-muted mb-0">
+            Contale al artesano qué te gustaría encargar. Cuanto más detalle agregues, mejor podrá ayudarte ✨
+        </p>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Título</label>
-            <input asp-for="Titulo" class="form-control" />
-            <span asp-validation-for="Titulo" class="text-danger"></span>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <form asp-action="Crear" method="post" class="card shadow-sm border-0 rounded-4 p-4">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-4">
+                    <label asp-for="Titulo" class="form-label fw-semibold">Título</label>
+                    <input asp-for="Titulo"
+                           class="form-control"
+                           placeholder="Ej: Taza personalizada con flores azules" />
+                    <span asp-validation-for="Titulo" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Descripcion" class="form-label fw-semibold">Descripción</label>
+                    <textarea asp-for="Descripcion"
+                              class="form-control"
+                              rows="6"
+                              placeholder="Describí materiales, colores, tamaño, estilo, inspiración o cualquier detalle importante..."></textarea>
+                    <div class="form-text">
+                        Podés incluir ideas como colores, medidas, temática o uso del producto.
+                    </div>
+                    <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button class="btn btn-primary px-4">
+                         Enviar pedido
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Descripción</label>
-            <textarea asp-for="Descripcion"
-                      class="form-control"
-                      rows="4"></textarea>
-            <span asp-validation-for="Descripcion" class="text-danger"></span>
-        </div>
-
-        <div class="text-center">
-            <button class="btn btn-primary px-4">
-                Enviar pedido
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
 
 @section Scripts {
