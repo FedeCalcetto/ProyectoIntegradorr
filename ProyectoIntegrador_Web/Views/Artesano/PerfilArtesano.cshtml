@@ -1,7 +1,10 @@
 ﻿@model ProyectoIntegrador_Web.Models.EditarArtesanoViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
 @{
-    ViewData["Title"] = "Perfil";
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = localizer["Perfil"];
 }
 
 <div class="container py-5">

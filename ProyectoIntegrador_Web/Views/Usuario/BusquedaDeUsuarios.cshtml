@@ -1,10 +1,14 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @model BusquedaDeUsuariosViewModel
-
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
 <div class="container mt-4">
 
     <!-- Título -->
-    <h2 class="mb-4 text-center fw-bold">Buscar Usuarios</h2>
+    <h2 class="mb-4 text-center fw-bold">@localizer["BuscarUsuarios"]</h2>
 
     <!-- Barra de búsqueda -->
     <form method="get" class="d-flex justify-content-center mb-4">
@@ -12,9 +16,10 @@
                name="filtro"
                value="@Model.Filtro"
                class="form-control w-50 shadow-sm"
-               placeholder="🔍 Buscar usuarios..." />
+               placeholder="🔍 @localizer["BuscarUsuarios"]" />
+
         <button type="submit" class="btn btn-primary ms-3 px-4">
-            Buscar
+            @localizer["Buscar"]
         </button>
     </form>
 
@@ -25,12 +30,13 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>Foto</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Acciones</th>
+                        <th>@localizer["Foto"]</th>
+                        <th>@localizer["Nombre"]</th>
+                        <th>@localizer["Apellido"]</th>
+                        <th>@localizer["Acciones"]</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @if (Model.Usuarios != null && Model.Usuarios.Any())
                     {
@@ -59,14 +65,14 @@
 
                                 <!-- ACCIONES -->
                                 <td>
-                                    <!-- Ver perfil (solo artesanos) -->
+                                    <!-- Ver perfil -->
                                     @if (u is Artesano artesano)
                                     {
                                         <a asp-controller="Usuario"
                                            asp-action="PerfilPublico"
                                            asp-route-id="@u.id"
                                            class="btn btn-outline-primary btn-sm mb-1">
-                                            Ver Perfil
+                                            @localizer["VerPerfil"]
                                         </a>
                                     }
                                     else
@@ -87,8 +93,9 @@
                                                   method="post"
                                                   class="d-inline">
                                                 <input type="hidden" name="artesanoId" value="@artesanoSeguido.id" />
+
                                                 <button type="submit" class="btn btn-success btn-sm">
-                                                    Seguir
+                                                    @localizer["Seguir"]
                                                 </button>
                                             </form>
                                         }
@@ -99,8 +106,9 @@
                                                   method="post"
                                                   class="d-inline">
                                                 <input type="hidden" name="artesanoId" value="@artesanoSeguido.id" />
+
                                                 <button type="submit" class="btn btn-danger btn-sm">
-                                                    Dejar de seguir
+                                                    @localizer["DejarDeSeguir"]
                                                 </button>
                                             </form>
                                         }
@@ -113,7 +121,7 @@
                     {
                         <tr>
                             <td colspan="4" class="text-center p-4 text-muted">
-                                No se encontraron usuarios.
+                                @localizer["NoUsuarios"]
                             </td>
                         </tr>
                     }

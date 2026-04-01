@@ -1,8 +1,10 @@
 ﻿@model DetallesProductoViewModel
 @using System.Text.Json
-
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 @{
-    ViewData["Title"] = "Detalle del producto";
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = localizer["DetalleProducto"];
 
     var rol = Context.Session.GetString("Rol")?.ToUpper();
     var esCliente = rol == "CLIENTE";
@@ -15,37 +17,28 @@
     <meta property="og:image" content="@Model.ImagenCompartir" />
     <meta property="og:url" content="@Model.UrlCompartir" />
     <meta property="og:site_name" content="HechoXMí" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="@Model.Nombre" />
-    <meta name="twitter:description" content="@Model.Descripcion" />
-    <meta name="twitter:image" content="@Model.ImagenCompartir" />
-
 }
 
 <div class="container mt-5">
+
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show">
             @TempData["Success"]
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <div class="alert alert-warning alert-dismissible fade show">
             @TempData["Error"]
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
     <div class="card shadow-sm p-4 position-relative mb-5">
 
-        @* ❤️ BOTÓN FAVORITO (arriba a la derecha) *@
         @if (esCliente)
         {
             <form asp-controller="Cliente"
@@ -55,22 +48,23 @@
                   style="top: 14px; right: 14px; z-index: 5;">
 
                 @Html.AntiForgeryToken()
+
                 <input type="hidden" name="productoId" value="@Model.Id" />
 
                 <button type="button"
                         class="fav-btn js-fav-btn @(Model.EsFavorito ? "is-fav" : "")"
                         data-producto-id="@Model.Id"
-                        title="Agregar a favoritos">
+                        title="@localizer["AgregarFavoritos"]">
+
                     <i class="bi @(Model.EsFavorito ? "bi-heart-fill" : "bi-heart")"></i>
                 </button>
             </form>
         }
 
-        @* 🔗 COMPARTIR *@
         <button type="button"
                 class="fav-btn position-absolute"
                 style="top: 14px; right: @(esCliente ? "64px" : "14px"); z-index: 5;"
-                title="Compartir producto"
+                title="@localizer["CompartirProducto"]"
                 onclick="compartirProducto()">
             <i class="bi bi-share"></i>
         </button>
@@ -78,181 +72,120 @@
         <!-- Breadcrumb -->
         <nav class="mb-3">
             <small class="text-muted">
-                Catálogo / @Model.SubCategoria / @Model.Nombre
+                @localizer["Catalogo"] / @Model.SubCategoria / @Model.Nombre
             </small>
         </nav>
 
         <div class="row g-4 align-items-start">
 
-            <!-- MINIATURAS -->
-            <div class="col-md-1 d-flex flex-column align-items-center gap-2">
-                @foreach (var foto in Model.Fotos)
-                {
-                <img src="~/images/productos/@foto.UrlImagen.Replace("img/", "")"
-                         class="img-thumbnail thumb-img"
-                         style="width:60px; cursor:pointer"
-                         onclick="cambiarImagen(this)" />
-                }
-            </div>
-
-            <!-- IMAGEN PRINCIPAL -->
-            <div class="col-md-4">
-                <div class="border rounded shadow-sm p-3 text-center bg-white">
-                    <img id="imagenPrincipal"
-                         src="~/images/productos/@Model.Imagen"
-                         class="img-fluid rounded"
-                         style="max-height:420px; object-fit:contain;"
-                         alt="@Model.Nombre" />
-                </div>
-            </div>
-
-            <!-- INFO / COMPRA -->
+            <!-- INFO -->
             <div class="col-md-7">
-                <div class="row">
+                <h4 class="fw-semibold">@Model.Nombre</h4>
 
-                    <!-- 🧾 INFO PRODUCTO -->
-                    <div class="col-md-4">
+                <p class="text-muted small">
+                    @Model.Descripcion
+                </p>
 
-                        <h4 class="fw-semibold">@Model.Nombre</h4>
+                <div class="mb-2">
+                    <small class="text-muted">
+                        @Model.PromedioCalificacion.ToString("0.0")
+                        (@Model.CantidadReseñas @localizer["Resenas"])
+                    </small>
+                </div>
 
-                        <p class="text-muted small mb-2">
-                            @Model.Descripcion
-                        </p>
+                <div class="mb-3">
+                    <span class="fs-3 fw-bold">$@Model.Precio</span>
+                </div>
 
-                        <div class="mb-2">
-                            @{
-                                var promedio = Model.PromedioCalificacion;
-                                var estrellasEnteras = (int)Math.Floor(promedio);
-                                var tieneMedia = (promedio - estrellasEnteras) >= 0.5;
-                            }
+                <span class="badge bg-@(Model.Stock > 0 ? "success" : "danger")">
+                    @localizer["StockDisponible"]: @Model.Stock
+                </span>
 
-                            @for (int i = 1; i <= 5; i++)
-                            {
-                                if (i <= estrellasEnteras)
-                                {
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                }
-                                else if (i == estrellasEnteras + 1 && tieneMedia)
-                                {
-                                    <i class="bi bi-star-half text-warning"></i>
-                                }
-                                else
-                                {
-                                    <i class="bi bi-star text-warning"></i>
-                                }
-                            }
+                <p class="mt-3 text-muted">
+                    @localizer["VendidoPor"]
+                    <strong>
+                        <a asp-controller="Usuario"
+                           asp-action="PerfilPublico"
+                           asp-route-id="@Model.ArtesanoId">
+                            @Model.Artesano
+                        </a>
+                    </strong>
+                </p>
 
-                            <small class="text-muted ms-2">
-                                @Model.PromedioCalificacion.ToString("0.0")
-                                (@Model.CantidadReseñas reseñas)
-                            </small>
-                        </div>
+                @if (Model.Stock > 0)
+                {
+                    <form asp-controller="Carrito"
+                          asp-action="AgregarAlCarrito"
+                          method="post">
 
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="productoId" value="@Model.Id" />
 
                         <div class="mb-3">
-                            <span class="fs-3 fw-bold text-dark">
-                                $@Model.Precio
-                            </span>
+                            <label class="form-label small fw-semibold">
+                                @localizer["Cantidad"]
+                            </label>
+
+                            <input type="number"
+                                   name="cantidad"
+                                   class="form-control form-control-sm w-50"
+                                   value="1"
+                                   min="1"
+                                   max="@Model.Stock" />
                         </div>
 
-                        <span class="badge bg-@(Model.Stock > 0 ? "success" : "danger") mb-3 d-inline-block">
-                            Stock disponible: @Model.Stock
-                        </span>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                🛒 @localizer["AgregarCarrito"]
+                            </button>
 
-                        <p class="mt-3 text-muted">
-                            Vendido por
-                            <strong>
-                                <a asp-controller="Usuario"
-                                   asp-action="PerfilPublico"
-                                   asp-route-id="@Model.ArtesanoId">
-                                    @Model.Artesano
-                                </a>
-                            </strong>
-                        </p>
-
-                    </div>
-
-                    <!-- ⚙️ ACCIONES -->
-                    <div class="col-md-8 d-flex flex-column justify-content-center">
-
-                        @if (Model.Stock > 0)
-                        {
-                            <form asp-controller="Carrito"
-                                  asp-action="AgregarAlCarrito"
-                                  method="post">
-
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="productoId" value="@Model.Id" />
-
-                                <div class="mb-3">
-                                    <label class="form-label small fw-semibold">
-                                        Cantidad
-                                    </label>
-                                    <input type="number"
-                                           name="cantidad"
-                                           class="form-control form-control-sm w-75"
-                                           value="1"
-                                           min="1"
-                                           max="@Model.Stock" />
-                                </div>
-
-                                <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-primary px-3">
-                                        🛒 Agregar al carrito
-                                    </button>
-
-                                    <a asp-controller="Usuario"
-                                       asp-action="Catalogo"
-                                       class="btn btn-outline-secondary px-3">
-                                        Volver a la tienda
-                                    </a>
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            <p class="text-danger fw-semibold mt-3">
-                                Sin stock 😢
-                            </p>
-                        }
-
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- FORMULARIO DE REPORTE -->
-            <hr class="my-4" />
-
-            <div class="mt-3">
-                <h6 class="fw-semibold text-danger">Reportar este producto</h6>
-
-                <form asp-controller="Producto"
-                      asp-action="ReportarProducto"
-                      method="post"
-                      class="mt-2">
-
-                    @Html.AntiForgeryToken()
-
-                    <input type="hidden" asp-for="Id" />
-
-                    <div class="mb-2">
-                        <textarea asp-for="Reporte.razon"
-                                  class="form-control form-control-sm"
-                                  rows="3"
-                                  placeholder="Describa el motivo del reporte"></textarea>
-
-                        <span asp-validation-for="Reporte.razon"
-                              class="text-danger small"></span>
-                    </div>
-
-                    <button type="submit"
-                            class="btn btn-sm btn-outline-danger">
-                        🚩 Reportar producto
-                    </button>
-                </form>
+                            <a asp-controller="Usuario"
+                               asp-action="Catalogo"
+                               class="btn btn-outline-secondary">
+                                @localizer["VolverTienda"]
+                            </a>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <p class="text-danger fw-semibold mt-3">
+                        @localizer["SinStock"]
+                    </p>
+                }
             </div>
         </div>
+
+        <hr class="my-4" />
+
+        <!-- REPORTAR -->
+        <div>
+            <h6 class="fw-semibold text-danger">
+                @localizer["ReportarProducto"]
+            </h6>
+
+            <form asp-controller="Producto"
+                  asp-action="ReportarProducto"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Id" />
+
+                <textarea asp-for="Reporte.razon"
+                          class="form-control form-control-sm"
+                          rows="3"
+                          placeholder="@localizer["MotivoReporte"]">
+                </textarea>
+
+                <button type="submit"
+                        class="btn btn-sm btn-outline-danger mt-2">
+                    🚩 @localizer["Reportar"]
+                </button>
+            </form>
+        </div>
+
     </div>
 </div>
 

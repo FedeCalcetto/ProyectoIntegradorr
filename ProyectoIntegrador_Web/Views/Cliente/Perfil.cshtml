@@ -1,7 +1,10 @@
 ﻿@model ProyectoIntegrador_Web.Models.EditarClienteViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
 @{
-    ViewData["Title"] = "Perfil";
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = localizer["Perfil"];
 }
 
 <div class="container py-5">
@@ -15,17 +18,17 @@
     {
         <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
             @TempData["Mensaje"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    }
+}
 
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
             @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    }
+}
 
     <form asp-action="Perfil" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
@@ -179,7 +182,7 @@
                                    asp-action="PerfilPublico"
                                    asp-route-id="@artesano.id"
                                    class="btn btn-outline-primary btn-sm">
-                                    Ver perfil
+                                    @localizer["VerPerfil"]
                                 </a>
 
                                 <form asp-controller="Cliente"

@@ -1,10 +1,13 @@
 ﻿@model ListadoDeReportesViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
 @{
-    ViewData["Title"] = "Reportes";
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewData["Title"] = localizer["Reportes"];
 }
 
-<h1 class="mb-4">Reportes</h1>
+<h1 class="mb-4">@localizer["Reportes"]</h1>
 
 @if (Model.Reportes != null && Model.Reportes.Any())
 {
@@ -24,9 +27,11 @@
                         </h5>
 
                         <p class="mb-2">
-                            <strong>Cliente:</strong>
-                            @(reporte.cliente != null ? reporte.cliente.nombre : "Sin cliente")
-                        </p>
+                            <strong>@Localizer["Cliente"]:</strong>
+                            @(reporte.cliente != null
+                                                ? reporte.cliente.nombre
+                                                : localizer["SinCliente"])
+                </p>
 
                         <div class="mb-3">
                             @if (reporte.artesano == null && reporte.producto != null)
@@ -44,7 +49,8 @@
                                          alt="Artesano" />
 
                                     <span class="badge bg-secondary p-2">
-                                        Artesano reportado: @reporte.artesano.nombre
+                                        @localizer["ArtesanoReportado"]:
+                                        @reporte.artesano.nombre
                                     </span>
                                 </div>
                             }
@@ -79,7 +85,7 @@
 else
 {
     <div class="alert alert-secondary text-center">
-        No hay reportes pendientes.
+        @localizer["NoHayReportes"]
     </div>
 }
 

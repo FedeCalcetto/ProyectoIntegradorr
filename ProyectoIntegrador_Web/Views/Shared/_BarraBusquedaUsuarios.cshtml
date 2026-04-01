@@ -1,16 +1,20 @@
 ﻿@model BusquedaDeUsuariosViewModel
-
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    }
 <form method="get"
       class="d-flex justify-content-center mb-4">
 
     <input type="text"
            name="filtro"
            value="@Model?.Filtro"
-           class="form-control w-50 shadow-sm"
-           placeholder="🔍 Buscar usuarios..." />
+           class="form-control w-150 shadow-sm"
+           placeholder="@localizer["BuscarUsuarios"]" />
 
     <button type="submit"
             class="btn btn-primary ms-3 px-4">
-        Buscar
+        @localizer["Buscar"]
     </button>
 </form>

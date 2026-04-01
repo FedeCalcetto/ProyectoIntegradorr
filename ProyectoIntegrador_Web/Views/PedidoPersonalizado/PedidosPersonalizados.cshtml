@@ -1,9 +1,17 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @using ProyectoIntegrador_Web.Models
 @model PedidosPersonalizadosPaginadosViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center fw-bold">Pedidos personalizados</h2>
+    <h2 class="mb-4 text-center fw-bold">
+        @localizer["PedidosPersonalizados"]
+    </h2>
 
     <form method="get" class="row mb-4">
         <div class="col-md-6">
@@ -11,29 +19,29 @@
                    name="busqueda"
                    value="@Model.Busqueda"
                    class="form-control"
-                   placeholder="Buscar por título o cliente..." />
+                   placeholder="@localizer["BuscarPedidoPlaceholder"]" />
         </div>
 
         <div class="col-md-4">
             <select name="orden" class="form-select">
                 <option value="fecha_desc" selected="@(Model.Orden == "fecha_desc")">
-                    Más recientes primero
+                    @localizer["MasRecientes"]
                 </option>
                 <option value="fecha_asc" selected="@(Model.Orden == "fecha_asc")">
-                    Más antiguos primero
+                    @localizer["MasAntiguos"]
                 </option>
                 <option value="nombre_asc" selected="@(Model.Orden == "nombre_asc")">
-                    Cliente A–Z
+                    @localizer["ClienteAZ"]
                 </option>
                 <option value="nombre_desc" selected="@(Model.Orden == "nombre_desc")">
-                    Cliente Z–A
+                    @localizer["ClienteZA"]
                 </option>
             </select>
         </div>
 
         <div class="col-md-2">
             <button class="btn btn-primary w-100">
-                Buscar
+                @localizer["Buscar"]
             </button>
         </div>
     </form>
@@ -48,15 +56,21 @@
                     <p class="card-text">@p.Descripcion</p>
 
                     <p class="text-muted mb-2">
-                        Pedido por:
+                        @localizer["PedidoPor"]:
                         <strong>@p.Cliente.nombre @p.Cliente.apellido</strong><br />
-                        Fecha: @p.FechaCreacion.ToShortDateString()
+                        @localizer["Fecha"]:
+                        @p.FechaCreacion.ToShortDateString()
                     </p>
 
-                    <form asp-action="Aceptar" method="post" class="js-loader" data-loader-text="Aceptando pedido...">
+                    <form asp-action="Aceptar"
+                          method="post"
+                          class="js-loader"
+                          data-loader-text="@localizer["AceptandoPedido"]">
+
                         <input type="hidden" name="id" value="@p.Id" />
+
                         <button class="btn btn-success">
-                            Aceptar encargo
+                            @localizer["AceptarEncargo"]
                         </button>
                     </form>
                 </div>
@@ -66,7 +80,7 @@
     else
     {
         <p class="text-center text-muted">
-            No hay pedidos disponibles en este momento.
+            @localizer["SinPedidosDisponibles"]
         </p>
     }
 
@@ -81,7 +95,7 @@
                        asp-route-pagina="@(Model.PaginaActual - 1)"
                        asp-route-busqueda="@Model.Busqueda"
                        asp-route-orden="@Model.Orden">
-                        Anterior
+                        @localizer["Anterior"]
                     </a>
                 </li>
 
@@ -104,7 +118,7 @@
                        asp-route-pagina="@(Model.PaginaActual + 1)"
                        asp-route-busqueda="@Model.Busqueda"
                        asp-route-orden="@Model.Orden">
-                        Siguiente
+                        @localizer["Siguiente"]
                     </a>
                 </li>
 

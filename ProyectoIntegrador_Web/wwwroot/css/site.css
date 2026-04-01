@@ -19,6 +19,7 @@ html {
 
 body {
     overflow-x: hidden;
+    background-color: #F5F7F6;
 }
 
 
@@ -261,8 +262,13 @@ body {
     gap: 10px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 10px 40px;
+    padding: 10px 20px;
+}
 
+@media (max-width: 768px) {
+    .slider {
+        padding: 10px;
+    }
 }
 
 .slider::-webkit-scrollbar {
@@ -295,10 +301,27 @@ body {
         right: 0;
     }
 
+@media (max-width: 768px) {
+    .slider-btn {
+        display: none !important;
+    }
+}
+
 .slider-item {
-    min-width: 200px;
-    max-width: 200px;
-    flex-shrink: 0;
+    flex: 0 0 auto;
+    width: 200px;
+}
+
+/* MOBIL */
+@media (max-width: 768px) {
+    .slider-item {
+        width: 70%; /* ocupa gran parte de la pantalla */
+    }
+}
+@media (max-width: 480px) {
+    .slider-item {
+        width: 85%;
+    }
 }
 
 .catalog-section {
@@ -331,7 +354,7 @@ body {
 
 .catalogo-container {
     background: #f5f7f6;
-
+    overflow-x: hidden; /* evita scroll horizontal */
 }
 
 .catalogoCard {
@@ -345,7 +368,24 @@ body {
     background: #f3f6f4;
 }
 
+.catalog-image {
+    background-image: url('/images/catalogo/fondoHeader.jpg'); /* tu imagen */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 300px; /* ajustÃ¡ segÃºn te guste */
+    display: flex;
+    align-items: center;
+}
 
+    /* Opcional: oscurecer un poco para que se vea mejor el buscador */
+    .catalog-image .overlay {
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3); /* transparencia */
+        display: flex;
+        align-items: center;
+    }
 
 /*DETALLES PRODUCTO*/
 .thumb-img {
@@ -614,7 +654,7 @@ body.login-body {
     border: none;
     border-top: 1px solid rgba(255,255,255,0.08);
     color: white; 
-    font-size: 20px;*/ /* tamaño del ícono */
+    font-size: 20px;*/ /* tamaÃ±o del Ã­cono */
     /*cursor: pointer;
     transition: background 0.25s ease, color 0.25s ease;
 }
@@ -624,7 +664,7 @@ body.login-body {
         color: black;
     }*/
 
-/* Rotación SOLO del ícono */
+/* RotaciÃ³n SOLO del Ã­cono */
 /*.catalog-header:not(.collapsed) + .toggle-header
 #btnToggleHeader i {
     transform: rotate(180deg);
@@ -704,10 +744,10 @@ body.login-body {
 
 .producto-card-fav {
     position: relative;
-    /*overflow: hidden; /* evita que el botón "genere espacio" */
+    /*overflow: hidden; /* evita que el botÃ³n "genere espacio" */
 }
 
-    /* Contenedor del botón (form) */
+    /* Contenedor del botÃ³n (form) */
     .producto-card-fav .fav-btn-form {
         position: absolute;
         top: 8px;
@@ -723,12 +763,12 @@ body.login-body {
         opacity: 1;
     }
 
-    /* El overlay del stretched-link siempre por debajo del botón */
+    /* El overlay del stretched-link siempre por debajo del botÃ³n */
     .producto-card-fav .stretched-link::after {
         z-index: 1 !important;
     }
 
-    /* Botón */
+    /* BotÃ³n */
     .producto-card-fav .fav-btn {
         border: 0;
         background: rgba(255,255,255,.95);
@@ -773,7 +813,7 @@ body.login-body {
 }
 
 .login-alert{
-    width: 900px;      /* mismo “ancho visual” que tu login-card */
+    width: 900px;      /* mismo Â“ancho visualÂ” que tu login-card */
     max-width: 95%;
 }
 
@@ -827,7 +867,7 @@ body.login-body {
     font-size: 26px;
 }
 
-/* ?? info líneas */
+/* ?? info lÃ­neas */
 .info-line {
     display: flex;
     gap: 8px;
@@ -883,3 +923,150 @@ body.login-body {
     .star-click:hover {
         transform: scale(1.2);
     }
+    /* Select mÃ¡s limpio */
+    .language-switcher select {
+        border-radius: 0; /* rectangular */
+        font-size: 0.9rem;
+        padding: 6px -8px;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        cursor: pointer;
+    }
+
+        /* Hover */
+        .language-switcher select:hover {
+            background-color: #eaeaea;
+        }
+
+
+   /*----------------*/
+
+.catalog-hero {
+    background-color: #123c30;
+    background-size: cover;
+    background-position: center;
+    height: 700px;
+    position: relative;
+    padding-bottom: 2px;
+}
+
+.hero-overlay {
+    background: rgba(1, 0, 1, 0.10);  
+    background-repeat: no-repeat; 
+    background-size: cover; 
+    background-position: center; 
+
+
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;  
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-content {
+    margin: 0 auto; 
+    text-align: center; 
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+}
+
+    .hero-content.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .hero-content.fade-out {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    .hero-content .form-control,
+    .hero-content .form-select {
+        background-color: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+
+        .hero-content .btn:hover {
+            background-color: #0d2b22;
+        }
+
+#botonBuscar {
+    background-color: #198754;
+    border: none;
+    color: white;
+}
+
+.navbar-nav {
+    list-style: none;
+    padding-left: 0;
+}
+
+/*BARRA BSUQUEDA RESPONSIVE*/
+
+/* CONTENEDOR */
+.busqueda-form > * {
+    flex: 0 0 auto;
+}
+
+/* INPUT crece */
+#inputBusqueda {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* FILTROS */
+#filtrosProductos {
+    flex-wrap: wrap;
+}
+
+/* MOBIL */
+@media (min-width: 768px) {
+
+    .busqueda-form {
+        flex-wrap: nowrap;
+    }
+
+    /* SELECT modo */
+    #modoBusqueda {
+        width: 180px;
+    }
+
+    /* INPUT principal crece */
+    #inputBusqueda {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    /* CONTENEDOR DE FILTROS */
+    #filtrosProductos {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 10px;
+        flex: 2; 
+    }
+
+        #filtrosProductos input,
+        #filtrosProductos select {
+            flex: 1;
+            min-width: 120px;
+        }
+
+    /* BOTÃ“N */
+    #botonBuscar {
+        width: auto;
+        white-space: nowrap;
+    }
+    
+}
+.busqueda-form > * {
+    flex: 0 0 auto;
+}
+.busqueda-form > * {
+    flex: initial;
+}

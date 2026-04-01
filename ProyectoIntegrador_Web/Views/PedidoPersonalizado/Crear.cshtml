@@ -1,8 +1,16 @@
 ﻿@model CrearPedidoPersonalizadoViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
 
 @{
     ViewData["Title"] = "Crear pedido personalizado";
 }
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    }
+<div class="container mt-4">
+    <h2 class="mb-4 text-center fw-bold">
+        @localizer["CrearPedidoPersonalizado"]
+    </h2>
 
 <div class="container py-5">
     <div class="text-center mb-4">

@@ -193,20 +193,26 @@ namespace ProyectoIntegrador_Web.Controllers
             var email = HttpContext.Session.GetString("loginUsuario");
             var rol = HttpContext.Session.GetString("Rol")?.Trim().ToUpper();
 
-             if (string.IsNullOrEmpty(email) || (rol != "ARTESANO" && rol != "CLIENTE" && rol != "ADMIN"))
-             {
-                 return RedirectToAction("Login", "Login");
-             }
+            //if (string.IsNullOrEmpty(email) || (rol != "ARTESANO" && rol != "CLIENTE" && rol != "ADMIN"))
+            // {
+            //     return RedirectToAction("Login", "Login");
+            // }
 
             var artesano = _obtenerArtesano.Ejecutar(id);
+            var cantidad = _promedioCalificacion.ObtenerTotalCalificacionesArtesano(artesano.id);
+            var promedio = _promedioCalificacion.ObtenerPromedioPorArtesano(artesano.id);
 
             if (artesano == null)
                 return NotFound();
 
-            var vm = new PerfilPublicoViewModel
+           var vm = new PerfilPublicoViewModel
             {
                 Artesano = artesano,
-                Productos = artesano.productos
+                Productos = artesano.productos,
+                Reporte = new AgregarReporteDto(),
+                Comentario = new AgregarComentarioDto(),
+                PromedioCalificacion = (double)promedio,
+                CantidadReseñas = cantidad
             };
 
             return View(vm);
@@ -289,16 +295,16 @@ namespace ProyectoIntegrador_Web.Controllers
             }
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Calificar([FromBody] CalificarArtesanoDto dto)
-        {
-            var email = HttpContext.Session.GetString("loginUsuario");
-            var cliente = _obtenerCliente.Ejecutar(email);
-            await _calificarArtesano.Ejecutar(dto.arteId, dto.puntaje, cliente.id);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Calificar([FromBody] CalificarArtesanoDto dto)
+        //{
+        //    var email = HttpContext.Session.GetString("loginUsuario");
+        //    var cliente = _obtenerCliente.Ejecutar(email);
+        //    await _calificarArtesano.Ejecutar(dto.arteId, dto.puntaje, cliente.id);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         private PerfilPublicoViewModel CrearDetalleVM(int id)
         {

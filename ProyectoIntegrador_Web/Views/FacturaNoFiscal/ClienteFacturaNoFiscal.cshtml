@@ -1,5 +1,13 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @model FacturaNoFiscalCliente
+
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
+
 @Html.AntiForgeryToken()
 
 @if (Model == null)
@@ -108,6 +116,12 @@
                 <div class="fs-4 fw-bold">$@Model.Total</div>
             </div>
 
+        <div class="text-end mt-3">
+            <h5>
+                @localizer["TotalPagado"]:
+                <strong>$@Model.Total</strong>
+            </h5>
+            <p>@localizer["Fecha"]: @Model.Fecha.ToString("dd/MM/yyyy")</p>
         </div>
     </div>
 
@@ -148,7 +162,7 @@
                     pintarEstrellas(container, puntaje);
                     mostrarToast("Gracias por calificar ⭐");
                 } else {
-                    alert("No se pudo calificar.");
+                    alert("@localizer["ErrorCalificar"]");
                 }
             });
         });

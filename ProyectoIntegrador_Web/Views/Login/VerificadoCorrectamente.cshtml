@@ -1,16 +1,26 @@
-﻿@{
-    ViewBag.Title = "Email Verificado";
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+    ViewBag.Title = localizer["EmailVerificado"];
 }
 
 <div class="container mt-5">
 
     <div class="text-center p-5 rounded shadow" style="background: #f8f9fa;">
-        <h2 class="text-success mb-4">🎉 ¡Email verificado correctamente! 🎉</h2>
+        <h2 class="text-success mb-4">
+            🎉 @localizer["EmailVerificadoExito"] 🎉
+        </h2>
 
-        <p class="mb-4">Tu correo fue confirmado con éxito. Ya podés iniciar sesión.</p>
+        <p class="mb-4">
+            @localizer["DescripcionEmailVerificado"]
+        </p>
 
-        <a asp-controller="Cliente" asp-action="Inicio" class="btn btn-primary btn-lg">
-            Ir al Inicio
+        <a asp-controller="Cliente"
+           asp-action="Inicio"
+           class="btn btn-primary btn-lg">
+            @localizer["IrInicio"]
         </a>
     </div>
 

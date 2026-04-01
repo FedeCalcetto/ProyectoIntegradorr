@@ -1,4 +1,7 @@
-﻿@{
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
     var modo = ViewBag.ModoBusqueda ?? "productos";
 }
 <nav class="navbar" style="background-color:#f2f2f2;">
@@ -21,7 +24,7 @@
                    id="inputBusqueda"
                    class="form-control"
                    placeholder="Buscar productos..."
-                   style="min-width:260px" />
+                   style="min-width:150px" />
 
             <!-- FILTROS PRODUCTOS -->
             <div id="filtrosProductos" class="d-flex gap-2">
@@ -82,18 +85,19 @@
         const modo = document.getElementById('modoBusqueda');
         const filtros = document.getElementById('filtrosProductos');
         const input = document.getElementById('inputBusqueda');
-
+        const placeholderUsuarios = '@localizer["BuscarUsuarios"]';
+        const placeholderProductos = '@localizer["BuscarProductos"]';
         function actualizarModo() {
             if (modo.value === 'usuarios') {
                 filtros.classList.add('d-none');
                 filtros.classList.remove('d-flex');
                 form.action = '/Usuario/BusquedaDeUsuarios';
-                input.placeholder = 'Buscar usuarios...';
+                input.placeholder = placeholderUsuarios;
             } else {
                     filtros.classList.remove('d-none');
     filtros.classList.add('d-flex');
                 form.action = '/Producto/ProductosFiltrados';
-                input.placeholder = 'Buscar productos...';
+                input.placeholder = placeholderProductos;
             }
         }
 

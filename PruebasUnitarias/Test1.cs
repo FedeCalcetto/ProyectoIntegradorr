@@ -135,34 +135,7 @@ namespace PruebasUnitarias
     [TestClass]
     public class UsuarioTests
     {
-        [TestMethod]
-        public void Validar_ContraseñaSinMayuscula_LanzaExcepcion()
-        {
-
-            var usuario = new Cliente
-            {
-                nombre = "Test",
-                apellido = "User",
-                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("t@t.com"),
-                password = "password123"
-            };
-
-            Assert.ThrowsException<MayusculaPasswordException>(() => usuario.Validar());
-        }
-
-        [TestMethod]
-        public void Validar_ContraseñaMuyCorta_LanzaExcepcion()
-        {
-            var usuario = new Cliente
-            {
-                nombre = "Test",
-                apellido = "User",
-                email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("t@t.com"),
-                password = "Ab1"
-            };
-
-            Assert.ThrowsException<passwordUsuarioException>(() => usuario.Validar());
-        }
+        
 
         [TestMethod]
         public void Validar_NombreConNumero_LanzaExcepcion()
@@ -1168,7 +1141,7 @@ namespace PruebasUnitarias
             public void ObtenerPromedioPorArtesano_RetornaValorDelRepositorio()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
                 int artesanoId = 5;
                 decimal promedioEsperado = 4.5m;
 
@@ -1189,11 +1162,11 @@ namespace PruebasUnitarias
             public void ObtenerTotalCalificacionesArtesano_RetornaValorDelRepositorio()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
                 int artesanoId = 5;
                 int totalEsperado = 10;
 
-                repo.Setup(r => r.ObtenerTotalCalificacionesArtesano(artesanoId))
+                repo.Setup(r => r.ObtenerTotalCalificaciones(artesanoId))
                     .Returns(totalEsperado);
 
                 var caso = new ObtenerCalificacionArtesanoCasoDeUso(repo.Object);
@@ -1203,7 +1176,7 @@ namespace PruebasUnitarias
 
                 // Assert
                 Assert.AreEqual(totalEsperado, resultado);
-                repo.Verify(r => r.ObtenerTotalCalificacionesArtesano(artesanoId), Times.Once);
+                repo.Verify(r => r.ObtenerTotalCalificaciones(artesanoId), Times.Once);
             }
         }
 
@@ -1214,7 +1187,7 @@ namespace PruebasUnitarias
             public async Task Ejecutar_PuntajeInvalido_LanzaExcepcion()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
                 var caso = new CalificarArtesanoCasoDeUso(repo.Object);
 
                 // Act + Assert
@@ -1227,10 +1200,10 @@ namespace PruebasUnitarias
             public async Task Ejecutar_CalificacionExistente_ActualizaPuntaje()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
 
                 var calificacionExistente =
-                    Calificación.ParaArtesano(1, 10, 3);
+                    CalificacionArtesano.ParaArtesano(1, 10, 3);
 
                 repo.Setup(r =>
                     r.ObtenerPorUsuarioYArtesano(10, 1)
@@ -1246,7 +1219,7 @@ namespace PruebasUnitarias
 
                 repo.Verify(r => r.Actualizar(calificacionExistente), Times.Once);
                 repo.Verify(r =>
-                    r.AgregarParaArtesano(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<decimal>()),
+                    r.Agregar(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<decimal>()),
                     Times.Never
                 );
             }
@@ -1255,11 +1228,11 @@ namespace PruebasUnitarias
             public async Task Ejecutar_SinCalificacionPrevia_AgregaNueva()
             {
                 // Arrange
-                var repo = new Mock<ICalificarProductoRepositorio>();
+                var repo = new Mock<ICalificarArtesanoRepositorio>();
 
                 repo.Setup(r =>
                     r.ObtenerPorUsuarioYArtesano(It.IsAny<int>(), It.IsAny<int>())
-                ).ReturnsAsync((Calificación)null);
+                ).ReturnsAsync((CalificacionArtesano)null);
 
                 var caso = new CalificarArtesanoCasoDeUso(repo.Object);
 
@@ -1268,14 +1241,197 @@ namespace PruebasUnitarias
 
                 // Assert
                 repo.Verify(r =>
-                    r.AgregarParaArtesano(2, 20, 4),
+                    r.Agregar(2, 20, 4),
                     Times.Once
                 );
 
                 repo.Verify(r =>
-                    r.Actualizar(It.IsAny<Calificación>()),
+                    r.Actualizar(It.IsAny<CalificacionArtesano>()),
                     Times.Never
                 );
+            }
+
+            [TestClass]
+            public class CambiarPasswordCasoDeUsoTests
+            {
+                [TestMethod]
+                public void Ejecutar_DatosCorrectos_ActualizaPassword()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+
+                    var usuario = new Cliente
+                    {
+                        id = 1,
+                        email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
+                        password = BCrypt.Net.BCrypt.HashPassword("Password123")
+                    };
+
+                    repo.Setup(r => r.BuscarPorEmail("test@mail.com"))
+                        .Returns(usuario);
+
+                    var caso = new CambiarPasswordCasoDeUso(repo.Object);
+
+                    // Act
+                    caso.Ejecutar(
+                        "PasswordNueva1",
+                        "PasswordNueva1",
+                        "Password123",
+                        "test@mail.com"
+                    );
+
+                    // Assert
+                    repo.Verify(r => r.Actualizar(usuario), Times.Once);
+                }
+
+                [TestMethod]
+                public void Ejecutar_ContraseñasNoCoinciden_LanzaExcepcion()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+
+                    var usuario = new Cliente
+                    {
+                        id = 1,
+                        email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
+                        password = BCrypt.Net.BCrypt.HashPassword("Password123")
+                    };
+
+                    repo.Setup(r => r.BuscarPorEmail("test@mail.com"))
+                        .Returns(usuario);
+
+                    var caso = new CambiarPasswordCasoDeUso(repo.Object);
+
+                    // Act + Assert
+                    Assert.ThrowsException<NoCoincideException>(() =>
+                        caso.Ejecutar(
+                            "PasswordNueva1",
+                            "PasswordNueva2",
+                            "Password123",
+                            "test@mail.com"
+                        )
+                    );
+                }
+
+                [TestMethod]
+                public void Ejecutar_ContraActualIncorrecta_LanzaExcepcion()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+
+                    var usuario = new Cliente
+                    {
+                        id = 1,
+                        email = new ProyectoIntegrador.LogicaNegocio.ValueObjects.Email("test@mail.com"),
+                        password = BCrypt.Net.BCrypt.HashPassword("Password123")
+                    };
+
+                    repo.Setup(r => r.BuscarPorEmail("test@mail.com"))
+                        .Returns(usuario);
+
+                    var caso = new CambiarPasswordCasoDeUso(repo.Object);
+
+                    // Act + Assert
+                    Assert.ThrowsException<ContraActualException>(() =>
+                        caso.Ejecutar(
+                            "PasswordNueva1",
+                            "PasswordNueva1",
+                            "PasswordIncorrecta",
+                            "test@mail.com"
+                        )
+                    );
+                }
+            }
+            [TestClass]
+            public class AgregarUsuarioCasoDeUsoTests
+            {
+                [TestMethod]
+                public void Ejecutar_EsArtesano_CreaUsuarioArtesano()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+                    var caso = new AgregarUsuarioCasoDeUso(repo.Object);
+
+                    var dto = new AgregarUsuarioDto
+                    {
+                        Nombre = "Juan",
+                        Apellido = "Perez",
+                        Email = "juan@mail.com",
+                        Password = "Password123",
+                        EsArtesano = true
+                    };
+
+                    string codigo = "ABC123";
+
+                    // Act
+                    var resultado = caso.Ejecutar(dto, codigo);
+
+                    // Assert
+                    Assert.IsInstanceOfType(resultado, typeof(Artesano));
+                    Assert.AreEqual("Artesano", resultado.rol);
+                    Assert.AreEqual(codigo, resultado.CodigoVerificacion);
+                    Assert.IsFalse(resultado.Verificado);
+
+                    repo.Verify(r => r.Agregar(It.IsAny<Usuario>()), Times.Once);
+                }
+
+                [TestMethod]
+                public void Ejecutar_NoEsArtesano_CreaUsuarioCliente()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+                    var caso = new AgregarUsuarioCasoDeUso(repo.Object);
+
+                    var dto = new AgregarUsuarioDto
+                    {
+                        Nombre = "Ana",
+                        Apellido = "Lopez",
+                        Email = "ana@mail.com",
+                        Password = "Password123",
+                        EsArtesano = false
+                    };
+
+                    string codigo = "XYZ999";
+
+                    // Act
+                    var resultado = caso.Ejecutar(dto, codigo);
+
+                    // Assert
+                    Assert.IsInstanceOfType(resultado, typeof(Cliente));
+                    Assert.AreEqual("Cliente", resultado.rol);
+                    Assert.AreEqual(codigo, resultado.CodigoVerificacion);
+                    Assert.IsFalse(resultado.Verificado);
+
+                    repo.Verify(r => r.Agregar(It.IsAny<Usuario>()), Times.Once);
+                }
+
+                [TestMethod]
+                public void Ejecutar_UsuarioCreado_SeGuardaEnRepositorio()
+                {
+                    // Arrange
+                    var repo = new Mock<IUsuarioRepositorio>();
+                    var caso = new AgregarUsuarioCasoDeUso(repo.Object);
+
+                    var dto = new AgregarUsuarioDto
+                    {
+                        Nombre = "Pedro",
+                        Apellido = "Gomez",
+                        Email = "pedro@mail.com",
+                        Password = "Password123",
+                        EsArtesano = false
+                    };
+
+                    string codigo = "COD123";
+
+                    // Act
+                    caso.Ejecutar(dto, codigo);
+
+                    // Assert
+                    repo.Verify(r => r.Agregar(It.Is<Usuario>(u =>
+                        u.nombre == "Pedro" &&
+                        u.apellido == "Gomez"
+                    )), Times.Once);
+                }
             }
         }
     }

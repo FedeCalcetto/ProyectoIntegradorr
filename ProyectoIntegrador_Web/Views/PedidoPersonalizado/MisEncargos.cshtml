@@ -1,9 +1,18 @@
 ﻿@using ProyectoIntegrador.LogicaNegocio.Entidades
 @using ProyectoIntegrador_Web.Models
 @model MisEncargosPaginadosViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizerFactory factory
+
+@{
+    var localizer = factory.Create("Resource", "ProyectoIntegrador_Web");
+}
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center fw-bold">Mis encargos</h2>
+    <h2 class="mb-4 text-center fw-bold">
+        @localizer["MisEncargos"]
+    </h2>
+
     @if (Model.Pedidos.Any())
     {
         foreach (var p in Model.Pedidos)
@@ -14,8 +23,10 @@
                     <p class="card-text">@p.Descripcion</p>
 
                     <p class="text-muted mb-2">
-                        Cliente: <strong>@p.Cliente.nombre @p.Cliente.apellido</strong><br />
-                        Estado: <strong>@p.Estado</strong>
+                        @localizer["Cliente"]:
+                        <strong>@p.Cliente.nombre @p.Cliente.apellido</strong><br />
+                        @localizer["Estado"]:
+                        <strong>@p.Estado</strong>
                     </p>
 
                     @if (p.Estado == EstadoPedido.Aceptado)
@@ -23,14 +34,14 @@
                         <form asp-action="Finalizar" method="post">
                             <input type="hidden" name="id" value="@p.Id" />
                             <button class="btn btn-primary">
-                                Finalizar pedido
+                                @localizer["FinalizarPedido"]
                             </button>
                         </form>
                     }
                     else if (p.Estado == EstadoPedido.Finalizado)
                     {
                         <span class="badge bg-success">
-                            Pedido finalizado
+                            @localizer["PedidoFinalizado"]
                         </span>
                     }
                 </div>
@@ -40,59 +51,43 @@
     else
     {
         <p class="text-center text-muted">
-            Aún no aceptaste ningún encargo.
+            @localizer["SinEncargosAceptados"]
         </p>
     }
 
-    @* 🔽 PAGINACIÓN *@
     @if (Model.TotalPaginas > 1)
     {
         <nav class="mt-4">
-
             <ul class="pagination justify-content-center">
 
-                <!-- ANTERIOR -->
                 <li class="page-item @(Model.PaginaActual == 1 ? "disabled" : "")">
-
                     <a class="page-link"
                        asp-action="MisEncargos"
                        asp-route-pagina="@(Model.PaginaActual - 1)">
-                        Anterior
+                        @localizer["Anterior"]
                     </a>
-
                 </li>
 
-
-                <!-- NÚMEROS -->
                 @for (int i = 1; i <= Model.TotalPaginas; i++)
                 {
                     <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
-
                         <a class="page-link"
                            asp-action="MisEncargos"
                            asp-route-pagina="@i">
                             @i
                         </a>
-
                     </li>
                 }
 
-
-                <!-- SIGUIENTE -->
                 <li class="page-item @(Model.PaginaActual == Model.TotalPaginas ? "disabled" : "")">
-
                     <a class="page-link"
                        asp-action="MisEncargos"
                        asp-route-pagina="@(Model.PaginaActual + 1)">
-                        Siguiente
+                        @localizer["Siguiente"]
                     </a>
-
                 </li>
 
             </ul>
-
         </nav>
     }
-
-
 </div>
